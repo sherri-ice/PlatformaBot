@@ -1,3 +1,4 @@
-/consts/token.env
+/.env
 /Pipfile
 /Pipfile.lock
+/.env
