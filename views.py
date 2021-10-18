@@ -48,7 +48,7 @@ def webhook():
 @tg_bot.message_handler(commands = ['help', 'start'])
 def send_welcome(message):
     print("start command")
-    if User.query.filter_by(id = message.chat.id).firts is not None:
+    if User.query.filter_by(id = message.chat.id).first() is not None:
         tg_bot.send_message(message.chat.id, "Hey!")
     else:
         tg_bot.send_message(message.chat.id, "Register first!")
