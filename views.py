@@ -48,7 +48,7 @@ def webhook():
 @tg_bot.message_handler(commands = ['help', 'start'])
 def send_welcome(message):
     print("start command")
-    if User.query.filter_by(id = message.char.id):
+    if User.query.filter_by(id = message.chat.id):
         tg_bot.send_message(message.chat.id, "Hey!")
     else:
         tg_bot.send_message(message.chat.id, "Register first!")
