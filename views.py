@@ -77,6 +77,7 @@ def process_age_step(message):
     age = message.text
     user = get_user_by_id(message.chat.id)
     user.age = age
+    tg_bot.send_message(message.chat.id, f"Great! Hello, {user.name}, your age is {user.age}")
 
 
 # Handle all other messages from unregistered users

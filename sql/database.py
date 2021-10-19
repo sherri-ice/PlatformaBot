@@ -3,17 +3,16 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 
-# Create table user with pole id
 def get_user_by_id(id):
     return User.query.filter_by(id = id).first()
 
 
 def add_new_user(id):
     db.session.add(User(id = id))
-    db.session.commit()
     return get_user_by_id(id)
 
 
+# Ypu should always use this command
 def apply_db_changes():
     db.session.commit()
 
