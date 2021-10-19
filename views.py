@@ -61,10 +61,13 @@ def register(message):
     tg_bot.register_next_step_handler(message, process_name_step)
 
 
+# TODO: strange names, as commands name...
 def process_name_step(message):
     name = message.text
     id = message.chat.id
-    user = add_new_user(id)
+    user = get_user_by_id(id)
+    if user is None:
+        user = add_new_user(id)
     user.name = name
     apply_db_changes()
     markup = types.ReplyKeyboardMarkup(one_time_keyboard = True)
@@ -81,7 +84,7 @@ def process_age_step(message):
 
 
 # Handle all other messages from unregistered users
-@tg_bot.message_handler(func = lambda message: get_user_by_id(message.chat.id) is not None, content_types = ['text'])
+@tg_bot.message_handler(func = lambda message: get_user_by_id(message.chat.id) is None, content_types = ['text'])
 def echo_message(message):
     tg_bot.reply_to(message, "Register first!")
 
