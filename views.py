@@ -52,7 +52,7 @@ def send_welcome(message):
         tg_bot.send_message(message.chat.id, "Hey!")
     else:
         tg_bot.send_message(message.chat.id, "Register first!")
-        db.session.add(User(id = message.char.id))
+        db.session.add(User(id = message.chat.id))
         db.session.commit()
 
 
