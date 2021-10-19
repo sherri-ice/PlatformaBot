@@ -1,4 +1,6 @@
-from sql.database import db
+from telebot import types
+
+from sql.database import db, User, get_user_by_id, add_new_user, apply_db_changes
 from flask.blueprints import Blueprint
 
 import telebot
@@ -13,20 +15,17 @@ from loader import WEBHOOK_HOST
 WEBHOOK_URL_BASE = "https://%s" % WEBHOOK_HOST
 WEBHOOK_URL_PATH = "/%s/" % TELEGRAM_TOKEN
 
+# Init new module for bot, later the one for the site will appear
 bot = Blueprint('bot', __name__)
 
 logger = telebot.logger
 telebot.logger.setLevel(logging.INFO)
 
+# Creates bot
 tg_bot = telebot.TeleBot(TELEGRAM_TOKEN, threaded = False)
-print(tg_bot.get_me())
 
 
-# Create table user with pole id
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key = True)
-
-
+# Holds server indexes
 @bot.route('/', methods = ['GET', 'HEAD'])
 def index():
     return "Hello"
@@ -45,21 +44,45 @@ def webhook():
 
 
 # Handle '/start' and '/help'
-@tg_bot.message_handler(commands = ['help', 'start'])
+@tg_bot.message_handler(commands = ['start'])
 def send_welcome(message):
-    print("start command")
-    if User.query.filter_by(id = message.chat.id).first() is not None:
-        tg_bot.send_message(message.chat.id, "Hey!")
+    user = get_user_by_id(message.chat.id)
+    if user is not None:
+        tg_bot.send_message(message.chat.id, "Hey! I know you :)")
+
     else:
-        tg_bot.send_message(message.chat.id, "Register first!")
-        db.session.add(User(id = message.chat.id))
-        db.session.commit()
+        tg_bot.send_message(message.chat.id, "Send /register.")
 
 
-# Handle all other messages
-@tg_bot.message_handler(func = lambda message: True, content_types = ['text'])
+# Handles '/register'
+@tg_bot.message_handler(commands = ['register'])
+def register(message):
+    tg_bot.send_message(message.chat.id, "Let's get to know each other :) \n Send me your name:")
+    tg_bot.register_next_step_handler(message, process_name_step)
+
+
+def process_name_step(message):
+    name = message.text
+    id = message.chat.id
+    user = add_new_user(id)
+    user.name = name
+    apply_db_changes()
+    markup = types.ReplyKeyboardMarkup(one_time_keyboard = True)
+    markup.add('12-18', '18-21', '24-27', '27+')
+    msg = tg_bot.reply_to(message, 'Your age:', reply_markup = markup)
+    tg_bot.register_next_step_handler(msg, process_age_step)
+
+
+def process_age_step(message):
+    age = message.text
+    user = get_user_by_id(message.chat.id)
+    user.age = age
+
+
+# Handle all other messages from unregistered users
+@tg_bot.message_handler(func = lambda message: get_user_by_id(message.chat.id) is not None, content_types = ['text'])
 def echo_message(message):
-    tg_bot.reply_to(message, message.text)
+    tg_bot.reply_to(message, "Register first!")
 
 
 # Remove webhook, it fails sometimes the set if there is a previous webhook
