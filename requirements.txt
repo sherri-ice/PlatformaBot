@@ -2,3 +2,5 @@ python-telegram-bot
 mysql-connector-python
 python-dotenv
 Flask
+requests
+vk

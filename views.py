@@ -5,12 +5,16 @@ from flask.blueprints import Blueprint
 
 import telebot
 import flask
+from flask import request
 
 import logging
 import time
 
 from loader import TELEGRAM_TOKEN
 from loader import WEBHOOK_HOST
+from loader import REDIRECT_FROM_VK
+
+from vk_auth import request_vk_auth
 
 WEBHOOK_URL_BASE = "https://%s" % WEBHOOK_HOST
 WEBHOOK_URL_PATH = "/%s/" % TELEGRAM_TOKEN
@@ -31,6 +35,11 @@ def index():
     return "Hello"
 
 
+@bot.route(REDIRECT_FROM_VK, methods = ['GET'])
+def redirect_form_vk():
+    code = request.args.get('code')
+
+
 # Process webhook calls
 @bot.route(WEBHOOK_URL_PATH, methods = ['POST'])
 def webhook():
@@ -43,6 +52,7 @@ def webhook():
         flask.abort(403)
 
 
+@bot.route()
 # Handle '/start' and '/help'
 @tg_bot.message_handler(commands = ['start'])
 def send_welcome(message):
@@ -52,6 +62,20 @@ def send_welcome(message):
 
     else:
         tg_bot.send_message(message.chat.id, "Send /register.")
+
+
+# Creates a markup with link to auth url
+def gen_markup_for_vk_auth():
+    markup = types.InlineKeyboardMarkup()
+    markup.row_width = 1
+    markup.add(types.InlineKeyboardButton(text = "VK auth", url = request_vk_auth()))
+    return markup
+
+
+# Handles '/vk_auth'
+@tg_bot.message_handler(commands = ['vk_auth'])
+def vk_auth(message):
+    tg_bot.send_message(message.chat.id, "Vk auth", reply_markup = gen_markup_for_vk_auth())
 
 
 # Handles '/register'
@@ -96,3 +120,5 @@ time.sleep(0.1)
 
 # Set webhook
 tg_bot.set_webhook(url = WEBHOOK_URL_BASE + WEBHOOK_URL_PATH)
+
+# TODO: unregistered user can't call smth except /start
