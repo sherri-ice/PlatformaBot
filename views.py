@@ -38,6 +38,7 @@ def index():
 @bot.route('/vk_auth', methods = ['GET'])
 def redirect_form_vk():
     code = request.args.get('code')
+    return ''
 
 
 # Process webhook calls
