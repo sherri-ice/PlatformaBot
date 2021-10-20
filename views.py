@@ -52,7 +52,6 @@ def webhook():
         flask.abort(403)
 
 
-@bot.route()
 # Handle '/start' and '/help'
 @tg_bot.message_handler(commands = ['start'])
 def send_welcome(message):
