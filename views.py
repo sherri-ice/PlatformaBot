@@ -1,6 +1,7 @@
+import requests
 from telebot import types
 
-from sql.database import db, User, get_user_by_id, add_new_user, apply_db_changes
+from sql.database import db, User, get_user_by_id, add_new_user, apply_db_changes, register_vk_user
 from flask.blueprints import Blueprint
 
 import telebot
@@ -35,10 +36,20 @@ def index():
     return "Hello"
 
 
+# Process vk auth calls
 @bot.route('/vk_auth', methods = ['GET'])
-def redirect_form_vk():
-    code = request.args.get('code')
+def redirect_from_vk(message = None):
+    vk_token = request.args.get('access_token')
+    vk_user_id = request.args.get('id')
+    if message is not None:
+        user = get_user_by_id(message.chat.id)
+        vk_user = register_vk_user(vk_user_id, vk_token, message.chat.id)
+        user.vk_api = vk_user
     return ''
+
+
+def response_after_vk_auth(message):
+    tg_bot.send_message(message.chat.id, "Ok! I found you!")
 
 
 # Process webhook calls
@@ -74,8 +85,9 @@ def gen_markup_for_vk_auth():
 
 # Handles '/vk_auth'
 @tg_bot.message_handler(commands = ['vk_auth'])
-def vk_auth(message):
+def vk_auth_register(message):
     tg_bot.send_message(message.chat.id, "Vk auth", reply_markup = gen_markup_for_vk_auth())
+    tg_bot.register_next_step_handler(message, redirect_from_vk)
 
 
 # Handles '/register'
@@ -104,7 +116,9 @@ def process_age_step(message):
     age = message.text
     user = get_user_by_id(message.chat.id)
     user.age = age
-    tg_bot.send_message(message.chat.id, f"Great! Hello, {user.name}, your age is {user.age}")
+    tg_bot.send_message(message.chat.id, f"Great! Hello, {user.name}, your age is {user.age}."
+                                         f"Now connect your vk account:")
+    tg_bot.register_next_step_handler(message, vk_auth_register)
 
 
 # Handle all other messages from unregistered users
