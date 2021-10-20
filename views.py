@@ -35,7 +35,7 @@ def index():
     return "Hello"
 
 
-@bot.route(REDIRECT_FROM_VK, methods = ['GET'])
+@bot.route('/vk_auth', methods = ['GET'])
 def redirect_form_vk():
     code = request.args.get('code')
 
