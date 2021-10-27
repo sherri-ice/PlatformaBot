@@ -24,9 +24,3 @@ def authorize_vk_session(code: str, id: int):
         print(error_msg)
         return None
     return vk_session.token
-
-
-if __name__ == '__main__':
-    print(request_vk_auth_code(123))
-    vk = vk_api.VkApi(token = "85046366458e1cda28aec027826fc51d0d427676f577189045db21cb0c1786c306693ba7da2f211b28db8")
-    print(vk.get_api().wall.get(count = 1))

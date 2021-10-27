@@ -35,7 +35,7 @@ def vk_auth_register(message):
     if vk is None:
         tg_bot.send_message(message.chat.id, f"Something gone wrong!")
         return
-    data = vk.get_api().getProfileInfo()
+    data = vk.get_api().users.get()
     tg_bot.send_message(message.chat.id, f"Your profile name: {data['first_name']}")
 
 
