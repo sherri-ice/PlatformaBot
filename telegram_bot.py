@@ -41,7 +41,8 @@ def vk_auth_register(message):
     # tg_bot.send_message(message.chat.id, f"Your profile name: {data['first_name']}")
     # tg_bot.send_message(message.chat.id, f"Your token is {vk}")
     vk_session = vk_api.VkApi(app_id = VK_API_APP_ID, client_secret = VK_CLIENT_SECRET, token = vk)
-    tg_bot.send_message(message.chat.id, f"Your vk_id:{vk_session.get_api().users.get()['id']}")
+    data = vk_session.get_api().users.get()
+    tg_bot.send_message(message.chat.id, f"Your vk_id:{data[0]['first_name']}")
 
 
 # Handles '/register'
