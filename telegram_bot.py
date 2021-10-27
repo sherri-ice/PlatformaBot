@@ -23,12 +23,6 @@ def send_welcome(message):
         tg_bot.send_message(message.chat.id, "Send /register.")
 
 
-# Handle all other messages from unregistered users
-@tg_bot.message_handler(func = lambda message: get_user_by_id(message.chat.id) is None, content_types = ['text'])
-def echo_message(message):
-    tg_bot.reply_to(message, "Register first!")
-
-
 # Handles '/vk_auth'
 @tg_bot.message_handler(commands = ['vk_auth'])
 def vk_auth_register(message):
@@ -72,6 +66,12 @@ def gen_markup_for_vk_auth(chat_id):
     markup.row_width = 1
     markup.add(types.InlineKeyboardButton(text = "VK auth", url = request_vk_auth(chat_id)))
     return markup
+
+
+# Handle all other messages from unregistered users
+@tg_bot.message_handler(func = lambda message: get_user_by_id(message.chat.id) is None, content_types = ['text'])
+def echo_message(message):
+    tg_bot.reply_to(message, "Register first!")
 
 
 @tg_bot.message_handler(func = lambda message: get_user_by_id(message.chat.id) is not None, content_types = ['text'])

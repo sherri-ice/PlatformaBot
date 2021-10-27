@@ -13,7 +13,3 @@ def create_app():
     db.init_app(application)
     application.register_blueprint(bot_handler)
     return application
-
-
-if __name__ == '__main__':
-    create_app()
