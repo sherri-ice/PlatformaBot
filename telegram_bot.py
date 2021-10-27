@@ -1,4 +1,4 @@
-import logging, time
+import logging
 import telebot
 from telebot import types
 from vk_auth import request_vk_auth_code
