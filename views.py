@@ -41,6 +41,7 @@ def index():
 def redirect_from_vk():
     vk_token = request.args.get('access_token')
     tg_id = request.args.get("tg_id")
+    tg_bot.send_message(tg_id, "Registered!")
     vk_user_id = request.args.get('id')
     return ''
 
