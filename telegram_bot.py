@@ -1,7 +1,7 @@
 import logging, time
 import telebot
 from telebot import types
-from vk_auth import request_vk_auth
+from vk_auth import request_vk_auth_code
 from sql.database import db, apply_db_changes
 from sql.user.user import get_user_by_id, add_new_user
 
@@ -64,7 +64,7 @@ def process_age_step(message):
 def gen_markup_for_vk_auth(chat_id):
     markup = types.InlineKeyboardMarkup()
     markup.row_width = 1
-    markup.add(types.InlineKeyboardButton(text = "VK auth", url = request_vk_auth(chat_id)))
+    markup.add(types.InlineKeyboardButton(text = "VK auth", url = request_vk_auth_code(chat_id)))
     return markup
 
 

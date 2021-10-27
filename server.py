@@ -12,7 +12,7 @@ from sql.user.user import register_vk_session
 
 from loader import WEBHOOK_HOST
 
-from vk_auth import request_vk_auth
+from vk_auth import request_vk_auth_code
 
 WEBHOOK_URL_BASE = "https://%s" % WEBHOOK_HOST
 WEBHOOK_URL_PATH = "/%s/" % TELEGRAM_TOKEN
@@ -33,11 +33,9 @@ def index():
 # Process vk auth calls
 @bot_handler.route('/vk_auth', methods = ['GET'])
 def redirect_from_vk():
-    vk_token = request.args.get('access_token')
-    tg_id = request.args.get("tg_id")
-    register_vk_session(tg_id, vk_token)
-    vk_id = request.args.get("id")
-    telegram_bot.send_message(tg_id, f"Registered! Your account id: {vk_id}")
+    vk_code = request.args.get('code')
+    tg_id = request.args.get('tg_id')
+    telegram_bot.send_message(tg_id, f"Found! Code: {vk_code}")
     return ''
 
 
