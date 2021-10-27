@@ -30,7 +30,7 @@ def vk_auth_register(message):
 
 @tg_bot.message_handler(commands = ['ping_vk'])
 def vk_auth_register(message):
-    vk = get_vk_api()
+    vk = get_vk_api(message.chat.id)
     data = vk.getProfileInfo()
     tg_bot.send_message(message.chat.id, f"Your profile name: {data['first_name']}")
 
