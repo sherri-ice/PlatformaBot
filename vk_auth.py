@@ -22,5 +22,5 @@ def authorize_vk_session(code: str, id: int):
         vk_session.code_auth(code, f"{REDIRECT_FROM_VK}?tg_id={id}")
     except vk_api.AuthError as error_msg:
         print(error_msg)
-        return
+        return None
     return vk_session.token

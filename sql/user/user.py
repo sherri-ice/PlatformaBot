@@ -21,7 +21,7 @@ def add_new_user(id):
 
 
 def get_vk_api(id):
-    if get_user_by_id(id) is None:
+    if get_user_by_id(id) or get_user_by_id(id).vk_token is None:
         return None
     return vk_api.VkApi(token = get_user_by_id(id).vk_token)
 
