@@ -28,10 +28,10 @@ def send_welcome(message):
 
 @tg_bot.message_handler(commands = ['vk_auth'])
 def vk_auth_register(message):
-    if get_vk_token(message.chat.id) is None:
+    # if get_vk_token(message.chat.id) is None:
         tg_bot.send_message(message.chat.id, "Vk auth", reply_markup = gen_markup_for_vk_auth(message.chat.id))
-    else:
-        tg_bot.send_message(message.chat.id, "You've already connected vk")
+    # else:
+    #     tg_bot.send_message(message.chat.id, "You've already connected vk")
 
 
 @tg_bot.message_handler(commands = ['ping_vk'])
