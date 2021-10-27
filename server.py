@@ -8,6 +8,8 @@ from flask import request
 from loader import TELEGRAM_TOKEN
 import time
 
+from sql.user.user import register_vk_session
+
 from loader import WEBHOOK_HOST
 
 from vk_auth import request_vk_auth
@@ -33,8 +35,9 @@ def index():
 def redirect_from_vk():
     vk_token = request.args.get('access_token')
     tg_id = request.args.get("tg_id")
-    telegram_bot.send_message(tg_id, "Registered!")
-    vk_user_id = request.args.get('id')
+    register_vk_session(tg_id, vk_token)
+    vk_id = request.args.get("id")
+    telegram_bot.send_message(tg_id, f"Registered! Your account id: {vk_id}")
     return ''
 
 

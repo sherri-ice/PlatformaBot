@@ -2,7 +2,8 @@ import logging, time
 import telebot
 from telebot import types
 from vk_auth import request_vk_auth
-from sql.database import db, UserTable, get_user_by_id, add_new_user, apply_db_changes
+from sql.database import db, apply_db_changes
+from sql.user.user import get_user_by_id, add_new_user
 
 from loader import TELEGRAM_TOKEN
 
