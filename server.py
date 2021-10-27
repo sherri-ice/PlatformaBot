@@ -18,6 +18,7 @@ WEBHOOK_URL_PATH = "/%s/" % TELEGRAM_TOKEN
 # Init new module for bot, later the one for the site will appear
 bot_handler = Blueprint('bot', __name__)
 
+# Get created telegram bot
 telegram_bot = get_telegram_bot()
 
 

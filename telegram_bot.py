@@ -28,6 +28,11 @@ def echo_message(message):
     tg_bot.reply_to(message, "Register first!")
 
 
+@tg_bot.message_handler(func = lambda message: get_user_by_id(message.chat.id) is not None, content_types = ['text'])
+def echo_message(message):
+    tg_bot.reply_to(message, "Sorry, now I can't answer for this...")
+
+
 # Handles '/vk_auth'
 @tg_bot.message_handler(commands = ['vk_auth'])
 def vk_auth_register(message):
