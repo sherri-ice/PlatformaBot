@@ -8,7 +8,7 @@ from telebot import types
 from loader import TELEGRAM_TOKEN, WEBHOOK_HOST
 import time
 
-from sql.user.user import register_vk_session
+from sql.user.user import register_vk_token
 
 from vk_auth import authorize_vk_session
 
@@ -33,7 +33,7 @@ def index():
 def redirect_from_vk():
     vk_code = request.args.get('code')
     tg_id = request.args.get('tg_id')
-    register_vk_session(vk_code, tg_id)
+    register_vk_token(vk_code, tg_id)
     telegram_bot.send_message(tg_id, f"Found! Send /ping_vk to test auth!")
     return ''
 

@@ -1,8 +1,4 @@
-import json
-
 import vk_api
-from sqlalchemy import TypeDecorator, VARCHAR
-
 from sql.database import db, apply_db_changes
 from vk_auth import authorize_vk_session
 
