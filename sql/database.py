@@ -21,5 +21,5 @@ class User(db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String, nullable = False)
-    vk_api = db.relationship('VkUser', backref = 'user', lazy = True)
+    vk_api = db.Column(db.String)
     age = db.Column(db.String, nullable = False)
