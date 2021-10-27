@@ -38,13 +38,10 @@ def index():
 
 # Process vk auth calls
 @bot.route('/vk_auth', methods = ['GET'])
-def redirect_from_vk(message = None):
+def redirect_from_vk():
     vk_token = request.args.get('access_token')
+    tg_id = request.args.get("tg_id")
     vk_user_id = request.args.get('id')
-    if message is not None:
-        user = get_user_by_id(message.chat.id)
-        vk_user = register_vk_user(vk_user_id, vk_token, message.chat.id)
-        user.vk_api = vk_user
     return ''
 
 
@@ -76,17 +73,17 @@ def send_welcome(message):
 
 
 # Creates a markup with link to auth url
-def gen_markup_for_vk_auth():
+def gen_markup_for_vk_auth(chat_id):
     markup = types.InlineKeyboardMarkup()
     markup.row_width = 1
-    markup.add(types.InlineKeyboardButton(text = "VK auth", url = request_vk_auth()))
+    markup.add(types.InlineKeyboardButton(text = "VK auth", url = request_vk_auth(chat_id)))
     return markup
 
 
 # Handles '/vk_auth'
 @tg_bot.message_handler(commands = ['vk_auth'])
 def vk_auth_register(message):
-    tg_bot.send_message(message.chat.id, "Vk auth", reply_markup = gen_markup_for_vk_auth())
+    tg_bot.send_message(message.chat.id, "Vk auth", reply_markup = gen_markup_for_vk_auth(message.chat.id))
     tg_bot.register_next_step_handler(message, redirect_from_vk)
 
 
