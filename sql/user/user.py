@@ -2,6 +2,8 @@ import vk_api
 from sql.database import db, apply_db_changes
 from vk_auth import authorize_vk_session
 
+vk_session = vk_api.VkApi()
+
 
 def register_vk_token(code: str, id: int):
     if get_user_by_id(id) is None:
@@ -22,8 +24,9 @@ def add_new_user(id):
 
 def get_vk_api(id):
     if get_user_by_id(id) or get_user_by_id(id).vk_token is None:
-        return None
-    return vk_api.VkApi(token = get_user_by_id(id).vk_token)
+        return
+    vk_session = vk_api.VkApi(get_user_by_id(id).vk_token)
+    return vk_session.get_api()
 
 
 class UserTable(db.Model):

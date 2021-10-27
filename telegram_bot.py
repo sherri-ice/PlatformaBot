@@ -31,11 +31,11 @@ def vk_auth_register(message):
 
 @tg_bot.message_handler(commands = ['ping_vk'])
 def vk_auth_register(message):
-    vk: vk_api.VkApi = get_vk_api(message.chat.id)
+    vk = get_vk_api(message.chat.id)
     if vk is None:
         tg_bot.send_message(message.chat.id, f"Something gone wrong!")
         return
-    data = vk.get_api().users.get()
+    data = vk.users.get()
     tg_bot.send_message(message.chat.id, f"Your profile name: {data['first_name']}")
 
 
