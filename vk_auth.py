@@ -24,10 +24,3 @@ def authorize_vk_session(code: str, id: int):
         print(error_msg)
         return
     return vk_session.token
-
-
-if __name__ == '__main__':
-    print(request_vk_auth_code(123))
-    value: vk_api.VkApi = authorize_vk_session("e07d493e2d0906fd9c", 123)
-    new_value = vk_api.VkApi(token = value.token)
-    print(new_value)
