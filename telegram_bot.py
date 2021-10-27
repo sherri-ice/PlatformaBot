@@ -1,5 +1,6 @@
 import logging
 import telebot
+import vk_api
 from telebot import types
 from vk_auth import request_vk_auth_code
 from sql.database import db, apply_db_changes
@@ -30,8 +31,11 @@ def vk_auth_register(message):
 
 @tg_bot.message_handler(commands = ['ping_vk'])
 def vk_auth_register(message):
-    vk = get_vk_api(message.chat.id)
-    data = vk.getProfileInfo()
+    vk: vk_api.VkApi = get_vk_api(message.chat.id)
+    if vk is None:
+        tg_bot.send_message(message.chat.id, f"Something gone wrong!")
+        return
+    data = vk.get_api().getProfileInfo()
     tg_bot.send_message(message.chat.id, f"Your profile name: {data['first_name']}")
 
 

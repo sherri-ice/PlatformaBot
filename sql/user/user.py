@@ -18,8 +18,10 @@ def add_new_user(id):
     return get_user_by_id(id)
 
 
-def get_vk_api(id) -> vk_api.VkApi:
-    return vk_api.VkApi(token = get_user_by_id(id).vk_token).get_api()
+def get_vk_api(id):
+    if get_user_by_id(id) is None:
+        return None
+    return vk_api.VkApi(token = get_user_by_id(id).vk_token)
 
 
 class UserTable(db.Model):
