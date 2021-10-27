@@ -1,7 +1,6 @@
-import requests
 from telebot import types
 
-from sql.database import db, User, get_user_by_id, add_new_user, apply_db_changes, register_vk_user
+from sql.database import db, User, get_user_by_id, add_new_user, apply_db_changes
 from flask.blueprints import Blueprint
 
 import telebot
@@ -13,7 +12,6 @@ import time
 
 from loader import TELEGRAM_TOKEN
 from loader import WEBHOOK_HOST
-from loader import REDIRECT_FROM_VK
 
 from vk_auth import request_vk_auth
 
