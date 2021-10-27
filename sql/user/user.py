@@ -7,7 +7,7 @@ from loader import VK_API_APP_ID, VK_CLIENT_SECRET
 def register_vk_token(code: str, id: int):
     if get_user_by_id(id) is None:
         return None
-    get_user_by_id(id).vk_token = authorize_vk_session(code, id)['access_token']
+    get_user_by_id(id).vk_token = authorize_vk_session(code, id).token['access_token']
     apply_db_changes()
 
 
