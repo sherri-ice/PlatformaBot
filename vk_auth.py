@@ -15,4 +15,4 @@ def request_vk_auth(id: int) -> str:
 
 
 if __name__ == '__main__':
-    print(request_vk_auth(299065458))
+    print(request_vk_auth(832082499))
