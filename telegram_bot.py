@@ -4,7 +4,7 @@ import vk_api
 from telebot import types
 from vk_auth import request_vk_auth_code
 from sql.database import db, apply_db_changes
-from sql.user.user import get_user_by_id, add_new_user, get_vk_api
+from sql.user.user import get_user_by_id, add_new_user, get_vk_token
 
 from loader import TELEGRAM_TOKEN
 from loader import VK_API_APP_ID, REDIRECT_FROM_VK, VK_CLIENT_SECRET
@@ -28,21 +28,17 @@ def send_welcome(message):
 
 @tg_bot.message_handler(commands = ['vk_auth'])
 def vk_auth_register(message):
-    tg_bot.send_message(message.chat.id, "Vk auth", reply_markup = gen_markup_for_vk_auth(message.chat.id))
+    if get_vk_token(message.chat.id) is None:
+        tg_bot.send_message(message.chat.id, "Vk auth", reply_markup = gen_markup_for_vk_auth(message.chat.id))
+    else:
+        tg_bot.send_message(message.chat.id, "You've already connected vk")
 
 
 @tg_bot.message_handler(commands = ['ping_vk'])
 def vk_auth_register(message):
-    vk = get_vk_api(message.chat.id)
-    # if vk is None:
-    #     tg_bot.send_message(message.chat.id, f"Something gone wrong!")
-    #     return
-    # data = vk.users.get()
-    # tg_bot.send_message(message.chat.id, f"Your profile name: {data['first_name']}")
-    # tg_bot.send_message(message.chat.id, f"Your token is {vk}")
-    vk_session = vk_api.VkApi(app_id = VK_API_APP_ID, client_secret = VK_CLIENT_SECRET, token = vk)
-    data = vk_session.get_api().users.get()
-    tg_bot.send_message(message.chat.id, f"Your vk_id:{data[0]['first_name']}")
+    vk = get_vk_token(message.chat.id)
+    data = vk.users.get()
+    tg_bot.send_message(message.chat.id, f"Your vk name: {data[0]['first_name']}")
 
 
 # Handles '/register'
