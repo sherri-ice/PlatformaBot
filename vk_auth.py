@@ -1,4 +1,5 @@
 import requests.utils
+import vk
 import vk_api
 
 from loader import VK_API_APP_ID, REDIRECT_FROM_VK, VK_CLIENT_SECRET
@@ -15,5 +16,11 @@ def request_vk_auth_code(id: int) -> str:
     return vk_request_auth_url
 
 
-if __name__ == '__main__':
-    print(request_vk_auth_code(123))
+def authorize_vk_session(code: str, id: int):
+    vk_session = vk_api.VkApi(app_id = VK_API_APP_ID, client_secret = VK_CLIENT_SECRET)
+    try:
+        vk_session.code_auth(code, f"{REDIRECT_FROM_VK}?tg_id={id}")
+    except vk_api.AuthError as error_msg:
+        print(error_msg)
+        return
+    return vk_session

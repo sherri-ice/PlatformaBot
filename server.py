@@ -1,18 +1,16 @@
+import flask
+from flask import request
 from flask.blueprints import Blueprint
 
 from telegram_bot import get_telegram_bot
 from telebot import types
-import flask
-from flask import request
 
-from loader import TELEGRAM_TOKEN
+from loader import TELEGRAM_TOKEN, WEBHOOK_HOST
 import time
 
 from sql.user.user import register_vk_session
 
-from loader import WEBHOOK_HOST
-
-from vk_auth import request_vk_auth_code
+from vk_auth import authorize_vk_session
 
 WEBHOOK_URL_BASE = "https://%s" % WEBHOOK_HOST
 WEBHOOK_URL_PATH = "/%s/" % TELEGRAM_TOKEN
@@ -35,6 +33,7 @@ def index():
 def redirect_from_vk():
     vk_code = request.args.get('code')
     tg_id = request.args.get('tg_id')
+    register_vk_session(vk_code, tg_id)
     telegram_bot.send_message(tg_id, f"Found! Code: {vk_code}")
     return ''
 

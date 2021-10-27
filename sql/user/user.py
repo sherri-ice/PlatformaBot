@@ -1,11 +1,9 @@
-import vk_api
-from vk_api import VkApi
-
 from sql.database import db
+from vk_auth import authorize_vk_session
 
 
-def register_vk_session(id, token):
-    get_user_by_id(id).vk_session = VkApi(token)
+def register_vk_session(code: str, id: int):
+    get_user_by_id(id).vk_session = authorize_vk_session(code, id)
 
 
 def get_user_by_id(id):
