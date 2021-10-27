@@ -4,6 +4,8 @@ from vk_auth import authorize_vk_session
 
 
 def register_vk_token(code: str, id: int):
+    if get_user_by_id(id) is None:
+        return None
     get_user_by_id(id).vk_token = authorize_vk_session(code, id)
     apply_db_changes()
 
