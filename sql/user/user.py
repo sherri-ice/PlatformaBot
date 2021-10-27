@@ -1,8 +1,7 @@
 import vk_api
 from sql.database import db, apply_db_changes
 from vk_auth import authorize_vk_session
-
-vk_session = vk_api.VkApi()
+from loader import VK_API_APP_ID, VK_CLIENT_SECRET
 
 
 def register_vk_token(code: str, id: int):
@@ -25,7 +24,8 @@ def add_new_user(id):
 def get_vk_api(id):
     if get_user_by_id(id) or get_user_by_id(id).vk_token is None:
         return
-    vk_session = vk_api.VkApi(get_user_by_id(id).vk_token)
+    vk_session = vk_api.VkApi(app_id = VK_API_APP_ID, client_secret = VK_CLIENT_SECRET, token = get_user_by_id(
+        id).vk_token)
     return vk_session.get_api()
 
 
