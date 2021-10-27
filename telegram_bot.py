@@ -7,6 +7,8 @@ from sql.database import db, apply_db_changes
 from sql.user.user import get_user_by_id, add_new_user, get_vk_api
 
 from loader import TELEGRAM_TOKEN
+from loader import VK_API_APP_ID, REDIRECT_FROM_VK, VK_CLIENT_SECRET
+
 
 logger = telebot.logger
 telebot.logger.setLevel(logging.INFO)
@@ -38,6 +40,8 @@ def vk_auth_register(message):
     # data = vk.users.get()
     # tg_bot.send_message(message.chat.id, f"Your profile name: {data['first_name']}")
     tg_bot.send_message(message.chat.id, f"Your token is {vk}")
+    vk_session = vk_api.VkApi(app_id = VK_API_APP_ID, client_secret = VK_CLIENT_SECRET, token = vk)
+    tg_bot.send_message(message.chat.id, f"Your vk_id:{vk_session.get_api().users.get()['id']}")
 
 
 # Handles '/register'
