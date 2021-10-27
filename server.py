@@ -34,7 +34,7 @@ def redirect_from_vk():
     vk_code = request.args.get('code')
     tg_id = request.args.get('tg_id')
     register_vk_session(vk_code, tg_id)
-    telegram_bot.send_message(tg_id, f"Found! Code: {vk_code}")
+    telegram_bot.send_message(tg_id, f"Found! Send /ping_vk to test auth!")
     return ''
 
 

@@ -3,7 +3,7 @@ import telebot
 from telebot import types
 from vk_auth import request_vk_auth_code
 from sql.database import db, apply_db_changes
-from sql.user.user import get_user_by_id, add_new_user
+from sql.user.user import get_user_by_id, add_new_user, get_vk_api
 
 from loader import TELEGRAM_TOKEN
 
@@ -23,10 +23,16 @@ def send_welcome(message):
         tg_bot.send_message(message.chat.id, "Send /register.")
 
 
-# Handles '/vk_auth'
 @tg_bot.message_handler(commands = ['vk_auth'])
 def vk_auth_register(message):
     tg_bot.send_message(message.chat.id, "Vk auth", reply_markup = gen_markup_for_vk_auth(message.chat.id))
+
+
+@tg_bot.message_handler(commands = ['ping_vk'])
+def vk_auth_register(message):
+    vk = get_vk_api()
+    data = vk.getProfileInfo()
+    tg_bot.send_message(message.chat.id, f"Your profile name: {data['first_name']}")
 
 
 # Handles '/register'

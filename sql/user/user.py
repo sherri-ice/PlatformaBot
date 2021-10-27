@@ -17,6 +17,10 @@ def add_new_user(id):
     return get_user_by_id(id)
 
 
+def get_vk_api(id):
+    return get_user_by_id(id).vk_session.get_api()
+
+
 class UserTable(db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key = True)
