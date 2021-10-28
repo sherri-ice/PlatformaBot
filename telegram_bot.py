@@ -74,6 +74,7 @@ def process_name_step(message):
     apply_db_changes()
     msg = tg_bot.send_message(message, messages_templates["unregistered_user"]["registration_age_step"],
                               reply_markup = gen_markup_age())
+    tg_bot.register_next_step_handler(msg, complete_registration)
 
 
 @tg_bot.callback_query_handler(func = lambda call: True)
@@ -93,6 +94,11 @@ def callback_query(call):
         user.age = "27+"
     apply_db_changes()
     tg_bot.send_message(call.id, f"Супер! \n Тебя зовут: {user.name} \n Твой возраст: {user.age}")
+
+
+def complete_registration(message):
+    user = get_user_by_id(message.chat.id)
+    tg_bot.send_message(message.chat.id, f"Супер! \n Тебя зовут: {user.name} \n Твой возраст: {user.age}")
 
 
 # Creates a markup with link to auth url
