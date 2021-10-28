@@ -30,6 +30,9 @@ def send_welcome(message):
 
 @tg_bot.message_handler(commands = ['vk_auth'])
 def vk_auth_register(message):
+    if get_user_by_id(message.chat.id).vk_token is not None:
+        tg_bot.send_message(message.chat.id, messages_templates["vk"]["vk_re_register"])
+        return
     if get_vk_token(message.chat.id) is None:
         tg_bot.send_message(message.chat.id, messages_templates["vk"]["vk_error_not_found"])
     else:
