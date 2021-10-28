@@ -14,8 +14,10 @@ VK_API_APP_ID = os.getenv("VK_API_APP_ID")
 REDIRECT_FROM_VK: str = os.getenv("REDIRECT_FROM_VK")
 VK_CLIENT_SECRET = os.getenv("VK_CLIENT_SECRET")
 
+project_path = os.getcwd()
+
 
 def load_messages():
-    with open('./messages_answers.json') as json_file:
+    with open(f'{project_path}/messages_answers.json') as json_file:
         data = json.load(json_file)
         return data
