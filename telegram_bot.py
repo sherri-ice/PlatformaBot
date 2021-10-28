@@ -16,6 +16,8 @@ telebot.logger.setLevel(logging.INFO)
 
 tg_bot = telebot.TeleBot(TELEGRAM_TOKEN, threaded = False)
 
+hideBoard = types.ReplyKeyboardRemove()  # if sent as reply_markup, will hide the keyboard
+
 
 @tg_bot.message_handler(commands = ['start'])
 def send_welcome(message):
@@ -50,6 +52,17 @@ def register(message):
     tg_bot.register_next_step_handler(message, process_name_step)
 
 
+def gen_markup_age():
+    markup = types.InlineKeyboardMarkup()
+    markup.row_width = 4
+    markup.add(types.InlineKeyboardButton("12-18", callback_data = "cb_12_18"),
+               types.InlineKeyboardButton("19-24", callback_data = "cb_19_24"),
+               types.InlineKeyboardButton("25-27", callback_data = "cb_25_27"),
+               types.InlineKeyboardButton("27+", callback_data = "cb_27_plus"),
+               )
+    return markup
+
+
 # TODO: strange names, as commands name...
 def process_name_step(message):
     name = message.text
@@ -59,11 +72,21 @@ def process_name_step(message):
         user = add_new_user(id)
     user.name = name
     apply_db_changes()
-    markup = types.ReplyKeyboardMarkup(one_time_keyboard = True)
-    markup.add('12-18', '18-21', '24-27', '27+')
-    msg = tg_bot.reply_to(message, messages_templates["unregistered_user"]["registration_age_step"], reply_markup =
-    markup)
+    msg = tg_bot.reply_to(message, messages_templates["unregistered_user"]["registration_age_step"],
+                          reply_markup = gen_markup_age())
     tg_bot.register_next_step_handler(msg, process_age_step)
+
+
+@tg_bot.callback_query_handler(func = lambda call: True)
+def callback_query(call):
+    if call.data == "cb_12_18":
+        tg_bot.answer_callback_query(call.id, "Возраст: 12-18")
+    elif call.data == "cb_19_24":
+        tg_bot.answer_callback_query(call.id, "Возраст: 19-24")
+    elif call.data == "cb_25_27":
+        tg_bot.answer_callback_query(call.id, "Возраст: 25-27")
+    elif call.data == "cb_27_plus":
+        tg_bot.answer_callback_query(call.id, "Возраст: 27+")
 
 
 def process_age_step(message):
