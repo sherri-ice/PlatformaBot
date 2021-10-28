@@ -74,27 +74,25 @@ def process_name_step(message):
     apply_db_changes()
     msg = tg_bot.reply_to(message, messages_templates["unregistered_user"]["registration_age_step"],
                           reply_markup = gen_markup_age())
-    tg_bot.register_next_step_handler(msg, process_age_step)
+    tg_bot.register_next_step_handler(msg, complete_registration)
 
 
 @tg_bot.callback_query_handler(func = lambda call: True)
 def callback_query(call):
+    user = get_user_by_id(call.id)
     if call.data == "cb_12_18":
         tg_bot.answer_callback_query(call.id, "Возраст: 12-18")
+        user.age = "12-18"
     elif call.data == "cb_19_24":
         tg_bot.answer_callback_query(call.id, "Возраст: 19-24")
+        user.age = "19-24"
     elif call.data == "cb_25_27":
         tg_bot.answer_callback_query(call.id, "Возраст: 25-27")
+        user.age = "25-27"
     elif call.data == "cb_27_plus":
         tg_bot.answer_callback_query(call.id, "Возраст: 27+")
-
-
-def process_age_step(message):
-    age = message.text
-    user = get_user_by_id(message.chat.id)
-    user.age = age
+        user.age = "27+"
     apply_db_changes()
-    tg_bot.register_next_step_handler(message, complete_registration)
 
 
 def complete_registration(message):
