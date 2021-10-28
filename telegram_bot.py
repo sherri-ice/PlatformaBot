@@ -16,8 +16,6 @@ telebot.logger.setLevel(logging.INFO)
 
 tg_bot = telebot.TeleBot(TELEGRAM_TOKEN, threaded = False)
 
-hideBoard = types.ReplyKeyboardRemove()  # if sent as reply_markup, will hide the keyboard
-
 
 @tg_bot.message_handler(commands = ['start'])
 def send_welcome(message):
@@ -53,12 +51,12 @@ def register(message):
 
 
 def gen_markup_age():
-    markup = types.InlineKeyboardMarkup()
+    markup = types.ReplyKeyboardMarkup()
     markup.row_width = 4
-    markup.add(types.InlineKeyboardButton("12-18", callback_data = "cb_12_18"),
-               types.InlineKeyboardButton("19-24", callback_data = "cb_19_24"),
-               types.InlineKeyboardButton("25-27", callback_data = "cb_25_27"),
-               types.InlineKeyboardButton("27+", callback_data = "cb_27_plus"),
+    markup.add(types.KeyboardButton("12-18"),
+               types.KeyboardButton("19-24"),
+               types.KeyboardButton("25-27"),
+               types.KeyboardButton("27+"),
                )
     return markup
 
@@ -74,31 +72,16 @@ def process_name_step(message):
     apply_db_changes()
     msg = tg_bot.send_message(message, messages_templates["unregistered_user"]["registration_age_step"],
                               reply_markup = gen_markup_age())
-    tg_bot.register_next_step_handler(msg, complete_registration)
+    tg_bot.register_next_step_handler(msg, process_age_step)
 
 
-@tg_bot.callback_query_handler(func = lambda call: True)
-def callback_query(call):
-    user = get_user_by_id(call.id)
-    if call.data == "cb_12_18":
-        tg_bot.answer_callback_query(call.id, "Возраст: 12-18")
-        user.age = "12-18"
-    elif call.data == "cb_19_24":
-        tg_bot.answer_callback_query(call.id, "Возраст: 19-24")
-        user.age = "19-24"
-    elif call.data == "cb_25_27":
-        tg_bot.answer_callback_query(call.id, "Возраст: 25-27")
-        user.age = "25-27"
-    elif call.data == "cb_27_plus":
-        tg_bot.answer_callback_query(call.id, "Возраст: 27+")
-        user.age = "27+"
-    apply_db_changes()
-    tg_bot.send_message(call.id, f"Супер! \n Тебя зовут: {user.name} \n Твой возраст: {user.age}")
-
-
-def complete_registration(message):
+def process_age_step(message):
+    keyboard_hider = types.ReplyKeyboardRemove()
     user = get_user_by_id(message.chat.id)
-    tg_bot.send_message(message.chat.id, f"Супер! \n Тебя зовут: {user.name} \n Твой возраст: {user.age}")
+    user.age = message.text
+    apply_db_changes()
+    tg_bot.send_message(message.chat.id, f"Супер! \n Тебя зовут: {user.name} \n Твой возраст: {user.age}",
+                        reply_markup = keyboard_hider)
 
 
 # Creates a markup with link to auth url
