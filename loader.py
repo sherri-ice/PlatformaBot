@@ -14,7 +14,7 @@ VK_API_APP_ID = os.getenv("VK_API_APP_ID")
 REDIRECT_FROM_VK: str = os.getenv("REDIRECT_FROM_VK")
 VK_CLIENT_SECRET = os.getenv("VK_CLIENT_SECRET")
 
-project_path = os.getcwd()
+project_path = "/home/sherriice/PlatformaBot"
 
 
 def load_messages():
