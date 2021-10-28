@@ -7,8 +7,9 @@ from sql.database import db, apply_db_changes
 from sql.user.user import get_user_by_id, add_new_user, get_vk_token
 
 from loader import TELEGRAM_TOKEN
-from loader import VK_API_APP_ID, REDIRECT_FROM_VK, VK_CLIENT_SECRET
+from loader import load_messages
 
+messages_templates = load_messages()
 
 logger = telebot.logger
 telebot.logger.setLevel(logging.INFO)
@@ -20,18 +21,19 @@ tg_bot = telebot.TeleBot(TELEGRAM_TOKEN, threaded = False)
 def send_welcome(message):
     user = get_user_by_id(message.chat.id)
     if user is not None:
-        tg_bot.send_message(message.chat.id, "Hey! I know you :)")
-
+        tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["start_message"])
     else:
-        tg_bot.send_message(message.chat.id, "Send /register.")
+        tg_bot.send_message(message.chat.id, messages_templates["registered_user"]["start_message"])
 
 
 @tg_bot.message_handler(commands = ['vk_auth'])
 def vk_auth_register(message):
     # if get_vk_token(message.chat.id) is None:
-        tg_bot.send_message(message.chat.id, "Vk auth", reply_markup = gen_markup_for_vk_auth(message.chat.id))
-    # else:
-    #     tg_bot.send_message(message.chat.id, "You've already connected vk")
+    tg_bot.send_message(message.chat.id, "Vk auth", reply_markup = gen_markup_for_vk_auth(message.chat.id))
+
+
+# else:
+#     tg_bot.send_message(message.chat.id, "You've already connected vk")
 
 
 @tg_bot.message_handler(commands = ['ping_vk'])
@@ -78,6 +80,11 @@ def gen_markup_for_vk_auth(chat_id):
     markup.row_width = 1
     markup.add(types.InlineKeyboardButton(text = "VK auth", url = request_vk_auth_code(chat_id)))
     return markup
+
+
+@tg_bot.message_handler(commands = ['help, faq'])
+def faq(message):
+    tg_bot.send_message(message.chat.id, "Пока в разработке...")
 
 
 # Handle all other messages from unregistered users

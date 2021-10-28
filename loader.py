@@ -1,5 +1,6 @@
 import os
 from dotenv import load_dotenv
+import json
 
 load_dotenv(".env")
 
@@ -10,5 +11,11 @@ SQL_USER = os.getenv("SQL_USER")
 SQL_PASSWORD = os.getenv("SQL_PASSWORD")
 SQL_DATABASE = os.getenv("SQL_DATABASE")
 VK_API_APP_ID = os.getenv("VK_API_APP_ID")
-REDIRECT_FROM_VK : str = os.getenv("REDIRECT_FROM_VK")
+REDIRECT_FROM_VK: str = os.getenv("REDIRECT_FROM_VK")
 VK_CLIENT_SECRET = os.getenv("VK_CLIENT_SECRET")
+
+
+def load_messages():
+    with open('messages_answers.json') as json_file:
+        data = json.load(json_file)
+        return data
