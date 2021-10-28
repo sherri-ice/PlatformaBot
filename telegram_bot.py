@@ -43,7 +43,6 @@ def callback_query(call):
         tg_bot.register_next_step_handler(call.message, vk_auth_register)
     elif call.data == "cb_no":
         tg_bot.answer_callback_query(call.id, "Нет")
-    tg_bot.send_message(call.id, call.data)
 
 
 @tg_bot.message_handler(commands = ['vk_auth'])
