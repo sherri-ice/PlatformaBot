@@ -42,7 +42,7 @@ def vk_auth_register(message):
 
 
 @tg_bot.message_handler(commands = ['ping_vk'])
-def vk_auth_register(message):
+def ping_vk(message):
     vk = get_vk_token(message.chat.id)
     if vk is None:
         tg_bot.send_message(message.chat.id, messages_templates["vk"]["vk_not_authorized"])
