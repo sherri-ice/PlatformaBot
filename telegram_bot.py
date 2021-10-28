@@ -45,12 +45,12 @@ def vk_auth_register(message):
         tg_bot.send_message(message.chat.id, messages_templates["vk"]["vk_not_authorized"])
     else:
         data = vk.users.get()
-        if "deactivated" in data:
+        if "deactivated" in data[0]:
             tg_bot.send_message(message.chat.id, messages_templates["vk"]["vk_banned_profile"])
             return
-        # message_to_user = messages_templates["vk"]["vk_get_user_message"].format(data["first_name"],
-        #                                                                          data["last_name"], data["uid"])
-        tg_bot.send_message(message.chat.id, data["first_name"])
+        message_to_user = messages_templates["vk"]["vk_get_user_message"].format(data[0]["first_name"],
+                                                                                 data[0]["last_name"], data[0]["uid"])
+        tg_bot.send_message(message.chat.id, message_to_user)
 
 
 # Handles '/register'
