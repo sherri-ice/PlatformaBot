@@ -16,6 +16,6 @@ VK_CLIENT_SECRET = os.getenv("VK_CLIENT_SECRET")
 
 
 def load_messages():
-    with open('messages_answers.json') as json_file:
+    with open('./messages_answers.json') as json_file:
         data = json.load(json_file)
         return data
