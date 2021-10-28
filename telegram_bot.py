@@ -64,13 +64,12 @@ def gen_markup_age():
 # TODO: strange names, as commands name...
 def process_name_step(message):
     name = message.text
-    id = message.chat.id
-    user = get_user_by_id(id)
+    user = get_user_by_id(message.chat.id)
     if user is None:
-        user = add_new_user(id)
+        user = add_new_user(message.chat.id)
     user.name = name
     apply_db_changes()
-    msg = tg_bot.send_message(message, messages_templates["unregistered_user"]["registration_age_step"],
+    msg = tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["registration_age_step"],
                               reply_markup = gen_markup_age())
     tg_bot.register_next_step_handler(msg, process_age_step)
 
