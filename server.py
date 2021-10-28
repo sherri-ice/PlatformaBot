@@ -2,15 +2,13 @@ import flask
 from flask import request
 from flask.blueprints import Blueprint
 
-from telegram_bot import get_telegram_bot
+from telegram_bot import get_telegram_bot, messages_templates
 from telebot import types
 
 from loader import TELEGRAM_TOKEN, WEBHOOK_HOST
 import time
 
 from sql.user.user import register_vk_token
-
-from vk_auth import authorize_vk_session
 
 WEBHOOK_URL_BASE = "https://%s" % WEBHOOK_HOST
 WEBHOOK_URL_PATH = "/%s/" % TELEGRAM_TOKEN
@@ -31,10 +29,14 @@ def index():
 # Process vk auth calls
 @bot_handler.route('/vk_auth', methods = ['GET'])
 def redirect_from_vk():
-    vk_code = request.args.get('code')
-    tg_id = request.args.get('tg_id')
+    try:
+        vk_code = request.args.get('code')
+        tg_id = request.args.get('tg_id')
+    except KeyError as error:
+        telegram_bot.send_message(tg_id, messages_templates["vk"]["vk_error_not_found"])
+        return
     register_vk_token(vk_code, tg_id)
-    telegram_bot.send_message(tg_id, f"Found! Send /ping_vk to test auth!")
+    telegram_bot.send_message(tg_id, messages_templates["vk"]["vk_register_ok"])
     return ''
 
 

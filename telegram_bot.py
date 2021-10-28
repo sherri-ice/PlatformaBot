@@ -28,19 +28,27 @@ def send_welcome(message):
 
 @tg_bot.message_handler(commands = ['vk_auth'])
 def vk_auth_register(message):
-    # if get_vk_token(message.chat.id) is None:
-    tg_bot.send_message(message.chat.id, "Vk auth", reply_markup = gen_markup_for_vk_auth(message.chat.id))
-
-
-# else:
-#     tg_bot.send_message(message.chat.id, "You've already connected vk")
+    if get_vk_token(message.chat.id) is None:
+        tg_bot.send_message(message.chat.id, messages_templates["vk"]["vk_error_not_found"])
+    else:
+        tg_bot.send_message(message.chat.id, messages_templates["vk"]["vk_auth_message"],
+                            reply_markup = gen_markup_for_vk_auth(
+                                message.chat.id))
 
 
 @tg_bot.message_handler(commands = ['ping_vk'])
 def vk_auth_register(message):
     vk = get_vk_token(message.chat.id)
-    data = vk.users.get()
-    tg_bot.send_message(message.chat.id, f"Your vk name: {data[0]['first_name']}")
+    if vk is None:
+        tg_bot.send_message(message.chat.id, messages_templates["vk"]["vk_not_authorized"])
+    else:
+        data = vk.users.get()
+        if "deactivated" in data:
+            tg_bot.send_message(message.chat.id, messages_templates["vk"]["vk_banned_profile"])
+            return
+        message_to_user = messages_templates["vk"]["vk_get_user_message"].format(data["first_name"],
+                                                                                 data["last_name"], data["uid"])
+        tg_bot.send_message(message.chat.id, message_to_user)
 
 
 # Handles '/register'
@@ -87,11 +95,11 @@ def process_age_step(message):
 def gen_markup_for_vk_auth(chat_id):
     markup = types.InlineKeyboardMarkup()
     markup.row_width = 1
-    markup.add(types.InlineKeyboardButton(text = "VK auth", url = request_vk_auth_code(chat_id)))
+    markup.add(types.InlineKeyboardButton(text = "VK авторизация", url = request_vk_auth_code(chat_id)))
     return markup
 
 
-@tg_bot.message_handler(commands = ['help, faq'])
+@tg_bot.message_handler(commands = ['help', 'faq'])
 def faq(message):
     tg_bot.send_message(message.chat.id, "Пока в разработке...")
 
@@ -99,12 +107,12 @@ def faq(message):
 # Handle all other messages from unregistered users
 @tg_bot.message_handler(func = lambda message: get_user_by_id(message.chat.id) is None, content_types = ['text'])
 def echo_message(message):
-    tg_bot.reply_to(message, "Register first!")
+    tg_bot.reply_to(message, messages_templates["unregistered_user"]["request_for_registration"])
 
 
 @tg_bot.message_handler(func = lambda message: get_user_by_id(message.chat.id) is not None, content_types = ['text'])
 def echo_message(message):
-    tg_bot.reply_to(message, "Sorry, now I can't answer for this...")
+    tg_bot.reply_to(message, "В разработке! :)")
 
 
 def get_telegram_bot():
