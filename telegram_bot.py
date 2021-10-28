@@ -49,7 +49,7 @@ def vk_auth_register(message):
             tg_bot.send_message(message.chat.id, messages_templates["vk"]["vk_banned_profile"])
             return
         message_to_user = messages_templates["vk"]["vk_get_user_message"].format(data[0]["first_name"],
-                                                                                 data[0]["last_name"], data[0]["uid"])
+                                                                                 data[0]["last_name"], data[0]["id"])
         tg_bot.send_message(message.chat.id, message_to_user)
 
 
