@@ -21,9 +21,9 @@ tg_bot = telebot.TeleBot(TELEGRAM_TOKEN, threaded = False)
 def send_welcome(message):
     user = get_user_by_id(message.chat.id)
     if user is not None:
-        tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["start_message"])
-    else:
         tg_bot.send_message(message.chat.id, messages_templates["registered_user"]["start_message"])
+    else:
+        tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["start_message"])
 
 
 @tg_bot.message_handler(commands = ['vk_auth'])
@@ -46,7 +46,7 @@ def vk_auth_register(message):
 # Handles '/register'
 @tg_bot.message_handler(commands = ['register'])
 def register(message):
-    tg_bot.send_message(message.chat.id, "Let's get to know each other :) \n Send me your name:")
+    tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["registration_start"])
     tg_bot.register_next_step_handler(message, process_name_step)
 
 
@@ -61,7 +61,8 @@ def process_name_step(message):
     apply_db_changes()
     markup = types.ReplyKeyboardMarkup(one_time_keyboard = True)
     markup.add('12-18', '18-21', '24-27', '27+')
-    msg = tg_bot.reply_to(message, 'Your age:', reply_markup = markup)
+    msg = tg_bot.reply_to(message, messages_templates["unregistered_user"]["registration_age_step"], reply_markup =
+    markup)
     tg_bot.register_next_step_handler(msg, process_age_step)
 
 
@@ -69,9 +70,12 @@ def process_age_step(message):
     age = message.text
     user = get_user_by_id(message.chat.id)
     user.age = age
-    tg_bot.send_message(message.chat.id, f"Great! Hello, {user.name}, your age is {user.age}."
-                                         f"Now connect your vk account:")
-    tg_bot.register_next_step_handler(message, vk_auth_register)
+    tg_bot.register_next_step_handler(message, complete_registration)
+
+
+def complete_registration(message):
+    user = get_user_by_id(message.chat.id)
+    tg_bot.send_message(message.chat.id, f"Супер! \n Тебя зовут: {user.name} \n Твой возраст: {user.age}")
 
 
 # Creates a markup with link to auth url

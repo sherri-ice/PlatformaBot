@@ -21,3 +21,7 @@ def load_messages():
     with open(f'{project_path}/messages_answers.json') as json_file:
         data = json.load(json_file)
         return data
+
+
+if __name__ == '__main__':
+    print(project_path)
