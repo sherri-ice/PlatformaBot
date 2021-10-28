@@ -1,4 +1,6 @@
 import logging
+import time
+
 import telebot
 import vk_api
 from telebot import types
@@ -89,6 +91,9 @@ def process_age_step(message):
     apply_db_changes()
     tg_bot.send_message(message.chat.id, f"Супер! \n Тебя зовут: {user.name} \n Твой возраст: {user.age}",
                         reply_markup = keyboard_hider)
+    time.sleep(0.1)
+    msg = tg_bot.send_message(message.chat.id, messages_templates["vk"]["vk_not_authorized"])
+    tg_bot.register_next_step_handler(msg, vk_auth_register)
 
 
 # Creates a markup with link to auth url
