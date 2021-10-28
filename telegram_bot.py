@@ -125,8 +125,5 @@ def echo_message(message):
     tg_bot.reply_to(message, "Sorry, now I can't answer for this...")
 
 
-tg_bot.enable_save_next_step_handlers(delay = 2)
-
-
 def get_telegram_bot():
     return tg_bot
