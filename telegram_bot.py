@@ -95,9 +95,11 @@ def process_age_step(message):
     tg_bot.send_message(message.chat.id, f"Супер! \n Тебя зовут: {user.name} \n Твой возраст: {user.age}",
                         reply_markup = keyboard_hider)
     time.sleep(0.1)
-    message_for_user = "Kaжется, ты уже регистрировал свой VK..." + messages_templates["vk"]["vk_re_register"]
-    if user.vk_token is None:
-        message_for_user = messages_templates["vk"]["vk_not_authorized"]
+    message_for_user = messages_templates["vk"]["vk_not_authorized"]
+    if user.vk_token is not None:
+        message_for_user = "Kaжется, ты уже регистрировал свой VK...\n" + messages_templates["vk"]["vk_re_register"] \
+                           + "\nОтправь /vk_auth если всё же хочешь сменить аккаунт."
+        return
     msg = tg_bot.send_message(message.chat.id, message_for_user)
     tg_bot.register_next_step_handler(msg, vk_auth_register)
 
