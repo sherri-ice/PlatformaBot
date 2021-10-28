@@ -70,6 +70,7 @@ def process_age_step(message):
     age = message.text
     user = get_user_by_id(message.chat.id)
     user.age = age
+    apply_db_changes()
     tg_bot.register_next_step_handler(message, complete_registration)
 
 
