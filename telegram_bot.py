@@ -48,9 +48,9 @@ def vk_auth_register(message):
         if "deactivated" in data:
             tg_bot.send_message(message.chat.id, messages_templates["vk"]["vk_banned_profile"])
             return
-        message_to_user = messages_templates["vk"]["vk_get_user_message"].format(data["first_name"],
-                                                                                 data["last_name"], data["uid"])
-        tg_bot.send_message(message.chat.id, message_to_user)
+        # message_to_user = messages_templates["vk"]["vk_get_user_message"].format(data["first_name"],
+        #                                                                          data["last_name"], data["uid"])
+        tg_bot.send_message(message.chat.id, data["first_name"])
 
 
 # Handles '/register'
