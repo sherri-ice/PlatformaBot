@@ -11,6 +11,7 @@ def create_app():
     application.config["SQLALCHEMY_DATABASE_URI"] = f"mysql://{SQL_USER}:{SQL_PASSWORD}@{SQL_HOST}/{SQL_DATABASE}"
     application.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.init_app(application)
-    db.create_all()
+    with application.app_context():
+        db.create_all()
     application.register_blueprint(bot_handler)
     return application
