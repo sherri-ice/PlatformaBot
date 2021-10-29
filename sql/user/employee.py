@@ -1,5 +1,7 @@
-from user import User
+from sql.database import db, apply_db_changes
 
 
-class Employee(User):
+class Employee(db.Model):
+    balance = db.Column(db.Integer)
+
     pass
