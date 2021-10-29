@@ -102,7 +102,8 @@ def handle_callback_re_auth(call):
 def process_age_step(message):
     user_data = {"age": message.text}
     if message.text not in ["12-18", "19-24", "25-27", "27+"]:
-        tg_bot.register_next_step_handler(message, incorrect_input_handler, register)
+        msg = tg_bot.send_message(message.chat.id, "Некорректный ввод.")
+        tg_bot.register_next_step_handler(msg, register)
     # Send next step: city
     msg = tg_bot.send_message(message.chat.id, "В каком городе ты находишься? Будь внимателен при написании имени "
                                                "города!", reply_markup = keyboard_hider)
@@ -139,12 +140,6 @@ def process_salary_step(message, user_data):
                                          f"{user.city}",
                         reply_markup = keyboard_hider)
     tg_bot.send_message(message.chat.id, "Для дальнейшей работы понадобится авторизироваться в VK. Пришли /vk_auth.")
-
-
-def incorrect_input_handler(message, func_to_return_in):
-    tg_bot.send_message(message.chat.id, "Некорректный ввод.")
-    tg_bot.register_next_step_handler(message, func_to_return_in)
-
 
 # Creates a markup with link to auth url
 def gen_markup_for_vk_auth(chat_id):
