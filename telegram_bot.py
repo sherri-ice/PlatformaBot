@@ -70,7 +70,6 @@ def process_name_step(message):
     if user is None:
         user = add_new_user(message.chat.id)
     user.name = name
-    apply_db_changes()
 
     # Send next step: age
     markup = types.ReplyKeyboardMarkup()
@@ -87,7 +86,6 @@ def process_name_step(message):
 
 def process_age_step(message, user):
     user.age = message.text
-    apply_db_changes()
 
     # Send next step: city
     msg = tg_bot.send_message(message.chat.id, "В каком городе ты находишься? Будь внимателен при написании имени "
@@ -98,7 +96,7 @@ def process_age_step(message, user):
 def process_city_step(message, user):
     # TODO: str to low
     user.city = message.text
-    apply_db_changes()
+
     tg_bot.send_message(message.chat.id, f"Супер! \nТебя зовут: {user.name} \nТвой возраст: {user.age} \n Город: "
                                          f"{user.city}",
                         reply_markup = keyboard_hider)
@@ -117,9 +115,9 @@ def process_city_step(message, user):
 def process_salary_step(message, user):
     # TODO: enum
     user.salary = message.text
-    apply_db_changes()
 
     # End registration:
+    apply_db_changes()
     tg_bot.send_message(messages_templates["unregistered_user"]["finish_registration"])
 
 
