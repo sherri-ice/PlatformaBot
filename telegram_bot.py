@@ -116,9 +116,10 @@ def process_salary_step(message, user):
     user.salary = message.text
 
     # End registration:
-    tg_bot.send_message(message.chat.id, f"Супер! \nТебя зовут: {user.name} \nТвой возраст: {user.age} \n Город: "
+    tg_bot.send_message(message.chat.id, f"Супер! \nТебя зовут: {user.name} \nТвой возраст: {user.age} \nГород: "
                                          f"{user.city}",
                         reply_markup = keyboard_hider)
+    tg_bot.send_message(message.chat.id, "Для дальнейшей работы понадобится авторизироваться в VK. Пришли /vk_auth.")
     apply_db_changes()
 
 
