@@ -83,7 +83,7 @@ def register(message):
 
 
 # Handles answer for inline keyboard
-@tg_bot.callback_query_handler(func = lambda call: True)
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_yes" or call.data == "cd.no")
 def handle_callback(call):
     if call.data == "cd_yes":
         tg_bot.answer_callback_query(call.id, "Да")
