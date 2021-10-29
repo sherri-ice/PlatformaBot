@@ -101,6 +101,7 @@ def callback_vk_auth(call):
     if call.data == "pressed_vk_auth_key":
         tg_bot.edit_message_text(text = "Ждём авторизации...", chat_id = call.message.chat.id,
                                  message_id = call.message.message_id)
+        tg_bot.answer_callback_query(call.id, "Pressed button")
 
 
 # Creates a markup with link to auth url
