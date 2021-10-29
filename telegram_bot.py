@@ -43,6 +43,7 @@ def callback_query(call):
         tg_bot.register_next_step_handler(call.message, vk_auth_register)
     elif call.data == "cb_no":
         tg_bot.answer_callback_query(call.id, "Нет")
+        return
 
 
 @tg_bot.message_handler(commands = ['vk_auth'])
@@ -51,6 +52,7 @@ def vk_user_checker(message):
         tg_bot.send_message(message.chat.id, messages_templates["vk"]["vk_re_register"],
                             reply_markup = gen_markup_for_submitting_vk_re_auth())
         return
+    tg_bot.register_next_step_handler(message, vk_auth_register)
 
 
 def vk_auth_register(message):
