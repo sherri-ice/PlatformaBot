@@ -33,7 +33,7 @@ def redirect_from_vk():
         vk_code = request.args.get('code')
         tg_id = request.args.get('tg_id')
     except KeyError as error:
-        telegram_bot.send_message(tg_id, messages_templates["vk"]["vk_error_not_found"])
+        telegram_bot.send_message(tg_id, messages_templates["vk"]["vk_error_not_found"] + " "+ error)
         return
     register_vk_token(vk_code, tg_id)
     telegram_bot.send_message(tg_id, messages_templates["vk"]["vk_register_ok"])
