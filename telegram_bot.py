@@ -62,8 +62,16 @@ def ping_vk(message):
 def register(message):
     # Send next step: name
     if get_user_by_id(message.chat.id) is None:
-        msg = tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["registration_start"])
-        tg_bot.register_next_step_handler(msg, process_name_step)
+        markup = types.ReplyKeyboardMarkup()
+        markup.row_width = 4
+        markup.add(types.KeyboardButton("12-18"),
+                   types.KeyboardButton("19-24"),
+                   types.KeyboardButton("25-27"),
+                   types.KeyboardButton("27+"),
+                   )
+        msg = tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["registration_start"],
+                                  reply_markup = markup)
+        tg_bot.register_next_step_handler(msg, process_age_step)
     else:
         markup = types.InlineKeyboardMarkup()
         markup.row_width = 2
@@ -80,31 +88,13 @@ def handle_callback(call):
     if call.data == "cd_yes":
         tg_bot.answer_callback_query(call.id, "Да")
         msg = tg_bot.send_message(call.message.chat.id, messages_templates["unregistered_user"]["registration_start"])
-        tg_bot.register_next_step_handler(msg, process_name_step)
+        tg_bot.register_next_step_handler(msg, process_age_step)
     elif call.data == "cd_no":
         tg_bot.answer_callback_query(call.id, "Оставить всё как есть.")
 
 
-# TODO: strange names, as commands name...
-def process_name_step(message):
-    name = message.text
-    user_data = {"name": name}
-
-    # Send next step: age
-    markup = types.ReplyKeyboardMarkup()
-    markup.row_width = 4
-    markup.add(types.KeyboardButton("12-18"),
-               types.KeyboardButton("19-24"),
-               types.KeyboardButton("25-27"),
-               types.KeyboardButton("27+"),
-               )
-    msg = tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["registration_age_step"],
-                              reply_markup = markup)
-    tg_bot.register_next_step_handler(msg, process_age_step, user_data)
-
-
-def process_age_step(message, user_data):
-    user_data["age"] = message.text
+def process_age_step(message):
+    user_data = {"age": message.text}
 
     # Send next step: city
     msg = tg_bot.send_message(message.chat.id, "В каком городе ты находишься? Будь внимателен при написании имени "
@@ -135,7 +125,7 @@ def process_salary_step(message, user_data):
     # End registration:
     if get_user_by_id(message.chat.id) is not None:
         delete_user(message.chat.id)
-    user = add_new_user(id = message.chat.id, name = user_data["name"], age = user_data["age"], salary = user_data[
+    user = add_new_user(id = message.chat.id, age = user_data["age"], salary = user_data[
         "salary"], city = user_data["city"])
     apply_db_changes()
     tg_bot.send_message(message.chat.id, f"Супер! \nТебя зовут: {user.name} \nТвой возраст: {user.age} \nГород: "
