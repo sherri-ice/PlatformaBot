@@ -17,7 +17,7 @@ logger = telebot.logger
 telebot.logger.setLevel(logging.INFO)
 
 tg_bot = telebot.TeleBot(TELEGRAM_TOKEN, threaded = False)
-
+keyboard_hider = types.ReplyKeyboardRemove()
 
 @tg_bot.message_handler(commands = ['start'])
 def send_welcome(message):
@@ -48,7 +48,7 @@ def vk_user_checker(message):
 
 def handle_vk_re_auth_answer(message):
     if message.text == "Да":
-        msg = tg_bot.send_message(message.chat.id, "Окей, ищу аккаунт заново...")
+        msg = tg_bot.send_message(message.chat.id, "Окей, ищу аккаунт заново...", reply_markup = keyboard_hider)
         tg_bot.register_next_step_handler(msg, vk_auth_register)
     elif message.text == "Нет":
         tg_bot.send_message(message.chat.id, "Отменено...")
@@ -110,7 +110,6 @@ def process_name_step(message):
 
 
 def process_age_step(message):
-    keyboard_hider = types.ReplyKeyboardRemove()
     user = get_user_by_id(message.chat.id)
     user.age = message.text
     apply_db_changes()
