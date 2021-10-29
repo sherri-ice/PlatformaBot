@@ -37,7 +37,7 @@ def vk_auth_register(message):
         old = tg_bot.send_message(message.chat.id, messages_templates["vk"]["vk_auth_message"],
                                   reply_markup = gen_markup_for_vk_auth(
                                       message.chat.id))
-        time.sleep(20)
+        time.sleep(3)
         tg_bot.delete_message(old.chat.id, old.message_id)
 
 
