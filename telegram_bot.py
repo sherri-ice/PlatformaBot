@@ -82,7 +82,7 @@ def process_name_step(message):
                )
     msg = tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["registration_age_step"],
                               reply_markup = markup)
-    tg_bot.register_next_step_handler(msg, user, process_age_step)
+    tg_bot.register_next_step_handler(msg, process_age_step, user)
 
 
 def process_age_step(message, user):
@@ -92,7 +92,7 @@ def process_age_step(message, user):
     # Send next step: city
     msg = tg_bot.send_message(message.chat.id, "В каком городе ты находишься? Будь внимателен при написании имени "
                                                "города!")
-    tg_bot.register_next_step_handler(msg, user, process_city_step)
+    tg_bot.register_next_step_handler(msg, process_city_step, user)
 
 
 def process_city_step(message, user):
@@ -111,7 +111,7 @@ def process_city_step(message, user):
 
     msg = tg_bot.send_message(message.chat.id, "Имеешь ли ты личный источник дохода (работа, своё дело)?",
                               reply_markup = markup)
-    tg_bot.register_next_step_handler(msg, user, process_salary_step)
+    tg_bot.register_next_step_handler(msg, process_salary_step, user)
 
 
 def process_salary_step(message, user):
