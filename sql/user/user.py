@@ -15,8 +15,8 @@ def get_user_by_id(id):
     return UserTable.query.filter_by(id = id).first()
 
 
-def add_new_user(id):
-    db.session.add(UserTable(id = id))
+def add_new_user(id, name = None, age = None, salary = None, city = None):
+    db.session.add(UserTable(id = id, name = name, age = age, salary = salary, city = city))
     return get_user_by_id(id)
 
 

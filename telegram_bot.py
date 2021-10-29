@@ -68,10 +68,7 @@ def register(message):
 # TODO: strange names, as commands name...
 def process_name_step(message):
     name = message.text
-    user = get_user_by_id(message.chat.id)
-    if user is None:
-        user = add_new_user(message.chat.id)
-    user.name = name
+    user_data = {"name": name}
 
     # Send next step: age
     markup = types.ReplyKeyboardMarkup()
@@ -83,21 +80,21 @@ def process_name_step(message):
                )
     msg = tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["registration_age_step"],
                               reply_markup = markup)
-    tg_bot.register_next_step_handler(msg, process_age_step, user)
+    tg_bot.register_next_step_handler(msg, process_age_step, user_data)
 
 
-def process_age_step(message, user):
-    user.age = message.text
+def process_age_step(message, user_data):
+    user_data["age"] = message.text
 
     # Send next step: city
     msg = tg_bot.send_message(message.chat.id, "В каком городе ты находишься? Будь внимателен при написании имени "
                                                "города!", reply_markup = keyboard_hider)
-    tg_bot.register_next_step_handler(msg, process_city_step, user)
+    tg_bot.register_next_step_handler(msg, process_city_step, user_data)
 
 
-def process_city_step(message, user):
+def process_city_step(message, user_data):
     # TODO: str to low
-    user.city = message.text
+    user_data["city"] = message.text
 
     # Send next step: salary
     markup = types.ReplyKeyboardMarkup()
@@ -108,14 +105,17 @@ def process_city_step(message, user):
 
     msg = tg_bot.send_message(message.chat.id, "Имеешь ли ты личный источник дохода (работа, своё дело)?",
                               reply_markup = markup)
-    tg_bot.register_next_step_handler(msg, process_salary_step, user)
+    tg_bot.register_next_step_handler(msg, process_salary_step, user_data)
 
 
-def process_salary_step(message, user):
+def process_salary_step(message, user_data):
     # TODO: enum
-    user.salary = message.text
-    apply_db_changes()
+    user_data["salary"] = message.text
+
     # End registration:
+    user = add_new_user(id = message.chat.id, name = user_data["name"], age = user_data["age"], salary = user_data[
+        "salary"], city = user_data["user"])
+    apply_db_changes()
     tg_bot.send_message(message.chat.id, f"Супер! \nТебя зовут: {user.name} \nТвой возраст: {user.age} \nГород: "
                                          f"{user.city}",
                         reply_markup = keyboard_hider)
