@@ -114,7 +114,7 @@ def process_salary_step(message, user_data):
 
     # End registration:
     user = add_new_user(id = message.chat.id, name = user_data["name"], age = user_data["age"], salary = user_data[
-        "salary"], city = user_data["user"])
+        "salary"], city = user_data["city"])
     apply_db_changes()
     tg_bot.send_message(message.chat.id, f"Супер! \nТебя зовут: {user.name} \nТвой возраст: {user.age} \nГород: "
                                          f"{user.city}",
