@@ -44,10 +44,10 @@ def vk_auth_register(message):
 
 @tg_bot.message_handler(commands = ['ping_vk'])
 def ping_vk(message):
-    vk = get_vk_api(message.chat.id)
-    if vk is None:
+    if get_user_by_id(message.chat.id).vk_token is None:
         tg_bot.send_message(message.chat.id, messages_templates["vk"]["vk_not_authorized"])
     else:
+        vk = get_vk_api(message.chat.id)
         data = vk.users.get()
         # If user is banned or deactivated
         if "deactivated" in data[0]:
