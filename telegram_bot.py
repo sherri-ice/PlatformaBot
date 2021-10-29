@@ -99,13 +99,10 @@ def process_city_step(message, user):
     # TODO: str to low
     user.city = message.text
 
-    tg_bot.send_message(message.chat.id, f"Супер! \nТебя зовут: {user.name} \nТвой возраст: {user.age} \n Город: "
-                                         f"{user.city}",
-                        reply_markup = keyboard_hider)
     # Send next step: salary
     markup = types.ReplyKeyboardMarkup()
     markup.row_width = 2
-    markup.add(types.KeyboardButton("Да, я зарабатываю сам и лично распоряжаюсь своими доходами."),
+    markup.add(types.KeyboardButton("Да, я зарабатываю сам и лично \nраспоряжаюсь своими доходами."),
                types.KeyboardButton("Нет, сижу на шее у родителей.")
                )
 
@@ -119,8 +116,10 @@ def process_salary_step(message, user):
     user.salary = message.text
 
     # End registration:
+    tg_bot.send_message(message.chat.id, f"Супер! \nТебя зовут: {user.name} \nТвой возраст: {user.age} \n Город: "
+                                         f"{user.city}",
+                        reply_markup = keyboard_hider)
     apply_db_changes()
-    tg_bot.send_message(messages_templates["unregistered_user"]["finish_registration"])
 
 
 # Creates a markup with link to auth url
