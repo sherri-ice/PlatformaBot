@@ -130,6 +130,11 @@ def process_city_step(message, user_data):
 def process_salary_step(message, user_data):
     # TODO: enum
     user_data["salary"] = message.text
+    if message.text not in ["Да, я зарабатываю сам и лично \nраспоряжаюсь своими доходами.", "Нет, сижу на шее у "
+                                                                                             "родителей."]:
+        tg_bot.send_message(message.chat.id, "Некорректный ввод. Регистрация не пройдена. Попробуйте отправить "
+                                             "/register заново.", reply_markup = keyboard_hider)
+        return
 
     # End registration:
     if get_user_by_id(message.chat.id) is not None:
@@ -141,6 +146,7 @@ def process_salary_step(message, user_data):
                                          f"{user.city}",
                         reply_markup = keyboard_hider)
     tg_bot.send_message(message.chat.id, "Для дальнейшей работы понадобится авторизироваться в VK. Пришли /vk_auth.")
+
 
 # Creates a markup with link to auth url
 def gen_markup_for_vk_auth(chat_id):
