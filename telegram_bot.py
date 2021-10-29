@@ -119,10 +119,8 @@ def process_salary_step(message, user):
     user.salary = message.text
     apply_db_changes()
 
-    # Send next step: vk auth
-    message_for_user = messages_templates["vk"]["vk_not_authorized"]
-    msg = tg_bot.send_message(message.chat.id, message_for_user)
-    tg_bot.register_next_step_handler(msg, vk_auth_register)
+    # End registration:
+    tg_bot.send_message(messages_templates["unregistered_user"]["finish_registration"])
 
 
 # Creates a markup with link to auth url
@@ -133,7 +131,12 @@ def gen_markup_for_vk_auth(chat_id):
     return markup
 
 
-@tg_bot.message_handler(commands = ['help', 'faq'])
+@tg_bot.message_handler(commands = ['help'])
+def commands_help(message):
+    tg_bot.send_message(message.chat.id, messages_templates["help"]["command_help_text"])
+
+
+@tg_bot.message_handler(commands = ['faq'])
 def faq(message):
     tg_bot.send_message(message.chat.id, "Пока в разработке...")
 
