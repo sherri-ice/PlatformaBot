@@ -27,7 +27,6 @@ def send_welcome(message):
         tg_bot.send_message(message.chat.id, messages_templates["registered_user"]["start_message"])
     else:
         tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["start_message"])
-    tg_bot.register_next_step_handler(message.message, vk_auth_register)
 
 
 @tg_bot.message_handler(commands = ['vk_auth'])
@@ -98,11 +97,6 @@ def process_age_step(message):
                         reply_markup = keyboard_hider)
     time.sleep(0.1)
     message_for_user = messages_templates["vk"]["vk_not_authorized"]
-    if user.vk_token is not None:
-        message_for_user = "Kaжется, ты уже регистрировал свой VK...\n" + messages_templates["vk"]["vk_re_register"] \
-                           + "\nОтправь /vk_auth если всё же хочешь сменить аккаунт."
-        tg_bot.send_message(message.chat.id, message_for_user)
-        return
     msg = tg_bot.send_message(message.chat.id, message_for_user)
     tg_bot.register_next_step_handler(msg, vk_auth_register)
 
