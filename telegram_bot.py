@@ -32,6 +32,9 @@ def send_welcome(message):
 
 @tg_bot.message_handler(commands = ['vk_auth'])
 def vk_auth_register(message):
+    if get_user_by_id(message.chat.id) is None:
+        tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["request_for_registration"])
+        return
     # If error while auth appears:
     if get_vk_api(message.chat.id) is None:
         tg_bot.send_message(message.chat.id, messages_templates["vk"]["vk_error_not_found"])
@@ -46,6 +49,7 @@ def vk_auth_register(message):
 def ping_vk(message):
     if get_user_by_id(message.chat.id) is None:
         tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["request_for_registration"])
+        return
     vk = get_vk_api(message.chat.id)
     if vk is None:
         tg_bot.send_message(message.chat.id, messages_templates["vk"]["vk_not_authorized"])
