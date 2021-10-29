@@ -26,6 +26,8 @@ def delete_user(id):
 
 
 def get_vk_api(id):
+    if get_user_by_id(id) is None:
+        return None
     try:
         vk_session = vk_api.VkApi(app_id = VK_API_APP_ID, client_secret = VK_CLIENT_SECRET, token = get_user_by_id(
             id).vk_token)
