@@ -102,6 +102,7 @@ def process_age_step(message):
 def callback(call):
     tg_bot.edit_message_text("Ждём авторизации...", call.message.chat.id, call.message.message_id)
 
+
 # Creates a markup with link to auth url
 def gen_markup_for_vk_auth(chat_id):
     markup = types.InlineKeyboardMarkup()
