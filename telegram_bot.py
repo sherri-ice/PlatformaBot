@@ -98,7 +98,7 @@ def process_age_step(message):
 
 @tg_bot.callback_query_handler(func = lambda call: True)
 def callback_vk_auth(call):
-    if (call.data == "pressed_vk_auth_key"):
+    if call.data == "pressed_vk_auth_key":
         tg_bot.edit_message_text(text = "Ждём авторизации...", chat_id = call.message.chat.id,
                                  message_id = call.message.message_id)
 
