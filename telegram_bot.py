@@ -23,9 +23,11 @@ keyboard_hider = types.ReplyKeyboardRemove()
 def send_welcome(message):
     user = get_user_by_id(message.chat.id)
     if user is not None:
-        tg_bot.send_message(message.chat.id, messages_templates["registered_user"]["start_message"])
+        tg_bot.send_message(message.chat.id, messages_templates["registered_user"]["start_message"],
+                            reply_markup = keyboard_hider)
     else:
-        tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["start_message"])
+        tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["start_message"],
+                            reply_markup = keyboard_hider)
 
 
 @tg_bot.message_handler(commands = ['vk_auth'])
