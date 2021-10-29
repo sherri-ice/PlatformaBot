@@ -34,9 +34,11 @@ def vk_auth_register(message):
     if get_vk_token(message.chat.id) is None:
         tg_bot.send_message(message.chat.id, messages_templates["vk"]["vk_error_not_found"])
     else:
-        tg_bot.send_message(message.chat.id, messages_templates["vk"]["vk_auth_message"],
-                            reply_markup = gen_markup_for_vk_auth(
-                                message.chat.id))
+        old = tg_bot.send_message(message.chat.id, messages_templates["vk"]["vk_auth_message"],
+                                  reply_markup = gen_markup_for_vk_auth(
+                                      message.chat.id))
+        time.sleep(5000)
+        tg_bot.delete_message(old.chat.id, old.id)
 
 
 @tg_bot.message_handler(commands = ['ping_vk'])
