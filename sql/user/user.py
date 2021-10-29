@@ -17,7 +17,6 @@ def get_user_by_id(id):
 
 def add_new_user(id):
     db.session.add(UserTable(id = id))
-    apply_db_changes()
     return get_user_by_id(id)
 
 
