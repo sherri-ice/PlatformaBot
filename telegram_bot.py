@@ -91,6 +91,7 @@ def handle_callback(call):
         tg_bot.register_next_step_handler(msg, process_age_step)
     elif call.data == "cd_no":
         tg_bot.answer_callback_query(call.id, "Оставить всё как есть.")
+        tg_bot.send_message(call.message.chat.id, "Окей, оставим как есть.")
 
 
 def process_age_step(message):
