@@ -5,7 +5,7 @@ import telebot
 from telebot import types
 from vk_auth import request_vk_auth_code
 from sql.database import db, apply_db_changes
-from sql.user.user import get_user_by_id, add_new_user, get_vk_api
+from sql.user.user import get_user_by_id, add_new_user, get_vk_api, delete_user
 
 from loader import TELEGRAM_TOKEN
 from loader import load_messages
@@ -133,6 +133,8 @@ def process_salary_step(message, user_data):
     user_data["salary"] = message.text
 
     # End registration:
+    if get_user_by_id(message.chat.id) is not None:
+        delete_user(message.chat.id)
     user = add_new_user(id = message.chat.id, name = user_data["name"], age = user_data["age"], salary = user_data[
         "salary"], city = user_data["city"])
     apply_db_changes()

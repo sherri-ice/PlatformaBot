@@ -20,6 +20,11 @@ def add_new_user(id, name = None, age = None, salary = None, city = None):
     return get_user_by_id(id)
 
 
+def delete_user(id):
+    UserTable.query.filter_by(id).delete()
+    apply_db_changes()
+
+
 def get_vk_api(id):
     try:
         vk_session = vk_api.VkApi(app_id = VK_API_APP_ID, client_secret = VK_CLIENT_SECRET, token = get_user_by_id(
