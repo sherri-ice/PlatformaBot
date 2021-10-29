@@ -61,8 +61,8 @@ def ping_vk(message):
 @tg_bot.message_handler(commands = ['register'])
 def register(message):
     # Send next step: name
-    tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["registration_start"])
     if get_user_by_id(message.chat.id) is None:
+        tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["registration_start"])
         tg_bot.register_next_step_handler(message, process_name_step)
     else:
         tg_bot.register_next_step_handler(message, re_register)
