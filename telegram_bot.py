@@ -103,7 +103,7 @@ def process_age_step(message):
     user_data = {"age": message.text}
     if message.text not in ["12-18", "19-24", "25-27", "27+"]:
         tg_bot.send_message(message.chat.id, "Некорректный ввод. Регистрация не пройдена. Попробуйте отправить "
-                                             "/register заново.")
+                                             "/register заново.", reply_markup = keyboard_hider)
         return
     # Send next step: city
     msg = tg_bot.send_message(message.chat.id, "В каком городе ты находишься? Будь внимателен при написании имени "
