@@ -43,7 +43,7 @@ def vk_user_checker(message):
                                   reply_markup = gen_markup_for_submitting_vk_re_auth())
         if msg.text == "Да":
             tg_bot.register_next_step_handler(msg, vk_auth_register)
-        else:
+        elif msg.text == "Нет":
             tg_bot.send_message(msg.chat.id, "Отменено...")
         return
     tg_bot.register_next_step_handler(message, vk_auth_register)
