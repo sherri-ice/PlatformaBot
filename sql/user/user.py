@@ -32,8 +32,8 @@ def get_vk_api(id):
 
 class UserTable(db.Model):
     __tablename__ = 'user'
-    id = db.Column(db.Integer, primary_key = True)
-    name = db.Column(db.String(255), nullable = False)
+    id = db.Column(db.Integer, primary_key = True, nullable = False)
+    name = db.Column(db.String(255))
     vk_token = db.Column(db.String(255))
     age = db.Column(db.String(255))
     salary = db.Column(db.String(255))
