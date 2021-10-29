@@ -19,6 +19,7 @@ telebot.logger.setLevel(logging.INFO)
 tg_bot = telebot.TeleBot(TELEGRAM_TOKEN, threaded = False)
 keyboard_hider = types.ReplyKeyboardRemove()
 
+
 @tg_bot.message_handler(commands = ['start'])
 def send_welcome(message):
     user = get_user_by_id(message.chat.id)
@@ -28,32 +29,7 @@ def send_welcome(message):
         tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["start_message"])
 
 
-def gen_markup_for_submitting_vk_re_auth():
-    markup = types.ReplyKeyboardMarkup()
-    markup.row_width = 2
-    markup.add(types.KeyboardButton(text = "Да"))
-    markup.add(types.InlineKeyboardButton(text = "Нет"))
-    return markup
-
-
 @tg_bot.message_handler(commands = ['vk_auth'])
-def vk_user_checker(message):
-    if get_user_by_id(message.chat.id).vk_token is not None:
-        msg = tg_bot.send_message(message.chat.id, messages_templates["vk"]["vk_re_register"],
-                                  reply_markup = gen_markup_for_submitting_vk_re_auth())
-        tg_bot.register_next_step_handler(msg, handle_vk_re_auth_answer)
-    else:
-        tg_bot.register_next_step_handler(message, vk_auth_register)
-
-
-def handle_vk_re_auth_answer(message):
-    if message.text == "Да":
-        msg = tg_bot.send_message(message.chat.id, "Окей, ищу аккаунт заново...", reply_markup = keyboard_hider)
-        tg_bot.register_next_step_handler(msg, vk_auth_register)
-    elif message.text == "Нет":
-        tg_bot.send_message(message.chat.id, "Отменено...")
-
-
 def vk_auth_register(message):
     if get_vk_token(message.chat.id) is None:
         tg_bot.send_message(message.chat.id, messages_templates["vk"]["vk_error_not_found"])
@@ -81,6 +57,10 @@ def ping_vk(message):
 # Handles '/register'
 @tg_bot.message_handler(commands = ['register'])
 def register(message):
+    if get_user_by_id(message.chat.id) is not None:
+        tg_bot.send_message(message.chat.id, "Вы уже зарегистрированы, используйте /re_register если хотите ввести "
+                                             "данные заново!")
+        return
     tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["registration_start"])
     tg_bot.register_next_step_handler(message, process_name_step)
 
