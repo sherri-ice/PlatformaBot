@@ -54,8 +54,10 @@ def ping_vk(message):
 
 
 # Handles '/register'
+
 @tg_bot.message_handler(commands = ['register'])
 def register(message):
+    # Send next step: name
     tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["registration_start"])
     tg_bot.register_next_step_handler(message, process_name_step)
 
@@ -79,18 +81,48 @@ def process_name_step(message):
         user = add_new_user(message.chat.id)
     user.name = name
     apply_db_changes()
+
+    # Send next step: age
     msg = tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["registration_age_step"],
                               reply_markup = gen_markup_age())
-    tg_bot.register_next_step_handler(msg, process_age_step)
+    tg_bot.register_next_step_handler(msg, user, process_age_step)
 
 
-def process_age_step(message):
-    user = get_user_by_id(message.chat.id)
+def process_age_step(message, user):
     user.age = message.text
     apply_db_changes()
-    tg_bot.send_message(message.chat.id, f"Супер! \nТебя зовут: {user.name} \nТвой возраст: {user.age}",
+
+    # Send next step: city
+    msg = tg_bot.send_message(message.chat.id, "В каком городе ты находишься? Будь внимателен при написании имени "
+                                               "города!")
+    tg_bot.register_next_step_handler(msg, user, process_city_step)
+
+
+def process_city_step(message, user):
+    # TODO: str to low
+    user.city = message.text
+    apply_db_changes()
+    tg_bot.send_message(message.chat.id, f"Супер! \nТебя зовут: {user.name} \nТвой возраст: {user.age} \n Город: "
+                                         f"{user.city}",
                         reply_markup = keyboard_hider)
-    time.sleep(0.1)
+    # Send next step: salary
+    markup = types.ReplyKeyboardMarkup()
+    markup.row_width = 2
+    markup.add(types.KeyboardButton("Да, я зарабатываю сам и лично распоряжаюсь своими доходами."),
+               types.KeyboardButton("Нет, сижу на шее у родителей.")
+               )
+
+    msg = tg_bot.send_message(message.chat.id, "Имеешь ли ты личный источник дохода (работа, своё дело)?",
+                              reply_markup = markup)
+    tg_bot.register_next_step_handler(msg, user, process_salary_step)
+
+
+def process_salary_step(message, user):
+    # TODO: enum
+    user.salary = message.text
+    apply_db_changes()
+
+    # Send next step: vk auth
     message_for_user = messages_templates["vk"]["vk_not_authorized"]
     msg = tg_bot.send_message(message.chat.id, message_for_user)
     tg_bot.register_next_step_handler(msg, vk_auth_register)
@@ -109,7 +141,7 @@ def callback_vk_auth(call):
 def gen_markup_for_vk_auth(chat_id):
     markup = types.InlineKeyboardMarkup()
     markup.row_width = 1
-    markup.add(types.InlineKeyboardButton(text = "VK авторизация",  url = request_vk_auth_code(chat_id),
+    markup.add(types.InlineKeyboardButton(text = "VK авторизация", url = request_vk_auth_code(chat_id),
                                           callback_data
                                           = "pressed_vk_auth_key"))
     return markup

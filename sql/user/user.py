@@ -35,4 +35,6 @@ class UserTable(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String, nullable = False)
     vk_token = db.Column(db.String)
-    age = db.Column(db.String, nullable = False)
+    age = db.Column(db.String)
+    salary = db.Column(db.String)
+    city = db.Column(db.String)
