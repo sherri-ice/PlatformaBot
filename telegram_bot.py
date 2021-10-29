@@ -62,7 +62,29 @@ def ping_vk(message):
 def register(message):
     # Send next step: name
     tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["registration_start"])
-    tg_bot.register_next_step_handler(message, process_name_step)
+    if get_user_by_id(message.chat.id) is None:
+        tg_bot.register_next_step_handler(message, process_name_step)
+    else:
+        tg_bot.register_next_step_handler(message, re_register)
+
+
+def re_register(message):
+    markup = types.InlineKeyboardMarkup()
+    markup.row_width = 4
+    markup.add(types.InlineKeyboardButton("Да!", callback_data = "cd_yes"),
+               types.InlineKeyboardButton("Оставить всё как есть", callback_data = "cd_no"),
+               )
+    tg_bot.send_message(message.chat.id, "Ты уже авторизирован. Уверен, что хочешь перерегистрировать профиль?",
+                        reply_markup = markup)
+
+
+# Handles answer for inline keyboard
+@tg_bot.callback_query_handler(func=lambda call: True)
+def handle_callback(call):
+    if call.data == "cd_yes":
+        tg_bot.answer_callback_query(call.id, "Да")
+    elif call.data == "cd_no":
+        tg_bot.answer_callback_query(call.id, "Оставить всё как есть.")
 
 
 # TODO: strange names, as commands name...
