@@ -91,7 +91,7 @@ def process_age_step(message, user):
 
     # Send next step: city
     msg = tg_bot.send_message(message.chat.id, "В каком городе ты находишься? Будь внимателен при написании имени "
-                                               "города!")
+                                               "города!", reply_markup = keyboard_hider)
     tg_bot.register_next_step_handler(msg, process_city_step, user)
 
 
