@@ -79,6 +79,7 @@ def register(message):
 def handle_callback(call):
     if call.data == "cd_yes":
         tg_bot.answer_callback_query(call.id, "Да")
+        tg_bot.register_next_step_handler(call.message, process_name_step)
     elif call.data == "cd_no":
         tg_bot.answer_callback_query(call.id, "Оставить всё как есть.")
 
