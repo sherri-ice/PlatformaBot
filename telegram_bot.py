@@ -29,28 +29,22 @@ def send_welcome(message):
 
 
 def gen_markup_for_submitting_vk_re_auth():
-    markup = types.InlineKeyboardMarkup()
+    markup = types.ReplyKeyboardMarkup()
     markup.row_width = 2
-    markup.add(types.InlineKeyboardButton(text = "Да", callback_data = "cb_yes"))
-    markup.add(types.InlineKeyboardButton(text = "Нет", callback_data = "cb_no"))
+    markup.add(types.KeyboardButton(text = "Да"))
+    markup.add(types.InlineKeyboardButton(text = "Нет"))
     return markup
-
-
-@tg_bot.callback_query_handler(func = lambda call: True)
-def callback_query(call):
-    if call.data == "cb_yes":
-        tg_bot.answer_callback_query(call.id, "Да")
-        tg_bot.register_next_step_handler(call.message, vk_auth_register)
-    elif call.data == "cb_no":
-        tg_bot.answer_callback_query(call.id, "Нет")
-        return
 
 
 @tg_bot.message_handler(commands = ['vk_auth'])
 def vk_user_checker(message):
     if get_user_by_id(message.chat.id).vk_token is not None:
-        tg_bot.send_message(message.chat.id, messages_templates["vk"]["vk_re_register"],
-                            reply_markup = gen_markup_for_submitting_vk_re_auth())
+        msg = tg_bot.send_message(message.chat.id, messages_templates["vk"]["vk_re_register"],
+                                  reply_markup = gen_markup_for_submitting_vk_re_auth())
+        if msg.text == "Да":
+            tg_bot.register_next_step_handler(msg, vk_auth_register)
+        else:
+            tg_bot.send_message(msg.chat.id, "Отменено...")
         return
     tg_bot.register_next_step_handler(message, vk_auth_register)
 
