@@ -27,6 +27,7 @@ def send_welcome(message):
         tg_bot.send_message(message.chat.id, messages_templates["registered_user"]["start_message"])
     else:
         tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["start_message"])
+    tg_bot.register_next_step_handler(message, vk_auth_register)
 
 
 @tg_bot.message_handler(commands = ['vk_auth'])
