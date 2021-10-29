@@ -58,19 +58,23 @@ def ping_vk(message):
         tg_bot.send_message(message.chat.id, message_to_user)
 
 
+def gen_age_inline_keyboard():
+    markup = types.ReplyKeyboardMarkup()
+    markup.row_width = 4
+    markup.add(types.KeyboardButton("12-18"),
+               types.KeyboardButton("19-24"),
+               types.KeyboardButton("25-27"),
+               types.KeyboardButton("27+"),
+               )
+    return markup
+
+
 @tg_bot.message_handler(commands = ['register'])
 def register(message):
     # Send next step: name
     if get_user_by_id(message.chat.id) is None:
-        markup = types.ReplyKeyboardMarkup()
-        markup.row_width = 4
-        markup.add(types.KeyboardButton("12-18"),
-                   types.KeyboardButton("19-24"),
-                   types.KeyboardButton("25-27"),
-                   types.KeyboardButton("27+"),
-                   )
         msg = tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["registration_start"],
-                                  reply_markup = markup)
+                                  reply_markup = gen_age_inline_keyboard())
         tg_bot.register_next_step_handler(msg, process_age_step)
     else:
         markup = types.InlineKeyboardMarkup()
@@ -81,16 +85,18 @@ def register(message):
         tg_bot.send_message(message.chat.id, "Ты уже авторизирован. Уверен, что хочешь перерегистрировать профиль?",
                             reply_markup = markup)
 
-        @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_yes" or call.data == "cd_no")
-        def handle_callback(call):
-            if call.data == "cd_yes":
-                tg_bot.answer_callback_query(call.id, "Да")
-                msg = tg_bot.send_message(call.message.chat.id,
-                                          messages_templates["unregistered_user"]["registration_start"])
-                tg_bot.register_next_step_handler(msg, process_age_step)
-            elif call.data == "cd_no":
-                tg_bot.answer_callback_query(call.id, "Оставить всё как есть.")
-                tg_bot.send_message(message.chat.id, "Окей, оставим как есть.")
+
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_yes" or call.data == "cd_no")
+def handle_callback_re_auth(call):
+    if call.data == "cd_yes":
+        tg_bot.answer_callback_query(call.id, "Да")
+        msg = tg_bot.send_message(call.message.chat.id,
+                                  messages_templates["unregistered_user"]["registration_start"], reply_markup
+                                  = gen_age_inline_keyboard())
+        tg_bot.register_next_step_handler(msg, process_age_step)
+    elif call.data == "cd_no":
+        tg_bot.answer_callback_query(call.id, "Оставить всё как есть.")
+        tg_bot.send_message(call.message.chat.id, "Окей, оставим как есть.")
 
 
 def process_age_step(message):
