@@ -38,7 +38,7 @@ def vk_auth_register(message):
                                   reply_markup = gen_markup_for_vk_auth(
                                       message.chat.id))
         time.sleep(5000)
-        tg_bot.delete_message(old.chat.id, old.id)
+        tg_bot.delete_message(old.chat.id, old.message_id)
 
 
 @tg_bot.message_handler(commands = ['ping_vk'])
