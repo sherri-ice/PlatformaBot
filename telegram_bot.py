@@ -41,12 +41,16 @@ def vk_user_checker(message):
     if get_user_by_id(message.chat.id).vk_token is not None:
         msg = tg_bot.send_message(message.chat.id, messages_templates["vk"]["vk_re_register"],
                                   reply_markup = gen_markup_for_submitting_vk_re_auth())
-        if msg.text == "Да":
-            tg_bot.register_next_step_handler(msg, vk_auth_register)
-        elif msg.text == "Нет":
-            tg_bot.send_message(msg.chat.id, "Отменено...")
-        return
-    tg_bot.register_next_step_handler(message, vk_auth_register)
+        tg_bot.register_next_step_handler(msg, handle_vk_re_auth_answer)
+    else:
+        tg_bot.register_next_step_handler(message, vk_auth_register)
+
+
+def handle_vk_re_auth_answer(message):
+    if message.text == "Да":
+        tg_bot.register_next_step_handler(message, vk_auth_register)
+    elif message.text == "Нет":
+        tg_bot.send_message(message.chat.id, "Отменено...")
 
 
 def vk_auth_register(message):
