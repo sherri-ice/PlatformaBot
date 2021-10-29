@@ -114,7 +114,7 @@ def process_city_step(message, user_data):
 
     # Send next step: salary
     markup = types.ReplyKeyboardMarkup()
-    markup.row_width = 2
+    markup.row_height = 2
     markup.add(types.KeyboardButton("Да, я зарабатываю сам и лично \nраспоряжаюсь своими доходами."),
                types.KeyboardButton("Нет, сижу на шее у родителей.")
                )
