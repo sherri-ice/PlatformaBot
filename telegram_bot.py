@@ -98,11 +98,16 @@ def process_age_step(message):
     tg_bot.register_next_step_handler(msg, vk_auth_register)
 
 
+@tg_bot.callback_query_handler(func = lambda call: call.data == "pressed_vk_auth_key")
+def callback(call):
+    tg_bot.edit_message_text("Ждём авторизации...", call.message.chat.id, call.message.message_id)
+
 # Creates a markup with link to auth url
 def gen_markup_for_vk_auth(chat_id):
     markup = types.InlineKeyboardMarkup()
     markup.row_width = 1
-    markup.add(types.InlineKeyboardButton(text = "VK авторизация", url = request_vk_auth_code(chat_id)))
+    markup.add(types.InlineKeyboardButton(text = "VK авторизация", url = request_vk_auth_code(chat_id), callback_data
+    = "pressed_vk_auth_key"))
     return markup
 
 
