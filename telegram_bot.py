@@ -108,8 +108,9 @@ def callback_vk_auth(call):
 def gen_markup_for_vk_auth(chat_id):
     markup = types.InlineKeyboardMarkup()
     markup.row_width = 1
-    markup.add(types.InlineKeyboardButton(text = "VK авторизация", url = request_vk_auth_code(chat_id), callback_data
-    = "pressed_vk_auth_key"))
+    markup.add(types.InlineKeyboardButton(text = "VK авторизация",  # url = request_vk_auth_code(chat_id),
+                                          callback_data
+                                          = "pressed_vk_auth_key"))
     return markup
 
 
