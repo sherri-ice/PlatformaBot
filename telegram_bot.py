@@ -2,7 +2,6 @@ import logging
 import time
 
 import telebot
-import vk_api
 from telebot import types
 from vk_auth import request_vk_auth_code
 from sql.database import db, apply_db_changes
@@ -97,9 +96,11 @@ def process_age_step(message):
     tg_bot.register_next_step_handler(msg, vk_auth_register)
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data.startswith("pressed_vk_auth_key"))
+@tg_bot.callback_query_handler(func = lambda call: True)
 def callback_vk_auth(call):
-    tg_bot.edit_message_text("Ждём авторизации...", call.message.chat.id, call.message.message_id)
+    if (call.data == "pressed_vk_auth_key"):
+        tg_bot.edit_message_text(text = "Ждём авторизации...", chat_id = call.message.chat.id,
+                                 message_id = call.message.message_id)
 
 
 # Creates a markup with link to auth url
