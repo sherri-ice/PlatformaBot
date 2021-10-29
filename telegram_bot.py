@@ -62,8 +62,8 @@ def ping_vk(message):
 def register(message):
     # Send next step: name
     if get_user_by_id(message.chat.id) is None:
-        tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["registration_start"])
-        tg_bot.register_next_step_handler(message, process_name_step)
+        msg = tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["registration_start"])
+        tg_bot.register_next_step_handler(msg, process_name_step)
     else:
         markup = types.InlineKeyboardMarkup()
         markup.row_width = 2
@@ -79,7 +79,8 @@ def register(message):
 def handle_callback(call):
     if call.data == "cd_yes":
         tg_bot.answer_callback_query(call.id, "Да")
-        tg_bot.register_next_step_handler(call.message, process_name_step)
+        msg = tg_bot.send_message(call.message.chat.id, messages_templates["unregistered_user"]["registration_start"])
+        tg_bot.register_next_step_handler(msg, process_name_step)
     elif call.data == "cd_no":
         tg_bot.answer_callback_query(call.id, "Оставить всё как есть.")
 
