@@ -29,11 +29,10 @@ def index():
 # Process vk auth calls
 @bot_handler.route('/vk_auth', methods = ['GET'])
 def redirect_from_vk():
-    try:
-        vk_code = request.args.get('code')
-        tg_id = request.args.get('tg_id')
-    except KeyError as error:
-        telegram_bot.send_message(tg_id, messages_templates["vk"]["vk_error_not_found"] + " "+ error)
+    vk_code = request.args.get('code')
+    tg_id = request.args.get('tg_id')
+    if vk_code is None:
+        telegram_bot.send_message(tg_id, messages_templates["vk"]["vk_error_not_found"])
         return
     register_vk_token(vk_code, tg_id)
     telegram_bot.send_message(tg_id, messages_templates["vk"]["vk_register_ok"])
