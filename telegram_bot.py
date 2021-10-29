@@ -102,8 +102,8 @@ def handle_callback_re_auth(call):
 def process_age_step(message):
     user_data = {"age": message.text}
     if message.text not in ["12-18", "19-24", "25-27", "27+"]:
-        msg = tg_bot.send_message(message.chat.id, "Некорректный ввод.")
-        tg_bot.register_next_step_handler(msg, register)
+        tg_bot.send_message(message.chat.id, "Некорректный ввод.")
+        tg_bot.register_next_step_handler(message, register)
         return
     # Send next step: city
     msg = tg_bot.send_message(message.chat.id, "В каком городе ты находишься? Будь внимателен при написании имени "
