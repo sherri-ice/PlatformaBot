@@ -21,7 +21,7 @@ def add_new_user(id, name = None, age = None, salary = None, city = None):
 
 
 def delete_user(id):
-    UserTable.query.filter_by(id).delete()
+    UserTable.query.filter_by(id = id).delete()
     apply_db_changes()
 
 
