@@ -44,6 +44,8 @@ def vk_auth_register(message):
 
 @tg_bot.message_handler(commands = ['ping_vk'])
 def ping_vk(message):
+    if get_user_by_id(message.chat.id) is None:
+        tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["request_for_registration"])
     vk = get_vk_api(message.chat.id)
     if vk is None:
         tg_bot.send_message(message.chat.id, messages_templates["vk"]["vk_not_authorized"])
