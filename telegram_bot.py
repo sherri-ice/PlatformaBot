@@ -37,7 +37,7 @@ def vk_auth_register(message):
         old = tg_bot.send_message(message.chat.id, messages_templates["vk"]["vk_auth_message"],
                                   reply_markup = gen_markup_for_vk_auth(
                                       message.chat.id))
-        time.sleep(5000)
+        time.sleep(20)
         tg_bot.delete_message(old.chat.id, old.message_id)
 
 
@@ -91,7 +91,7 @@ def process_age_step(message):
     user = get_user_by_id(message.chat.id)
     user.age = message.text
     apply_db_changes()
-    tg_bot.send_message(message.chat.id, f"Супер! \n Тебя зовут: {user.name} \n Твой возраст: {user.age}",
+    tg_bot.send_message(message.chat.id, f"Супер! \nТебя зовут: {user.name} \nТвой возраст: {user.age}",
                         reply_markup = keyboard_hider)
     time.sleep(0.1)
     message_for_user = messages_templates["vk"]["vk_not_authorized"]
