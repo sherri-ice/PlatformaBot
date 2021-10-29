@@ -48,7 +48,8 @@ def vk_user_checker(message):
 
 def handle_vk_re_auth_answer(message):
     if message.text == "Да":
-        tg_bot.register_next_step_handler(message, vk_auth_register)
+        msg = tg_bot.send_message(message.chat.id, "Окей, ищу аккаунт заново...")
+        tg_bot.register_next_step_handler(msg, vk_auth_register)
     elif message.text == "Нет":
         tg_bot.send_message(message.chat.id, "Отменено...")
 
