@@ -81,7 +81,7 @@ def register(message):
         tg_bot.send_message(message.chat.id, "Ты уже авторизирован. Уверен, что хочешь перерегистрировать профиль?",
                             reply_markup = markup)
 
-        @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_yes" or call.data == "cd.no")
+        @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_yes" or call.data == "cd_no")
         def handle_callback(call):
             if call.data == "cd_yes":
                 tg_bot.answer_callback_query(call.id, "Да")
