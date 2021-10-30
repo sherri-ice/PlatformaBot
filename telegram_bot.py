@@ -88,7 +88,7 @@ def register(message):
         markup.add(types.InlineKeyboardButton("Да!", callback_data = "cd_yes"),
                    types.InlineKeyboardButton("Оставить всё как есть", callback_data = "cd_no"),
                    )
-        tg_bot.send_message(message.chat.id, "Ты уже авторизирован. Уверен, что хочешь перерегистрировать профиль?",
+        tg_bot.send_message(message.chat.id, messages_templates["registered_user"]["re_register"],
                             reply_markup = markup)
 
 
@@ -108,12 +108,10 @@ def handle_callback_re_auth(call):
 def process_age_step(message):
     user_data = {"age": message.text}
     if message.text not in ["12-18", "19-24", "25-27", "27+"]:
-        tg_bot.send_message(message.chat.id, "Некорректный ввод. Регистрация не пройдена. Попробуйте отправить "
-                                             "/register заново.", reply_markup = keyboard_hider)
+        tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["incorrect_input"], reply_markup = keyboard_hider)
         return
     # Send next step: city
-    msg = tg_bot.send_message(message.chat.id, "В каком городе ты находишься? Будь внимателен при написании имени "
-                                               "города!", reply_markup = keyboard_hider)
+    msg = tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["city_reg_step"], reply_markup = keyboard_hider)
     tg_bot.register_next_step_handler(msg, process_city_step, user_data)
 
 
@@ -128,7 +126,7 @@ def process_city_step(message, user_data):
                types.KeyboardButton("Нет, сижу на шее у родителей.")
                )
 
-    msg = tg_bot.send_message(message.chat.id, "Имеешь ли ты личный источник дохода (работа, своё дело)?",
+    msg = tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["salary_reg_step"],
                               reply_markup = markup)
     tg_bot.register_next_step_handler(msg, process_salary_step, user_data)
 
@@ -138,8 +136,7 @@ def process_salary_step(message, user_data):
     user_data["salary"] = message.text
     if message.text not in ["Да, я зарабатываю сам и лично \nраспоряжаюсь своими доходами.", "Нет, сижу на шее у "
                                                                                              "родителей."]:
-        tg_bot.send_message(message.chat.id, "Некорректный ввод. Регистрация не пройдена. Попробуйте отправить "
-                                             "/register заново.", reply_markup = keyboard_hider)
+        tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["incorrect_input"], reply_markup = keyboard_hider)
         return
 
     # End registration:
@@ -151,7 +148,7 @@ def process_salary_step(message, user_data):
     tg_bot.send_message(message.chat.id, f"Супер! \nТвой возраст: {user.age} \nГород: "
                                          f"{user.city}",
                         reply_markup = keyboard_hider)
-    tg_bot.send_message(message.chat.id, "Для дальнейшей работы понадобится авторизироваться в VK. Пришли /vk_auth.")
+    tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["finish_registration"])
 
 
 # Creates a markup with link to auth url
