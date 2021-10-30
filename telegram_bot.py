@@ -95,12 +95,12 @@ def command_vk_auth_register(message):
 @tg_bot.message_handler(commands = ['ping_vk'])
 def command_ping_vk(message):
     data = ping_vk(message.chat.id)
-    if data is UserApiErrors.UNREGISTERED_USER:
+    if data == UserApiErrors.UNREGISTERED_USER:
         tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["request_for_registration"])
         return
-    if data is UserApiErrors.VK_NOT_AUTH:
+    if data == UserApiErrors.VK_NOT_AUTH:
         tg_bot.send_message(message.chat.id, messages_templates["vk"]["vk_not_authorized"])
-    elif data is UserApiErrors.USER_BANNED:
+    elif data == UserApiErrors.USER_BANNED:
         tg_bot.send_message(message.chat.id, messages_templates["vk"]["vk_banned_profile"])
         return
     else:
@@ -172,7 +172,7 @@ def end_reg(message, user_data):
     # End registration:
     if get_user_by_id(message.chat.id) is not None:
         delete_user(message.chat.id)
-    user = add_new_user(id = message.chat.id, age = user_data["age"], salary = user_data[
+    user = add_new_user(user_id = message.chat.id, age = user_data["age"], salary = user_data[
         "salary"], city = user_data["city"])
     apply_db_changes()
     tg_bot.send_message(message.chat.id, f"Супер! \nТвой возраст: {user.age} \nГород: "

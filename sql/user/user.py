@@ -5,42 +5,42 @@ from loader import VK_API_APP_ID, VK_CLIENT_SECRET
 from enum import Enum
 
 
-def register_vk_token(code: str, id: int):
-    if get_user_by_id(id) is None:
+def register_vk_token(code: str, user_id: int):
+    if get_user_by_id(user_id) is None:
         return None
-    get_user_by_id(id).vk_token = authorize_vk_session(code, id).token['access_token']
+    get_user_by_id(user_id).vk_token = authorize_vk_session(code, user_id).token['access_token']
     apply_db_changes()
 
 
-def get_user_by_id(id):
-    return UserTable.query.filter_by(id = id).first()
+def get_user_by_id(user_id):
+    return UserTable.query.filter_by(id = user_id).first()
 
 
-def add_new_user(id, age = None, salary = None, city = None):
-    db.session.add(UserTable(id = id, age = age, salary = salary, city = city))
-    return get_user_by_id(id)
+def add_new_user(user_id, age = None, salary = None, city = None):
+    db.session.add(UserTable(id = user_id, age = age, salary = salary, city = city))
+    return get_user_by_id(user_id)
 
 
-def delete_user(id):
-    UserTable.query.filter_by(id = id).delete()
+def delete_user(user_id):
+    UserTable.query.filter_by(id = user_id).delete()
     apply_db_changes()
 
 
-def get_vk_api(id):
-    if get_user_by_id(id) is None:
+def get_vk_api(user_id):
+    if get_user_by_id(user_id) is None:
         return None
     try:
         vk_session = vk_api.VkApi(app_id = VK_API_APP_ID, client_secret = VK_CLIENT_SECRET, token = get_user_by_id(
-            id).vk_token)
+            user_id).vk_token)
     except vk_api.exceptions.ApiError as error:
         return None
     return vk_session.get_api()
 
 
-def ping_vk(id):
-    if get_user_by_id(id) is None:
+def ping_vk(user_id):
+    if get_user_by_id(user_id) is None:
         return UserApiErrors.UNREGISTERED_USER
-    vk = get_vk_api(id)
+    vk = get_vk_api(user_id)
     if vk is None:
         return UserApiErrors.VK_NOT_AUTH
     else:
