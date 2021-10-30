@@ -58,16 +58,21 @@ def vk_auth_cancel(call):
     tg_bot.send_message(call.message.chat.id, messages_templates["vk"]["vk_cancel_auth"])
 
 
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_reauth_vk")
+def vk_re_auth(call):
+    tg_bot.register_next_step_handler(call.message, command_vk_auth_register)
+
+
 def after_vk_auth_in_server(tg_id):
     data = ping_vk(tg_id)
     if data is UserApiErrors.USER_BANNED:
         message_to_user = messages_templates["vk"]["vk_banned_profile"]
-        tg_bot.send_message(tg_id, message_to_user)
+        keyboard = {"Выбрать другой аккаунт": "cd_reauth_vk"}
     else:
         message_to_user = messages_templates["vk"]["vk_get_user_message"].format(data[0]["first_name"],
                                                                                  data[0]["last_name"], data[0]["id"])
-        keyboard = {"Я готов!": "cd_user_ready"}
-        tg_bot.send_message(tg_id, message_to_user, reply_markup = create_inline_keyboard(keyboard))
+        keyboard = {"Я готов!": "cd_user_ready", "Выбрать другой аккаунт": "cd_reauth_vk"}
+    tg_bot.send_message(tg_id, message_to_user, reply_markup = create_inline_keyboard(keyboard))
 
 
 @tg_bot.message_handler(commands = ['vk_auth'])
@@ -110,20 +115,20 @@ def command_register(message):
                                   reply_markup = create_reply_keyboard(["12-18", "19-24", "25-27", "27+"]))
         tg_bot.register_next_step_handler(msg, process_age_step)
     else:
-        keyboards = {"Да!": "cd_yes", "Оставить всё как есть": "cd_no"}
+        keyboards = {"Да!": "cd_reauth_yes", "Оставить всё как есть": "cd_reauth_no"}
         tg_bot.send_message(message.chat.id, messages_templates["registered_user"]["re_register"],
                             reply_markup = create_inline_keyboard(keyboards))
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_yes" or call.data == "cd_no")
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_reauth_yes" or call.data == "cd_reauth_no")
 def handle_callback_re_auth(call):
-    if call.data == "cd_yes":
+    if call.data == "cd_reauth_yes":
         tg_bot.answer_callback_query(call.id, "Да")
         msg = tg_bot.send_message(call.message.chat.id,
                                   messages_templates["unregistered_user"]["registration_start"], reply_markup
                                   = create_reply_keyboard(["12-18", "19-24", "25-27", "27+"]))
         tg_bot.register_next_step_handler(msg, process_age_step)
-    elif call.data == "cd_no":
+    elif call.data == "cd_reauth_no":
         tg_bot.answer_callback_query(call.id, "Оставить всё как есть.")
         tg_bot.send_message(call.message.chat.id, "Окей, оставим как есть.")
 
