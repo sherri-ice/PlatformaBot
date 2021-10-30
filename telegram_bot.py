@@ -49,6 +49,7 @@ def gen_markup_for_vk_auth(chat_id):
     markup = types.InlineKeyboardMarkup()
     markup.row_width = 1
     markup.add(types.InlineKeyboardButton(text = "VK авторизация", url = request_vk_auth_code(chat_id)))
+    markup.add(types.InlineKeyboardButton(text = "Привяжу потом", callback_data = "cd_vk_auth_cancel"))
     return markup
 
 
@@ -166,8 +167,10 @@ def handle_callback_faq(call):
         tg_bot.send_message(call.message.chat.id, messages_templates["faq"], reply_markup = create_inline_keyboard(
             {"Понятно! Продолжить": "cd_next"}))
     elif call.data == "cd_no":
-        tg_bot.answer_callback_query(call.id, "Оставить всё как есть.")
-        tg_bot.send_message(call.message.chat.id, "Окей, оставим как есть.")
+        tg_bot.answer_callback_query(call.id, "Не читать FAQ")
+        keyboard = gen_markup_for_vk_auth(call.message.chat.id)
+        keyboard.add(types.InlineKeyboardButton(text = "Я передумал! Хочу прочитать FAQ", callback_data = "cd_faq"))
+        tg_bot.send_message(call.message.chat.id, messages_templates["vk"]["vk_auth_message"], reply_markup = keyboard)
 
 
 @tg_bot.message_handler(commands = ['help'])
