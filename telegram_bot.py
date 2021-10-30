@@ -62,11 +62,11 @@ def after_vk_auth_in_server(tg_id):
     data = ping_vk(tg_id)
     if data is UserApiErrors.USER_BANNED:
         message_to_user = messages_templates["vk"]["vk_banned_profile"]
-        keyboard = {"Выбрать другой аккаунт": "cd_reauth_vk"}
+        keyboard = {"Выбрать другой аккаунт": "cd_auth_vk"}
     else:
         message_to_user = messages_templates["vk"]["vk_get_user_message"].format(data[0]["first_name"],
                                                                                  data[0]["last_name"], data[0]["id"])
-        keyboard = {"Я готов!": "cd_user_ready", "Выбрать другой аккаунт": "cd_reauth_vk"}
+        keyboard = {"Я готов!": "cd_user_ready", "Выбрать другой аккаунт": "cd_auth_vk"}
     tg_bot.send_message(tg_id, message_to_user, reply_markup = create_inline_keyboard(keyboard))
 
 
