@@ -108,10 +108,12 @@ def handle_callback_re_auth(call):
 def process_age_step(message):
     user_data = {"age": message.text}
     if message.text not in ["12-18", "19-24", "25-27", "27+"]:
-        tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["incorrect_input"], reply_markup = keyboard_hider)
+        tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["incorrect_input"],
+                            reply_markup = keyboard_hider)
         return
     # Send next step: city
-    msg = tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["city_reg_step"], reply_markup = keyboard_hider)
+    msg = tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["city_reg_step"],
+                              reply_markup = keyboard_hider)
     tg_bot.register_next_step_handler(msg, process_city_step, user_data)
 
 
@@ -136,7 +138,8 @@ def process_salary_step(message, user_data):
     user_data["salary"] = message.text
     if message.text not in ["Да, я зарабатываю сам и лично \nраспоряжаюсь своими доходами.", "Нет, сижу на шее у "
                                                                                              "родителей."]:
-        tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["incorrect_input"], reply_markup = keyboard_hider)
+        tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["incorrect_input"],
+                            reply_markup = keyboard_hider)
         return
 
     # End registration:
@@ -148,7 +151,13 @@ def process_salary_step(message, user_data):
     tg_bot.send_message(message.chat.id, f"Супер! \nТвой возраст: {user.age} \nГород: "
                                          f"{user.city}",
                         reply_markup = keyboard_hider)
-    tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["finish_registration"])
+
+    # Send inline markup with actions after registration
+    faq_markup = types.InlineKeyboardMarkup()
+    faq_markup.add(types.InlineKeyboardButton(text = "Разберусь походу", callback_data = "cd_cancel"))
+    faq_markup.add(types.InlineKeyboardButton(text = "Прочитать FAQ", callback_data = "cd_faq"))
+    tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["finish_registration"], reply_markup
+    = faq_markup)
 
 
 # Creates a markup with link to auth url
@@ -166,7 +175,7 @@ def commands_help(message):
 
 @tg_bot.message_handler(commands = ['faq'])
 def faq(message):
-    tg_bot.send_message(message.chat.id, "Пока в разработке...")
+    tg_bot.send_message(message.chat.id, messages_templates["faq"])
 
 
 # Handle all other messages from unregistered users
