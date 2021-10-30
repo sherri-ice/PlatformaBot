@@ -53,9 +53,9 @@ def gen_markup_for_vk_auth(chat_id):
     return markup
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_auth_vk")
-def vk_re_auth(call):
-    tg_bot.register_next_step_handler(call.message, command_vk_auth_register)
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_vk_auth_cancel")
+def cancel_vk_auth(call):
+    tg_bot.send_message(call.message.chat.id, messages_templates["vk"]["vk_cancel_auth"])
 
 
 def after_vk_auth_in_server(tg_id):
