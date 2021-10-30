@@ -2,7 +2,7 @@ import flask
 from flask import request
 from flask.blueprints import Blueprint
 
-from telegram_bot import get_telegram_bot, messages_templates, ping_vk, UserApiErrors
+from telegram_bot import get_telegram_bot, messages_templates, after_vk_auth_in_server
 from telebot import types
 
 from loader import TELEGRAM_TOKEN, WEBHOOK_HOST
@@ -35,13 +35,7 @@ def redirect_from_vk():
         telegram_bot.send_message(tg_id, messages_templates["vk"]["vk_error_not_found"])
         return
     register_vk_token(vk_code, tg_id)
-    data = ping_vk(tg_id)
-    if data is UserApiErrors.USER_BANNED:
-        message_to_user = messages_templates["vk"]["vk_banned_profile"]
-    else:
-        message_to_user = messages_templates["vk"]["vk_get_user_message"].format(data[0]["first_name"],
-                                                                                 data[0]["last_name"], data[0]["id"])
-    telegram_bot.send_message(tg_id, message_to_user)
+    after_vk_auth_in_server(tg_id)
     return ''
 
 

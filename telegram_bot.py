@@ -58,6 +58,16 @@ def vk_auth_cancel(call):
     tg_bot.send_message(call.message.chat.id, messages_templates["vk"]["vk_cancel_auth"])
 
 
+def after_vk_auth_in_server(tg_id):
+    data = ping_vk(tg_id)
+    if data is UserApiErrors.USER_BANNED:
+        message_to_user = messages_templates["vk"]["vk_banned_profile"]
+    else:
+        message_to_user = messages_templates["vk"]["vk_get_user_message"].format(data[0]["first_name"],
+                                                                                 data[0]["last_name"], data[0]["id"])
+    tg_bot.send_message(tg_id, message_to_user)
+
+
 @tg_bot.message_handler(commands = ['vk_auth'])
 def command_vk_auth_register(message):
     if get_user_by_id(message.chat.id) is None:
