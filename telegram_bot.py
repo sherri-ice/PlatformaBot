@@ -53,6 +53,11 @@ def gen_markup_for_vk_auth(chat_id):
     return markup
 
 
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_vk_auth_cancel")
+def vk_auth_cancel(call):
+    tg_bot.send_message(call.message.chat.id, messages_templates["vk"]["vk_cancel_auth"])
+
+
 @tg_bot.message_handler(commands = ['vk_auth'])
 def vk_auth_register(message):
     if get_user_by_id(message.chat.id) is None:
@@ -143,7 +148,10 @@ def process_salary_step(message, user_data):
         tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["incorrect_input"],
                             reply_markup = keyboard_hider)
         return
+    end_reg(message, user_data)
 
+
+def end_reg(message, user_data):
     # End registration:
     if get_user_by_id(message.chat.id) is not None:
         delete_user(message.chat.id)
