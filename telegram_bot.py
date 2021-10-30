@@ -219,7 +219,9 @@ def handle_callback_faq(call):
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_user_ready")
 def user_ready(call):
     tg_bot.delete_message(chat_id = call.message.chat.id, message_id = call.message.message_id)
-    tg_bot.send_message(call.message.chat.id, "Супер!")
+    keyboard = {"Выбрать исполнителя": "cd_employee", "Выбрать заказчика": "cd_customer"}
+    tg_bot.send_message(call.message.chat.id, messages_templates["choose_role"],
+                        reply_markup = create_inline_keyboard(keyboard))
 
 
 @tg_bot.message_handler(commands = ['help'])
