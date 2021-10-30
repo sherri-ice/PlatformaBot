@@ -48,6 +48,7 @@ def command_send_welcome(message):
 def gen_markup_for_vk_auth(chat_id):
     markup = types.InlineKeyboardMarkup()
     markup.row_width = 1
+
     markup.add(types.InlineKeyboardButton(text = "VK авторизация", url = request_vk_auth_code(chat_id)))
     markup.add(types.InlineKeyboardButton(text = "Привяжу потом", callback_data = "cd_vk_auth_cancel"))
     return markup
@@ -107,7 +108,8 @@ def command_ping_vk(message):
     else:
         message_to_user = messages_templates["vk"]["vk_get_user_message"].format(data[0]["first_name"],
                                                                                  data[0]["last_name"], data[0]["id"])
-        tg_bot.send_message(message.chat.id, message_to_user)
+        tg_bot.send_message(message.chat.id, message_to_user,
+                            reply_markup = create_inline_keyboard({"Сменить профиль": "cd_vk_reauth"}))
 
 
 @tg_bot.message_handler(commands = ['register'])
