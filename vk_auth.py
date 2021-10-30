@@ -1,4 +1,5 @@
 import json
+from telebot import types
 
 import vk_api
 

@@ -61,22 +61,22 @@ def cancel_vk_auth(call):
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_vk_reauth")
 def vk_reauth(call):
-    tg_bot.answer_callback_query(call.id, "Выбрать другой аккаунт")
-    tg_bot.send_message(call.message.chat.id, messages_templates["vk"]["vk_auth_message"],
-                        reply_markup = gen_markup_for_vk_auth(call.message.chat.id))
+    # tg_bot.answer_callback_query(call.id, "Выбрать другой аккаунт")
+    # tg_bot.send_message(call.message.chat.id, messages_templates["vk"]["vk_auth_message"],
+    #                     reply_markup = gen_markup_for_vk_auth(call.message.chat.id))
+    tg_bot.send_message(call.message.chat.id, messages_templates["vk"]["vk_cancel_auth"])
 
 
 def after_vk_auth_in_server(tg_id):
-    pass
-    # data = ping_vk(tg_id)
-    # if data is UserApiErrors.USER_BANNED:
-    #     message_to_user = messages_templates["vk"]["vk_banned_profile"]
-    #     keyboard = {"Выбрать другой аккаунт": "cd_reauth_vk"}
-    # else:
-    #     message_to_user = messages_templates["vk"]["vk_get_user_message"].format(data[0]["first_name"],
-    #                                                                              data[0]["last_name"], data[0]["id"])
-    #     keyboard = {"Я готов!": "cd_user_ready", "Выбрать другой аккаунт": "cd_reauth_vk"}
-    # tg_bot.send_message(tg_id, message_to_user, reply_markup = create_inline_keyboard(keyboard))
+    data = ping_vk(tg_id)
+    if data is UserApiErrors.USER_BANNED:
+        message_to_user = messages_templates["vk"]["vk_banned_profile"]
+        keyboard = {"Выбрать другой аккаунт": "cd_reauth_vk"}
+    else:
+        message_to_user = messages_templates["vk"]["vk_get_user_message"].format(data[0]["first_name"],
+                                                                                 data[0]["last_name"], data[0]["id"])
+        keyboard = {"Я готов!": "cd_user_ready", "Выбрать другой аккаунт": "cd_reauth_vk"}
+    tg_bot.send_message(tg_id, message_to_user, reply_markup = create_inline_keyboard(keyboard))
 
 
 @tg_bot.message_handler(commands = ['vk_auth'])
