@@ -216,6 +216,11 @@ def handle_callback_faq(call):
                                          reply_markup = keyboard)
 
 
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_user_ready")
+def user_ready(call):
+    tg_bot.send_message(call.message.chat.id, "Супер!")
+
+
 @tg_bot.message_handler(commands = ['help'])
 def command_help(message):
     tg_bot.send_message(message.chat.id, messages_templates["help"]["command_help_text"])
