@@ -61,10 +61,9 @@ def cancel_vk_auth(call):
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_reauth_vk")
 def vk_reauth(call):
-    # tg_bot.answer_callback_query(call.id, "Выбрать другой аккаунт")
-    # tg_bot.send_message(call.message.chat.id, messages_templates["vk"]["vk_auth_message"],
-    #                     reply_markup = gen_markup_for_vk_auth(call.message.chat.id))
-    tg_bot.send_message(call.message.chat.id, messages_templates["vk"]["vk_cancel_auth"])
+    tg_bot.answer_callback_query(call.id, "Выбрать другой аккаунт")
+    tg_bot.send_message(call.message.chat.id, messages_templates["vk"]["vk_auth_message"],
+                        reply_markup = gen_markup_for_vk_auth(call.message.chat.id))
 
 
 def after_vk_auth_in_server(tg_id):
