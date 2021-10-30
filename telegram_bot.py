@@ -173,7 +173,8 @@ def end_reg(message, user_data):
 def handle_callback_faq(call):
     if call.data == "cd_faq":
         tg_bot.answer_callback_query(call.id, "Прочитать FAQ")
-        tg_bot.edit_message_text(message_id = call.message.message_id, text = messages_templates["reg_faq"])
+        tg_bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
+                                 text = messages_templates["reg_faq"])
     #     tg_bot.edit_message_reply_markup(message_id = call.message.message_id,
     #                                      reply_markup = create_inline_keyboard({"Понятно! Продолжить": "cd_next"}))
     # elif call.data == "cd_faq_cancel":
