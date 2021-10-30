@@ -53,12 +53,7 @@ def gen_markup_for_vk_auth(chat_id):
     return markup
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_vk_auth_cancel")
-def vk_auth_cancel(call):
-    tg_bot.send_message(call.message.chat.id, messages_templates["vk"]["vk_cancel_auth"])
-
-
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_reauth_vk")
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_auth_vk")
 def vk_re_auth(call):
     tg_bot.register_next_step_handler(call.message, command_vk_auth_register)
 
@@ -184,14 +179,14 @@ def end_reg(message, user_data):
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_faq" or call.data == "cd_faq_cancel" or call.data
-                                                   == "cd_next")
+                                                   == "cd_vk_auth")
 def handle_callback_faq(call):
     if call.data == "cd_faq":
         tg_bot.answer_callback_query(call.id, "Прочитать FAQ")
         tg_bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
                                  text = messages_templates["reg_faq"])
         tg_bot.edit_message_reply_markup(chat_id = call.message.chat.id, message_id = call.message.message_id,
-                                         reply_markup = create_inline_keyboard({"Понятно! Продолжить": "cd_next"}))
+                                         reply_markup = create_inline_keyboard({"Понятно! Продолжить": "cd_vk_auth"}))
     elif call.data == "cd_faq_cancel":
         tg_bot.answer_callback_query(call.id, "Не читать FAQ")
         keyboard = gen_markup_for_vk_auth(call.message.chat.id)
@@ -200,7 +195,7 @@ def handle_callback_faq(call):
                                  text = messages_templates["vk"]["vk_auth_message"])
         tg_bot.edit_message_reply_markup(chat_id = call.message.chat.id, message_id = call.message.message_id,
                                          reply_markup = keyboard)
-    elif call.data == "cd_next":
+    elif call.data == "cd_vk_auth":
         keyboard = gen_markup_for_vk_auth(call.message.chat.id)
         tg_bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
                                  text = messages_templates["vk"]["vk_auth_message"])
