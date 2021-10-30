@@ -21,8 +21,8 @@ keyboard_hider = types.ReplyKeyboardRemove()
 
 def create_inline_keyboard(data: dict):
     markup = types.InlineKeyboardMarkup()
-    for button in data:
-        markup.add(types.InlineKeyboardButton(text = button[0], callback_data = button[1]))
+    for key in data:
+        markup.add(types.InlineKeyboardButton(text = key, callback_data = data[key]))
     return markup
 
 
