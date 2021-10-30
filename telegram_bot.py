@@ -56,7 +56,8 @@ def gen_markup_for_vk_auth(chat_id):
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_vk_auth_cancel")
 def cancel_vk_auth(call):
-    tg_bot.send_message(call.message.chat.id, messages_templates["vk"]["vk_cancel_auth"])
+    tg_bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
+                             text = messages_templates["vk"]["vk_cancel_auth"])
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_reauth_vk")
