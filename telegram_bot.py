@@ -5,7 +5,7 @@ import telebot
 from telebot import types
 from vk_auth import request_vk_auth_code
 from sql.database import db, apply_db_changes
-from sql.user.user import get_user_by_id, add_new_user, get_vk_api, delete_user
+from sql.user.user import get_user_by_id, add_new_user, get_vk_api, delete_user, UserApiErrors, ping_vk
 
 from loader import TELEGRAM_TOKEN
 from loader import load_messages
@@ -34,7 +34,7 @@ def create_reply_keyboard(data: list):
 
 
 @tg_bot.message_handler(commands = ['start'])
-def send_welcome(message):
+def command_send_welcome(message):
     user = get_user_by_id(message.chat.id)
     if user is not None:
         tg_bot.send_message(message.chat.id, messages_templates["registered_user"]["start_message"],
@@ -59,7 +59,7 @@ def vk_auth_cancel(call):
 
 
 @tg_bot.message_handler(commands = ['vk_auth'])
-def vk_auth_register(message):
+def command_vk_auth_register(message):
     if get_user_by_id(message.chat.id) is None:
         tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["request_for_registration"])
         return
@@ -74,26 +74,24 @@ def vk_auth_register(message):
 
 
 @tg_bot.message_handler(commands = ['ping_vk'])
-def ping_vk(message):
-    if get_user_by_id(message.chat.id) is None:
+def command_ping_vk(message):
+    data = ping_vk(message.chat.id)
+    if data is UserApiErrors.UNREGISTERED_USER:
         tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["request_for_registration"])
         return
-    vk = get_vk_api(message.chat.id)
-    if vk is None:
+    if data is UserApiErrors.VK_NOT_AUTH:
         tg_bot.send_message(message.chat.id, messages_templates["vk"]["vk_not_authorized"])
+    elif data is UserApiErrors.USER_BANNED:
+        tg_bot.send_message(message.chat.id, messages_templates["vk"]["vk_banned_profile"])
+        return
     else:
-        data = vk.users.get()
-        # If user is banned or deactivated
-        if "deactivated" in data[0]:
-            tg_bot.send_message(message.chat.id, messages_templates["vk"]["vk_banned_profile"])
-            return
         message_to_user = messages_templates["vk"]["vk_get_user_message"].format(data[0]["first_name"],
                                                                                  data[0]["last_name"], data[0]["id"])
         tg_bot.send_message(message.chat.id, message_to_user)
 
 
 @tg_bot.message_handler(commands = ['register'])
-def register(message):
+def command_register(message):
     # Send next step: name
     if get_user_by_id(message.chat.id) is None:
         msg = tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["registration_start"],
@@ -194,12 +192,12 @@ def handle_callback_faq(call):
 
 
 @tg_bot.message_handler(commands = ['help'])
-def commands_help(message):
+def command_help(message):
     tg_bot.send_message(message.chat.id, messages_templates["help"]["command_help_text"])
 
 
 @tg_bot.message_handler(commands = ['faq'])
-def faq(message):
+def command_faq(message):
     tg_bot.send_message(message.chat.id, messages_templates["faq"])
 
 

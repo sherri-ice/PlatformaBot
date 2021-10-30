@@ -2,6 +2,7 @@ import vk_api
 from sql.database import db, apply_db_changes
 from vk_auth import authorize_vk_session
 from loader import VK_API_APP_ID, VK_CLIENT_SECRET
+from enum import Enum
 
 
 def register_vk_token(code: str, id: int):
@@ -34,6 +35,25 @@ def get_vk_api(id):
     except vk_api.exceptions.ApiError as error:
         return None
     return vk_session.get_api()
+
+
+def ping_vk(id):
+    if get_user_by_id(id) is None:
+        return UserApiErrors.UNREGISTERED_USER
+    vk = get_vk_api(id)
+    if vk is None:
+        return None
+    else:
+        data = vk.users.get()
+        if "deactivated" in data[0]:
+            return UserApiErrors.USER_BANNED
+        return data
+
+
+class UserApiErrors(Enum):
+    VK_NOT_AUTH = 1
+    USER_BANNED = 2
+    UNREGISTERED_USER = 3
 
 
 class UserTable(db.Model):
