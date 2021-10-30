@@ -40,14 +40,13 @@ def get_vk_api(user_id):
 def ping_vk(user_id):
     if get_user_by_id(user_id) is None:
         return UserApiErrors.UNREGISTERED_USER
-    vk = get_vk_api(user_id)
-    if vk is None:
+    if get_user_by_id(user_id).vk_token is None:
         return UserApiErrors.VK_NOT_AUTH
-    else:
-        data = vk.users.get()
-        if "deactivated" in data[0]:
-            return UserApiErrors.USER_BANNED
-        return data
+    vk = get_vk_api(user_id)
+    data = vk.users.get()
+    if "deactivated" in data[0]:
+        return UserApiErrors.USER_BANNED
+    return data
 
 
 class UserApiErrors(Enum):
