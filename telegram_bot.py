@@ -155,18 +155,18 @@ def process_salary_step(message, user_data):
                         reply_markup = keyboard_hider)
 
     # Send inline markup with actions after registration
-    keyboard = {"Прочитать FAQ": "cd_faq", "Разберусь походу": "cd_cancel"}
+    keyboard = {"Прочитать FAQ": "cd_faq", "Разберусь походу": "cd_faq_cancel"}
     tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["finish_registration"], reply_markup
     = create_inline_keyboard(keyboard))
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_faq" or call.data == "cd_cancel")
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_faq" or call.data == "cd_faq_cancel")
 def handle_callback_faq(call):
     if call.data == "cd_faq":
         tg_bot.answer_callback_query(call.id, "Прочитать FAQ")
         tg_bot.send_message(call.message.chat.id, messages_templates["faq"], reply_markup = create_inline_keyboard(
             {"Понятно! Продолжить": "cd_next"}))
-    elif call.data == "cd_no":
+    elif call.data == "cd_faq_cancel":
         tg_bot.answer_callback_query(call.id, "Не читать FAQ")
         keyboard = gen_markup_for_vk_auth(call.message.chat.id)
         keyboard.add(types.InlineKeyboardButton(text = "Я передумал! Хочу прочитать FAQ", callback_data = "cd_faq"))
