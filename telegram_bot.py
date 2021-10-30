@@ -19,11 +19,12 @@ tg_bot = telebot.TeleBot(TELEGRAM_TOKEN, threaded = False)
 keyboard_hider = types.ReplyKeyboardRemove()
 
 
-def create_inline_keyboard(data : dict):
+def create_inline_keyboard(data: dict):
     markup = types.InlineKeyboardMarkup()
     for button in data:
         markup.add(types.InlineKeyboardButton(text = button[0], callback_data = button[1]))
     return markup
+
 
 def create_reply_keyboard(data: list):
     markup = types.ReplyKeyboardMarkup()
@@ -41,6 +42,14 @@ def send_welcome(message):
     else:
         tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["start_message"],
                             reply_markup = keyboard_hider)
+
+
+# Creates a markup with link to auth url
+def gen_markup_for_vk_auth(chat_id):
+    markup = types.InlineKeyboardMarkup()
+    markup.row_width = 1
+    markup.add(types.InlineKeyboardButton(text = "VK авторизация", url = request_vk_auth_code(chat_id)))
+    return markup
 
 
 @tg_bot.message_handler(commands = ['vk_auth'])
@@ -77,17 +86,6 @@ def ping_vk(message):
         tg_bot.send_message(message.chat.id, message_to_user)
 
 
-def gen_age_inline_keyboard():
-    markup = types.ReplyKeyboardMarkup()
-    markup.row_width = 4
-    markup.add(types.KeyboardButton("12-18"),
-               types.KeyboardButton("19-24"),
-               types.KeyboardButton("25-27"),
-               types.KeyboardButton("27+"),
-               )
-    return markup
-
-
 @tg_bot.message_handler(commands = ['register'])
 def register(message):
     # Send next step: name
@@ -96,13 +94,9 @@ def register(message):
                                   reply_markup = create_reply_keyboard(["12-18", "19-24", "25-27", "27+"]))
         tg_bot.register_next_step_handler(msg, process_age_step)
     else:
-        markup = types.InlineKeyboardMarkup()
-        markup.row_width = 2
-        markup.add(types.InlineKeyboardButton("Да!", callback_data = "cd_yes"),
-                   types.InlineKeyboardButton("Оставить всё как есть", callback_data = "cd_no"),
-                   )
+        keyboards = {"Да!": "cd_yes", "Оставить всё как есть": "cd_no"}
         tg_bot.send_message(message.chat.id, messages_templates["registered_user"]["re_register"],
-                            reply_markup = markup)
+                            reply_markup = create_inline_keyboard(keyboards))
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_yes" or call.data == "cd_no")
@@ -111,7 +105,7 @@ def handle_callback_re_auth(call):
         tg_bot.answer_callback_query(call.id, "Да")
         msg = tg_bot.send_message(call.message.chat.id,
                                   messages_templates["unregistered_user"]["registration_start"], reply_markup
-                                  = gen_age_inline_keyboard())
+                                  = create_reply_keyboard(["12-18", "19-24", "25-27", "27+"]))
         tg_bot.register_next_step_handler(msg, process_age_step)
     elif call.data == "cd_no":
         tg_bot.answer_callback_query(call.id, "Оставить всё как есть.")
@@ -135,22 +129,16 @@ def process_city_step(message, user_data):
     user_data["city"] = message.text
 
     # Send next step: salary
-    markup = types.ReplyKeyboardMarkup()
-    markup.row_width, markup.row_height = 1, 2
-    markup.add(types.KeyboardButton("Да, я зарабатываю сам и лично \nраспоряжаюсь своими доходами."),
-               types.KeyboardButton("Нет, сижу на шее у родителей.")
-               )
-
     msg = tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["salary_reg_step"],
-                              reply_markup = markup)
+                              reply_markup = create_reply_keyboard(
+                                  messages_templates["unregistered_user"]["salary_answers"]))
     tg_bot.register_next_step_handler(msg, process_salary_step, user_data)
 
 
 def process_salary_step(message, user_data):
     # TODO: enum
     user_data["salary"] = message.text
-    if message.text not in ["Да, я зарабатываю сам и лично \nраспоряжаюсь своими доходами.", "Нет, сижу на шее у "
-                                                                                             "родителей."]:
+    if message.text not in messages_templates["unregistered_user"]["salary_answers"]:
         tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["incorrect_input"],
                             reply_markup = keyboard_hider)
         return
@@ -166,32 +154,20 @@ def process_salary_step(message, user_data):
                         reply_markup = keyboard_hider)
 
     # Send inline markup with actions after registration
-    faq_markup = types.InlineKeyboardMarkup()
-    faq_markup.add(types.InlineKeyboardButton(text = "Прочитать FAQ", callback_data = "cd_faq"))
-    faq_markup.add(types.InlineKeyboardButton(text = "Разберусь походу", callback_data = "cd_cancel"))
+    keyboard = {"Прочитать FAQ": "cd_faq", "Разберусь походу": "cd_cancel"}
     tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["finish_registration"], reply_markup
-    = faq_markup)
+    = create_inline_keyboard(keyboard))
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_faq" or call.data == "cd_cancel")
 def handle_callback_faq(call):
     if call.data == "cd_faq":
         tg_bot.answer_callback_query(call.id, "Прочитать FAQ")
-        okay_markup = types.InlineKeyboardMarkup()
-        okay_markup.add(types.InlineKeyboardButton(text = "Прочитать FAQ", callback_data = "cd_faq"))
         tg_bot.send_message(call.message.chat.id, messages_templates["faq"], reply_markup = create_inline_keyboard(
-            {"Понятно! Продолжить" : "cd_next"}))
+            {"Понятно! Продолжить": "cd_next"}))
     elif call.data == "cd_no":
         tg_bot.answer_callback_query(call.id, "Оставить всё как есть.")
         tg_bot.send_message(call.message.chat.id, "Окей, оставим как есть.")
-
-
-# Creates a markup with link to auth url
-def gen_markup_for_vk_auth(chat_id):
-    markup = types.InlineKeyboardMarkup()
-    markup.row_width = 1
-    markup.add(types.InlineKeyboardButton(text = "VK авторизация", url = request_vk_auth_code(chat_id)))
-    return markup
 
 
 @tg_bot.message_handler(commands = ['help'])
