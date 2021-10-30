@@ -160,7 +160,8 @@ def process_salary_step(message, user_data):
     = create_inline_keyboard(keyboard))
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_faq" or call.data == "cd_faq_cancel")
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_faq" or call.data == "cd_faq_cancel" or call.data
+                                                   == "cd_next")
 def handle_callback_faq(call):
     if call.data == "cd_faq":
         tg_bot.answer_callback_query(call.id, "Прочитать FAQ")
@@ -170,6 +171,9 @@ def handle_callback_faq(call):
         tg_bot.answer_callback_query(call.id, "Не читать FAQ")
         keyboard = gen_markup_for_vk_auth(call.message.chat.id)
         keyboard.add(types.InlineKeyboardButton(text = "Я передумал! Хочу прочитать FAQ", callback_data = "cd_faq"))
+        tg_bot.send_message(call.message.chat.id, messages_templates["vk"]["vk_auth_message"], reply_markup = keyboard)
+    elif call.data == "cd_next":
+        keyboard = gen_markup_for_vk_auth(call.message.chat.id)
         tg_bot.send_message(call.message.chat.id, messages_templates["vk"]["vk_auth_message"], reply_markup = keyboard)
 
 
