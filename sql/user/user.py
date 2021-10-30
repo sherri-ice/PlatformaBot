@@ -42,7 +42,7 @@ def ping_vk(id):
         return UserApiErrors.UNREGISTERED_USER
     vk = get_vk_api(id)
     if vk is None:
-        return None
+        return UserApiErrors.VK_NOT_AUTH
     else:
         data = vk.users.get()
         if "deactivated" in data[0]:
