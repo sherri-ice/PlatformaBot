@@ -59,7 +59,7 @@ def cancel_vk_auth(call):
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_vk_reauth")
-def cancel_vk_auth(call):
+def vk_reauth(call):
     tg_bot.answer_callback_query(call.id, "Выбрать другой аккаунт")
     tg_bot.send_message(call.message.chat.id, messages_templates["vk"]["vk_auth_message"],
                         reply_markup = gen_markup_for_vk_auth(call.message.chat.id))
@@ -69,7 +69,7 @@ def after_vk_auth_in_server(tg_id):
     data = ping_vk(tg_id)
     if data is UserApiErrors.USER_BANNED:
         message_to_user = messages_templates["vk"]["vk_banned_profile"]
-        keyboard = {"Выбрать другой аккаунт": "cd_auth_vk"}
+        keyboard = {"Выбрать другой аккаунт": "cd_reauth_vk"}
     else:
         message_to_user = messages_templates["vk"]["vk_get_user_message"].format(data[0]["first_name"],
                                                                                  data[0]["last_name"], data[0]["id"])
