@@ -168,26 +168,26 @@ def end_reg(message, user_data):
     = create_inline_keyboard(keyboard))
 
 
-# @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_faq" or call.data == "cd_faq_cancel" or call.data
-#                                                    == "cd_next")
-# def handle_callback_faq(call):
-#     if call.data == "cd_faq":
-#         tg_bot.answer_callback_query(call.id, "Прочитать FAQ")
-#         tg_bot.edit_message_text(message_id = call.message.message_id, text = messages_templates["reg_faq"])
-#         tg_bot.edit_message_reply_markup(message_id = call.message.message_id,
-#                                          reply_markup = create_inline_keyboard({"Понятно! Продолжить": "cd_next"}))
-#     elif call.data == "cd_faq_cancel":
-#         tg_bot.answer_callback_query(call.id, "Не читать FAQ")
-#         keyboard = gen_markup_for_vk_auth(call.message.chat.id)
-#         keyboard.add(types.InlineKeyboardButton(text = "Я передумал! Хочу прочитать FAQ", callback_data = "cd_faq"))
-#         tg_bot.edit_message_text(message_id = call.message.message_id,
-#                                  text = messages_templates["vk"]["vk_auth_message"])
-#         tg_bot.edit_message_reply_markup(message_id = call.message.message_id, reply_markup = keyboard)
-#     elif call.data == "cd_next":
-#         keyboard = gen_markup_for_vk_auth(call.message.chat.id)
-#         tg_bot.edit_message_text(message_id = call.message.message_id,
-#                                  text = messages_templates["vk"]["vk_auth_message"])
-#         tg_bot.edit_message_reply_markup(message_id = call.message.message_id, reply_markup = keyboard)
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_faq" or call.data == "cd_faq_cancel" or call.data
+                                                   == "cd_next")
+def handle_callback_faq(call):
+    if call.data == "cd_faq":
+        tg_bot.answer_callback_query(call.id, "Прочитать FAQ")
+        tg_bot.edit_message_text(message_id = call.message.message_id, text = messages_templates["reg_faq"])
+        tg_bot.edit_message_reply_markup(message_id = call.message.message_id,
+                                         reply_markup = create_inline_keyboard({"Понятно! Продолжить": "cd_next"}))
+    elif call.data == "cd_faq_cancel":
+        tg_bot.answer_callback_query(call.id, "Не читать FAQ")
+        keyboard = gen_markup_for_vk_auth(call.message.chat.id)
+        keyboard.add(types.InlineKeyboardButton(text = "Я передумал! Хочу прочитать FAQ", callback_data = "cd_faq"))
+        tg_bot.edit_message_text(message_id = call.message.message_id,
+                                 text = messages_templates["vk"]["vk_auth_message"])
+        tg_bot.edit_message_reply_markup(message_id = call.message.message_id, reply_markup = keyboard)
+    elif call.data == "cd_next":
+        keyboard = gen_markup_for_vk_auth(call.message.chat.id)
+        tg_bot.edit_message_text(message_id = call.message.message_id,
+                                 text = messages_templates["vk"]["vk_auth_message"])
+        tg_bot.edit_message_reply_markup(message_id = call.message.message_id, reply_markup = keyboard)
 
 
 @tg_bot.message_handler(commands = ['help'])
