@@ -36,7 +36,7 @@ def create_reply_keyboard(data: list):
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_reg")
 def callback_reg(call):
-    tg_bot.register_next_step_handler(call.message, command_register)
+    tg_bot.set_state(call.message.chat.id, "reg")
 
 
 @tg_bot.message_handler(commands = ['start'])
@@ -48,9 +48,6 @@ def command_send_welcome(message):
     else:
         message_to_user, keyboard = messages_templates["unregistered_user"]["start_message"], create_inline_keyboard(
             buttons["reg"])
-        # sets state to register
-        tg_bot.set_state(message.chat.id, "reg")
-
     tg_bot.send_message(message.chat.id, message_to_user, reply_markup = keyboard)
 
 
