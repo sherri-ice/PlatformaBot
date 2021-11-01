@@ -3,8 +3,7 @@ from sql.database import db, apply_db_changes
 from vk_auth import authorize_vk_session
 from loader import VK_API_APP_ID, VK_CLIENT_SECRET
 from enum import Enum
-
-from employee import Employee
+from sqlalchemy.dialects.mysql import INTEGER
 
 
 def register_vk_token(code: str, user_id: int):
@@ -69,4 +68,10 @@ class UserTable(db.Model):
     appeals = db.Column(db.Integer, default = 0)
     banned = db.Column(db.Boolean, default = False)
     employee_id = db.Column(db.Integer, db.ForeignKey('employee.id'))
-    employee = db.relationship("Employee", backref=db.backref("employee", uselist=False))
+    employee = db.relationship("Employee", backref = db.backref("employee", uselist = False))
+
+
+class Employee(db.Model):
+    __tablename__ = 'employee'
+    id = db.Column(db.Integer, primary_key = True)
+    balance = db.Column(INTEGER(usigned = True))
