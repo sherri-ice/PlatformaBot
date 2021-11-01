@@ -67,10 +67,20 @@ class UserTable(db.Model):
     appeals = db.Column(db.Integer, default = 0)
     banned = db.Column(db.Boolean, default = False)
     employee_id = db.Column(db.Integer, db.ForeignKey('employee.id'))
+    customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'))
     employee = db.relationship("Employee", backref = db.backref("employee", uselist = False))
+    customer = db.relationship("Customer", backref = db.backref("customer", uselist = False))
 
 
 class Employee(db.Model):
     __tablename__ = 'employee'
+    id = db.Column(db.Integer, primary_key = True)
+    balance = db.Column(db.Integer)
+    vk_access_token = db.Column(db.String(255))
+    insta_access_token = db.Column(db.String(255))
+
+
+class Customer(db.Model):
+    __tablename__ = 'customer'
     id = db.Column(db.Integer, primary_key = True)
     balance = db.Column(db.Integer)
