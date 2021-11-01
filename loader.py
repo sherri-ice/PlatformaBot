@@ -23,5 +23,7 @@ def load_messages():
         return data
 
 
-if __name__ == '__main__':
-    print(project_path)
+def load_buttons():
+    with open(f'{project_path}/buttons.json') as json_file:
+        data = json.load(json_file)
+        return data

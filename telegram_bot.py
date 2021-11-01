@@ -1,6 +1,4 @@
 import logging
-import time
-
 import telebot
 from telebot import types
 from vk_auth import request_vk_auth_code
@@ -8,9 +6,10 @@ from sql.database import db, apply_db_changes
 from sql.user.user import get_user_by_id, add_new_user, get_vk_api, delete_user, UserApiErrors, ping_vk
 
 from loader import TELEGRAM_TOKEN
-from loader import load_messages
+from loader import load_messages, load_buttons
 
 messages_templates = load_messages()
+buttons = load_buttons()
 
 logger = telebot.logger
 telebot.logger.setLevel(logging.INFO)
@@ -39,11 +38,11 @@ def command_send_welcome(message):
     if user is not None:
         tg_bot.send_message(message.chat.id, messages_templates["registered_user"]["start_message"],
                             # adds an inline button to register
-                            reply_markup = create_inline_keyboard({"Регистрация": "cd_reg"}))
+                            reply_markup = create_inline_keyboard(buttons["reg"]))
     else:
         tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["start_message"],
                             # adds an inline button to see profile
-                            reply_markup = create_inline_keyboard({"Мой профиль": "cd_profile"}))
+                            reply_markup = create_inline_keyboard(buttons["my_profile"]))
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_reg")
