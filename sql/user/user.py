@@ -3,7 +3,6 @@ from sql.database import db, apply_db_changes
 from vk_auth import authorize_vk_session
 from loader import VK_API_APP_ID, VK_CLIENT_SECRET
 from enum import Enum
-from sqlalchemy.dialects.mysql import INTEGER
 
 
 def register_vk_token(code: str, user_id: int):
@@ -74,4 +73,4 @@ class UserTable(db.Model):
 class Employee(db.Model):
     __tablename__ = 'employee'
     id = db.Column(db.Integer, primary_key = True)
-    balance = db.Column(INTEGER(usigned = True))
+    balance = db.Column(db.Integer)
