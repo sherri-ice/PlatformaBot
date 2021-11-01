@@ -36,8 +36,7 @@ def create_reply_keyboard(data: list):
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_reg")
 def callback_reg(call):
-    tg_bot.answer_callback_query(call.id, "Рег")
-    command_register(call.message)
+    tg_bot.set_state(call.message.chat.id, "reg")
 
 
 @tg_bot.message_handler(commands = ['start'])
@@ -60,17 +59,16 @@ def command_register(message):
     # Send next step: name
     if get_user_by_id(message.chat.id) is None:
         tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["registration_start"],
-                            reply_markup = create_reply_keyboard(["12-18", "19-24", "25-27", "27+"]))
+                            reply_markup = create_reply_keyboard(buttons["ages"]))
         tg_bot.set_state(message.chat.id, "get_age")
     else:
-        keyboards = {"Да!": "cd_reauth_yes", "Оставить всё как есть": "cd_reauth_no"}
         tg_bot.send_message(message.chat.id, messages_templates["registered_user"]["re_register"],
-                            reply_markup = create_inline_keyboard(keyboards))
+                            reply_markup = create_inline_keyboard(buttons["re_register"]))
 
 
 @tg_bot.message_handler(state = "get_age")
 def process_age_step(message):
-    if message.text not in ["12-18", "19-24", "25-27", "27+"]:
+    if message.text not in buttons["ages"]:
         tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["incorrect_input"],
                             reply_markup = keyboard_hider)
         return
@@ -105,7 +103,7 @@ def process_salary_step(message):
 
 
 @tg_bot.message_handler(state = "end_reg")
-def end_reg(message, user_data):
+def end_reg(message):
     # End registration:
     if get_user_by_id(message.chat.id) is not None:
         delete_user(message.chat.id)

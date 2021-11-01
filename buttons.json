@@ -1,4 +1,18 @@
 {
-  "reg": {"✅Регистрация" : "cd_reg"},
-  "my_profile": {"\uD83D\uDC65 Мой профиль":  "cd_profile"}
+  "reg": {
+    "✅Регистрация": "cd_reg"
+  },
+  "my_profile": {
+    "\uD83D\uDC65 Мой профиль": "cd_profile"
+  },
+  "ages": [
+    "12-18",
+    "19-24",
+    "25-27",
+    "27+"
+  ],
+  "re_register": {
+    "Да!": "cd_reauth_yes",
+    "Оставить всё как есть": "cd_reauth_no"
+  }
 }
