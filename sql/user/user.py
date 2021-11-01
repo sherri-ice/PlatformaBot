@@ -4,6 +4,8 @@ from vk_auth import authorize_vk_session
 from loader import VK_API_APP_ID, VK_CLIENT_SECRET
 from enum import Enum
 
+from employee import Employee
+
 
 def register_vk_token(code: str, user_id: int):
     if get_user_by_id(user_id) is None:
