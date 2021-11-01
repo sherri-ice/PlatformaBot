@@ -38,10 +38,30 @@ def command_send_welcome(message):
     user = get_user_by_id(message.chat.id)
     if user is not None:
         tg_bot.send_message(message.chat.id, messages_templates["registered_user"]["start_message"],
-                            reply_markup = keyboard_hider)
+                            # adds an inline button to register
+                            reply_markup = create_inline_keyboard({"Регистрация": "cd_reg"}))
     else:
         tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["start_message"],
-                            reply_markup = keyboard_hider)
+                            # adds an inline button to see profile
+                            reply_markup = create_inline_keyboard({"Мой профиль": "cd_profile"}))
+
+
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_reg")
+def callback_reg(call):
+    tg_bot.register_next_step_handler(call.message, command_register)
+
+
+@tg_bot.message_handler(commands = ['register'])
+def command_register(message):
+    # Send next step: name
+    if get_user_by_id(message.chat.id) is None:
+        msg = tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["registration_start"],
+                                  reply_markup = create_reply_keyboard(["12-18", "19-24", "25-27", "27+"]))
+        tg_bot.register_next_step_handler(msg, process_age_step)
+    else:
+        keyboards = {"Да!": "cd_reauth_yes", "Оставить всё как есть": "cd_reauth_no"}
+        tg_bot.send_message(message.chat.id, messages_templates["registered_user"]["re_register"],
+                            reply_markup = create_inline_keyboard(keyboards))
 
 
 # Creates a markup with link to auth url
@@ -113,19 +133,6 @@ def command_ping_vk(message):
                                                                                  data[0]["last_name"], data[0]["id"])
         tg_bot.send_message(message.chat.id, message_to_user,
                             reply_markup = create_inline_keyboard({"Сменить профиль": "cd_vk_reauth"}))
-
-
-@tg_bot.message_handler(commands = ['register'])
-def command_register(message):
-    # Send next step: name
-    if get_user_by_id(message.chat.id) is None:
-        msg = tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["registration_start"],
-                                  reply_markup = create_reply_keyboard(["12-18", "19-24", "25-27", "27+"]))
-        tg_bot.register_next_step_handler(msg, process_age_step)
-    else:
-        keyboards = {"Да!": "cd_reauth_yes", "Оставить всё как есть": "cd_reauth_no"}
-        tg_bot.send_message(message.chat.id, messages_templates["registered_user"]["re_register"],
-                            reply_markup = create_inline_keyboard(keyboards))
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_reauth_yes" or call.data == "cd_reauth_no")
