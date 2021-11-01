@@ -57,8 +57,14 @@ class UserApiErrors(Enum):
 
 class UserTable(db.Model):
     __tablename__ = 'user'
-    id = db.Column(db.Integer, primary_key = True, nullable = False)
-    vk_token = db.Column(db.String(255))
+    id = db.Column(db.Integer, primary_key = True, nullable = False, autoincrement = True)
+    tg_id = db.Column(db.Integer)
+    # For target
     age = db.Column(db.String(255))
     salary = db.Column(db.String(255))
     city = db.Column(db.String(255))
+    #
+    appeals = db.Column(db.Integer, default = 0)
+    banned = db.Column(db.Boolean, default = False)
+    employee_id = db.Column(db.Integer, db.ForeignKey('employee.id'))
+    employee = db.relationship("Employee", backref=db.backref("employee", uselist=False))
