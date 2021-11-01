@@ -16,9 +16,9 @@ def get_user_by_id(user_id):
     return UserTable.query.filter_by(tg_id = user_id).first()
 
 
-def add_new_user(user_id, age = None, salary = None, city = None):
-    db.session.add(UserTable(id = user_id, age = age, salary = salary, city = city))
-    return get_user_by_id(user_id)
+def add_new_user(tg_id, age = None, salary = None, city = None):
+    db.session.add(UserTable(tg_id = tg_id, age = age, salary = salary, city = city))
+    return get_user_by_id(tg_id)
 
 
 def delete_user(user_id):
