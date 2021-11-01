@@ -47,7 +47,8 @@ def command_send_welcome(message):
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_reg")
 def callback_reg(call):
-    tg_bot.register_next_step_handler(call.message, command_register)
+    tg_bot.answer_callback_query(call.id, "Рег")
+    command_register(call.message)
 
 
 @tg_bot.message_handler(commands = ['register'])
