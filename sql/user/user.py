@@ -67,6 +67,8 @@ class Employee(db.Model):
     def get_vk_api(self, user_id):
         if self.get_employee_by_id(user_id) is None:
             return None
+        if self.get_employee_by_id(user_id).vk_access_token is None:
+            return None
         try:
             vk_session = vk_api.VkApi(app_id = VK_API_APP_ID, client_secret = VK_CLIENT_SECRET,
                                       token = self.get_employee_by_id(
