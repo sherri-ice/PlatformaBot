@@ -156,6 +156,16 @@ def command_choose_role(message):
         buttons["choose_type_of_account"]))
 
 
+def show_employee_profile(user_id, tg_id):
+    employee = employee_table.get_employee_by_id(user_id)
+    message = messages_templates["employee"]["profile"].format("Да" if employee.vk_tasks else "Нет",
+                                                               "Да" if employee.insta_tasks else "Нет",
+                                                               "",
+                                                               "",
+                                                               employee.balance)
+    tg_bot.send_message(tg_id, message)
+
+
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_employee")
 def switch_to_employee(call):
     user = user_table.get_user_by_tg_id(user_id = call.from_user.id)
@@ -165,6 +175,7 @@ def switch_to_employee(call):
         employee = employee_table.get_employee_by_id(call.from_user.id)
     tg_bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
                              text = messages_templates["chosen_role"].format("исполнитель."))
+    show_employee_profile(user.id, user.tg_id)
 
     # Check if vk and insta are registered
     if employee.vk_tasks and employee.vk_access_token is None:
