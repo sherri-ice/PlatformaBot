@@ -109,8 +109,8 @@ def process_end_reg(message):
     with tg_bot.retrieve_data(message.chat.id) as data:
         user = add_new_user(tg_id = message.chat.id, age = data["age"], salary = data['salary'], city = data["city"])
     apply_db_changes()
-    tg_bot.send_message(message.chat.id, messages_templates["get_data_register_finished"].format(user.age, user.city),
-                        reply_markup = keyboard_hider)
+    tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"][
+        "get_data_register_finished"].format(user.age, user.city), reply_markup = keyboard_hider)
 
     tg_bot.delete_state(message.chat.id)
     # Send inline markup with actions after registration
