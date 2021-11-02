@@ -3,7 +3,7 @@ import telebot
 from telebot import types
 from vk_auth import request_vk_auth_code
 from sql.database import db, apply_db_changes
-from sql.user.user import get_user_by_id, add_new_user, get_vk_api, delete_user, UserApiErrors, ping_vk
+from sql.user.user import get_user_by_tg_id, add_new_user, get_vk_api, delete_user, UserApiErrors, ping_vk
 
 from loader import TELEGRAM_TOKEN
 from loader import load_messages, load_buttons
@@ -36,7 +36,7 @@ def create_reply_keyboard(data: list):
 
 @tg_bot.message_handler(commands = ['start'])
 def command_send_welcome(message):
-    user = get_user_by_id(message.chat.id)
+    user = get_user_by_tg_id(message.chat.id)
     if user is not None:
         message_to_user, keyboard = messages_templates["registered_user"]["start_message"], create_inline_keyboard(
             buttons["my_profile"])
@@ -53,7 +53,7 @@ def command_register(call):
     '''
     message = call.message
     # Send next step: name
-    if get_user_by_id(message.chat.id) is None:
+    if get_user_by_tg_id(message.chat.id) is None:
         tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["registration_start"],
                             reply_markup = create_reply_keyboard(buttons["ages"]))
         tg_bot.set_state(message.chat.id, "get_age")
@@ -102,10 +102,13 @@ def process_salary_step(message):
 
 
 @tg_bot.message_handler(state = "end_reg")
-def end_reg(message):
+def process_end_reg(message):
+    # DEBUG
+    tg_bot.send_message(message.chat.id, "Hey")
     # End registration:
-    if get_user_by_id(message.chat.id) is not None:
+    if get_user_by_tg_id(message.chat.id) is not None:
         delete_user(message.chat.id)
+
     with tg_bot.retrieve_data(message.chat.id) as data:
         user = add_new_user(tg_id = message.chat.id, age = data["age"], salary = data[
             "salary"], city = data["city"])
@@ -160,7 +163,7 @@ def after_vk_auth_in_server(tg_id):
 
 @tg_bot.message_handler(commands = ['vk_auth'])
 def command_vk_auth_register(message):
-    if get_user_by_id(message.chat.id) is None:
+    if get_user_by_tg_id(message.chat.id) is None:
         tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["request_for_registration"])
         return
     # If error while auth appears:
@@ -248,12 +251,12 @@ def command_faq(message):
 
 
 # Handle all other messages from unregistered users
-@tg_bot.message_handler(func = lambda message: get_user_by_id(message.chat.id) is None, content_types = ['text'])
+@tg_bot.message_handler(func = lambda message: get_user_by_tg_id(message.chat.id) is None, content_types = ['text'])
 def echo_message(message):
     tg_bot.reply_to(message, messages_templates["unregistered_user"]["request_for_registration"])
 
 
-@tg_bot.message_handler(func = lambda message: get_user_by_id(message.chat.id) is not None, content_types = ['text'])
+@tg_bot.message_handler(func = lambda message: get_user_by_tg_id(message.chat.id) is not None, content_types = ['text'])
 def echo_message(message):
     tg_bot.reply_to(message, "В разработке! :)")
 

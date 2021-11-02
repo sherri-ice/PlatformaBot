@@ -6,19 +6,19 @@ from enum import Enum
 
 
 def register_vk_token(code: str, user_id: int):
-    if get_user_by_id(user_id) is None:
+    if get_user_by_tg_id(user_id) is None:
         return None
-    get_user_by_id(user_id).vk_token = authorize_vk_session(code, user_id).token['access_token']
+    get_user_by_tg_id(user_id).vk_token = authorize_vk_session(code, user_id).token['access_token']
     apply_db_changes()
 
 
-def get_user_by_id(user_id):
+def get_user_by_tg_id(user_id):
     return UserTable.query.filter_by(tg_id = user_id).first()
 
 
 def add_new_user(tg_id, age = None, salary = None, city = None):
     db.session.add(UserTable(tg_id = tg_id, age = age, salary = salary, city = city))
-    return get_user_by_id(tg_id)
+    return get_user_by_tg_id(tg_id)
 
 
 def delete_user(user_id):
@@ -27,10 +27,10 @@ def delete_user(user_id):
 
 
 def get_vk_api(user_id):
-    if get_user_by_id(user_id) is None:
+    if get_user_by_tg_id(user_id) is None:
         return None
     try:
-        vk_session = vk_api.VkApi(app_id = VK_API_APP_ID, client_secret = VK_CLIENT_SECRET, token = get_user_by_id(
+        vk_session = vk_api.VkApi(app_id = VK_API_APP_ID, client_secret = VK_CLIENT_SECRET, token = get_user_by_tg_id(
             user_id).vk_token)
     except vk_api.exceptions.ApiError as error:
         return None
@@ -38,9 +38,9 @@ def get_vk_api(user_id):
 
 
 def ping_vk(user_id):
-    if get_user_by_id(user_id) is None:
+    if get_user_by_tg_id(user_id) is None:
         return UserApiErrors.UNREGISTERED_USER
-    if get_user_by_id(user_id).vk_token is None:
+    if get_user_by_tg_id(user_id).vk_token is None:
         return UserApiErrors.VK_NOT_AUTH
     vk = get_vk_api(user_id)
     data = vk.users.get()
