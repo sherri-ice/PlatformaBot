@@ -158,7 +158,7 @@ def get_employee_profile_info(user_id):
     message = messages_templates["employee"]["profile"].format("no",
                                                                employee.insta_access_token,
                                                                employee.balance)
-    return message
+    return message, keyboard
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_employee")
@@ -169,7 +169,8 @@ def switch_to_employee(call):
         employee_table.add_employee(id = user.id)
     tg_bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
                              text = messages_templates["chosen_role"].format("исполнитель."))
-    tg_bot.send_message(user.tg_id, get_employee_profile_info(user.id))
+    employee_data, keyboard = get_employee_profile_info(user.id)
+    tg_bot.send_message(user.tg_id, employee_data, reply_markup = keyboard)
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_vk_auth")
@@ -216,8 +217,8 @@ def after_vk_auth_in_server(tg_id):
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_profile")
 def callback_profile(call):
     user = user_table.get_user_by_tg_id(call.from_user.id)
-    message = messages_templates["registered_user"]["profile"].format(get_employee_profile_info(user.id),
-                                                                      "Профиль заказчика:")
+    employee_data, _ = get_employee_profile_info(user.id)
+    message = messages_templates["registered_user"]["profile"].format("Профиль заказчика:")
     tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id, text = message)
     tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id, reply_markup
     = create_inline_keyboard(buttons["profile_buttons"]))
