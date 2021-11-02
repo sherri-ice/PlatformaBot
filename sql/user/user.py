@@ -4,8 +4,6 @@ import vk_api
 from sql.database import db, apply_db_changes
 from vk_auth import authorize_vk_session
 from loader import VK_API_APP_ID, VK_CLIENT_SECRET
-from sqlalchemy import func
-from geoalchemy import *
 
 
 class UserTable(db.Model):
@@ -15,7 +13,7 @@ class UserTable(db.Model):
     # For target
     age = db.Column(db.String(255))
     salary = db.Column(db.String(255))
-    city = GeometryColumn(Point(2))
+    city = db.Column(db.String(255))
     #
     appeals = db.Column(db.Integer, default = 0)
     banned = db.Column(db.Boolean, default = False)
@@ -48,9 +46,6 @@ class UserTable(db.Model):
     def delete_user(user_id):
         UserTable.query.filter_by(id = user_id).delete()
         apply_db_changes()
-
-
-GeometryDDL(UserTable.__table__)
 
 
 class Employee(db.Model):
