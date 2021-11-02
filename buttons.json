@@ -42,7 +42,8 @@
     "Тех. поддержка": "cd_technical_help"
   },
   "employee_vk_auth_confirmation": {
-    "Сменить аккаунт": "cd_vk_auth"
+    "Сменить аккаунт": "cd_vk_auth",
+    "Вернуться": "cd_employee"
   },
   "back_to_profile": {
     "Назад": "cd_profile"
