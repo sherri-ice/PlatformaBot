@@ -163,12 +163,8 @@ def show_employee_profile(user_id, tg_id):
         keyboard.add(types.InlineKeyboardButton("VK auth", callback_data = "cd_vk_auth"))
     if employee.insta_access_token is None:
         keyboard.add(types.InlineKeyboardButton("Insta auth", callback_data = "cd_vk_auth"))
-    message = messages_templates["employee"]["profile"].format("Да" if employee.vk_tasks else "Нет. Нужно привязать "
-                                                                                              "аккаунт",
-                                                               "Да" if employee.insta_tasks else "Нет. Нужно "
-                                                                                                 "привязать аккаунт",
-                                                               "",
-                                                               "",
+    message = messages_templates["employee"]["profile"].format(employee.vk_access_token,
+                                                               employee.insta_access_token,
                                                                employee.balance)
     tg_bot.send_message(tg_id, message, reply_markup = keyboard)
 

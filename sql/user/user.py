@@ -80,8 +80,6 @@ class Employee(db.Model):
     __tablename__ = 'employee'
     id = db.Column(db.Integer, primary_key = True)
     balance = db.Column(db.Integer)
-    vk_tasks = db.Column(db.Boolean, default = True)
-    insta_tasks = db.Column(db.Boolean, default = True)
     vk_access_token = db.Column(db.String(255))
     insta_access_token = db.Column(db.String(255))
 
