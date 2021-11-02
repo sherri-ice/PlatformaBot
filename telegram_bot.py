@@ -167,11 +167,35 @@ def switch_to_employee(call):
                              text = messages_templates["chosen_role"].format("исполнитель."))
 
     # Check if vk and insta are registered
-    if employee.vk_access_token is None:
+    if employee.vk_tasks and employee.vk_access_token is None:
         tg_bot.send_message(call.from_user.id, messages_templates["vk"]["vk_not_authorized"],
-                            reply_markup = gen_markup_for_vk_auth(employee.id))
-    if employee.insta_access_token is None:
+                            reply_markup = create_inline_keyboard({"Auth vk": "cd_vk_auth", "Не хочу выполнять "
+                                                                                            "задания VK":
+                                "cd_reject_vk_tasks"}))
+    if employee.insta_tasks and employee.insta_access_token is None:
         tg_bot.send_message(call.from_user.id, "Insta is not auth")
+
+
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_vk_auth")
+def callback_vk_auth(call):
+    user = user_table.get_user_by_tg_id(call.from_user.id)
+    request_vk_auth(user.id, user.tg_id)
+
+
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_reject_vk_tasks")
+def callback_vk_tasks_reject(call):
+    user = user_table.get_user_by_tg_id(call.from_user.id)
+    employee = employee_table.get_employee_by_id(user.id)
+    employee.vk_tasks = False
+    apply_db_changes()
+
+
+def request_vk_auth(user_id, tg_id, additional_buttons = None):
+    keyboard = gen_markup_for_vk_auth(user_id)
+    if additional_buttons is not None:
+        for button in additional_buttons:
+            keyboard.add(button)
+    tg_bot.send_message(tg_id, messages_templates["vk"]["vk_not_authorized"], reply_markup = keyboard)
 
 
 def gen_markup_for_vk_auth(user_id):
@@ -179,17 +203,13 @@ def gen_markup_for_vk_auth(user_id):
     markup.row_width = 1
 
     markup.add(types.InlineKeyboardButton(text = "VK авторизация", url = request_vk_auth_code(user_id)))
-    markup.add(types.InlineKeyboardButton(text = "Привяжу потом", callback_data = "cd_vk_auth_cancel"))
     return markup
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_vk_auth_cancel")
 def cancel_vk_auth(call):
-    keyboard = {"Я готов!": "cd_user_ready"}
     tg_bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
                              text = messages_templates["vk"]["vk_cancel_auth"])
-    tg_bot.edit_message_reply_markup(chat_id = call.message.chat.id, message_id = call.message.message_id,
-                                     reply_markup = create_inline_keyboard(keyboard))
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_reauth_vk")
