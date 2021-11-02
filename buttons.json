@@ -23,7 +23,11 @@
     "Понятно! Продолжить": "cd_user_ready"
   },
   "user_ready": {
-    "Я готов!" : "cd_user_ready",
+    "Я готов!": "cd_user_ready",
     "Я передумал! Хочу прочитать FAQ": "cd_faq"
+  },
+  "choose_type_of_account": {
+    "Выбрать исполнителя": "cd_employee",
+    "Выбрать заказчика": "cd_customer"
   }
 }
