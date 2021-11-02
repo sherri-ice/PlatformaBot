@@ -14,7 +14,7 @@ class Point(UserDefinedType):
         return "POINT SRID 4326"
 
     def bind_expression(self, bindvalue):
-        return func.ST_GeomFromText(bindvalue, 4326, type_ = self)
+        return func.ST_GeomFromText(bindvalue, type_ = self)
 
     def column_expression(self, col):
         return func.ST_AsText(col, type_ = self)
