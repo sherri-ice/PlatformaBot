@@ -152,7 +152,7 @@ def user_ready(call):
 
 @tg_bot.message_handler(commands = ['choose_role'])
 def command_choose_role(message):
-    tg_bot.send_message(message.chat.id, messages_templates["is_user_ready"], reply_markup = create_inline_keyboard(
+    tg_bot.send_message(message.chat.id, messages_templates["choose_role"], reply_markup = create_inline_keyboard(
         buttons["choose_type_of_account"]))
 
 
