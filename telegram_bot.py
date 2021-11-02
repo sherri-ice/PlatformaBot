@@ -34,14 +34,6 @@ def create_reply_keyboard(data: list):
     return markup
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_reg")
-def callback_reg(call):
-    tg_bot.answer_callback_query(call.id, "Рег")
-    message = tg_bot.current_states._states if tg_bot.current_states._states is None else "empty"
-    tg_bot.send_message(call.from_user.id, message)
-    tg_bot.register_next_step_handler(call.message, command_register)
-
-
 @tg_bot.message_handler(commands = ['start'])
 def command_send_welcome(message):
     user = get_user_by_id(message.chat.id)
@@ -54,8 +46,9 @@ def command_send_welcome(message):
     tg_bot.send_message(message.chat.id, message_to_user, reply_markup = keyboard)
 
 
-@tg_bot.message_handler(state = "reg")
-def command_register(message):
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_reg")
+def command_register(call):
+    message = call.message
     # Send next step: name
     if get_user_by_id(message.chat.id) is None:
         tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["registration_start"],
