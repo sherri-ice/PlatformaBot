@@ -1,8 +1,23 @@
+from datetime import datetime
+
 import vk_api
 from sql.database import db, apply_db_changes
 from vk_auth import authorize_vk_session
 from loader import VK_API_APP_ID, VK_CLIENT_SECRET
-from geoalchemy2 import Geometry
+from sqlalchemy import func
+from sqlalchemy.types import UserDefinedType
+
+
+# Just don't touch it :)
+class Point(UserDefinedType):
+    def get_col_spec(self):
+        return "POINT SRID 4326"
+
+    def bind_expression(self, bindvalue):
+        return func.ST_GeomFromText(bindvalue, 4326, type_ = self)
+
+    def column_expression(self, col):
+        return func.ST_AsText(col, type_ = self)
 
 
 class UserTable(db.Model):
@@ -12,6 +27,7 @@ class UserTable(db.Model):
     # For target
     age = db.Column(db.String(255))
     salary = db.Column(db.String(255))
+    city = db.Column(Point)
     #
     appeals = db.Column(db.Integer, default = 0)
     banned = db.Column(db.Boolean, default = False)
@@ -19,8 +35,7 @@ class UserTable(db.Model):
     customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'))
     employee = db.relationship("Employee", backref = db.backref("employee", uselist = False))
     customer = db.relationship("Customer", backref = db.backref("customer", uselist = False))
-    registered_data = db.Column(db.Date)
-    city = db.Column(Geometry("POINT"))
+    registered_date = db.Column(db.Date, default = datetime.now())
 
     def register_vk_token(self, code: str, user_id: int):
         if self.get_user_by_tg_id(user_id) is None:
