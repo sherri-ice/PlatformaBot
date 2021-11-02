@@ -159,6 +159,10 @@ def command_choose_role(message):
 def show_employee_profile(user_id, tg_id):
     employee = employee_table.get_employee_by_id(user_id)
     keyboard = create_inline_keyboard(buttons["employee_profile_buttons"])
+    if employee.vk_access_token is None:
+        keyboard.add(types.InlineKeyboardButton("VK auth", callback_data = "cd_vk_auth"))
+    if employee.insta_access_token is None:
+        keyboard.add(types.InlineKeyboardButton("Insta auth", callback_data = "cd_vk_auth"))
     message = messages_templates["employee"]["profile"].format("Да" if employee.vk_tasks else "Нет. Нужно привязать "
                                                                                               "аккаунт",
                                                                "Да" if employee.insta_tasks else "Нет. Нужно "
