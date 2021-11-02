@@ -5,19 +5,7 @@ from sql.database import db, apply_db_changes
 from vk_auth import authorize_vk_session
 from loader import VK_API_APP_ID, VK_CLIENT_SECRET
 from sqlalchemy import func
-from sqlalchemy.types import UserDefinedType
-
-
-# Just don't touch it :)
-class Point(UserDefinedType):
-    def get_col_spec(self):
-        return "POINT SRID 4326"
-
-    def bind_expression(self, bindvalue):
-        return func.ST_GeomFromText(bindvalue, type_ = self)
-
-    def column_expression(self, col):
-        return func.ST_AsText(col, type_ = self)
+from geoalchemy import *
 
 
 class UserTable(db.Model):
@@ -27,7 +15,7 @@ class UserTable(db.Model):
     # For target
     age = db.Column(db.String(255))
     salary = db.Column(db.String(255))
-    city = db.Column(Point)
+    city = GeometryColumn(Point(2))
     #
     appeals = db.Column(db.Integer, default = 0)
     banned = db.Column(db.Boolean, default = False)
@@ -60,6 +48,9 @@ class UserTable(db.Model):
     def delete_user(user_id):
         UserTable.query.filter_by(id = user_id).delete()
         apply_db_changes()
+
+
+GeometryDDL(UserTable.__table__)
 
 
 class Employee(db.Model):
