@@ -103,14 +103,12 @@ def process_salary_step(message):
 
 @tg_bot.message_handler(state = "end_reg")
 def process_end_reg(message):
-    # DEBUG
-    tg_bot.send_message(message.chat.id, "Hey")
     # End registration:
     if get_user_by_tg_id(message.chat.id) is not None:
         delete_user(message.chat.id)
 
     with tg_bot.retrieve_data(message.chat.id) as data:
-        user = add_new_user(tg_id = message.chat.id, age = data["age"], city = data["city"])
+        user = add_new_user(tg_id = message.chat.id, age = data["age"], salary = data['salary'], city = data["city"])
     apply_db_changes()
     tg_bot.send_message(message.chat.id, f"Супер! \nТвой возраст: {user.age} \nГород: "
                                          f"{user.city}",
