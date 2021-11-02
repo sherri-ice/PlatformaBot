@@ -153,9 +153,9 @@ def user_ready(call):
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_employee")
 def switch_to_employee(call):
-    employee = employee_table.get_employee_by_id(call.from_user.id)
+    user = user_table.get_user_by_tg_id(user_id = call.from_user.id)
+    employee = employee_table.get_employee_by_id(user.id)
     if employee is None:
-        user = user_table.get_user_by_tg_id(user_id = call.from_user.id)
         employee_table.add_employee(id = user.id)
         employee = employee_table.get_employee_by_id(call.from_user.id)
     tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id,
