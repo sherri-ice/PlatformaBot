@@ -91,6 +91,9 @@ class Employee(db.Model):
         user_table.get_user_by_id(id).employee_id = id
         apply_db_changes()
 
+    def get_employee_by_id(self, user_id):
+        return Employee.query.filter_by(id = user_id).first()
+
 
 class Customer(db.Model):
     __tablename__ = 'customer'
