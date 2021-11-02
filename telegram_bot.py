@@ -168,16 +168,17 @@ def switch_to_employee(call):
 
     # Check if vk and insta are registered
     if employee.vk_access_token is None:
-        tg_bot.send_message(call.from_user.id, "Vk is not auth")
+        tg_bot.send_message(call.from_user.id, messages_templates["vk"]["vk_not_authorized"],
+                            reply_markup = gen_markup_for_vk_auth(employee.id))
     if employee.insta_access_token is None:
         tg_bot.send_message(call.from_user.id, "Insta is not auth")
 
 
-def gen_markup_for_vk_auth(chat_id):
+def gen_markup_for_vk_auth(user_id):
     markup = types.InlineKeyboardMarkup()
     markup.row_width = 1
 
-    markup.add(types.InlineKeyboardButton(text = "VK авторизация", url = request_vk_auth_code(chat_id)))
+    markup.add(types.InlineKeyboardButton(text = "VK авторизация", url = request_vk_auth_code(user_id)))
     markup.add(types.InlineKeyboardButton(text = "Привяжу потом", callback_data = "cd_vk_auth_cancel"))
     return markup
 
