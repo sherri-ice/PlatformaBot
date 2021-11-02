@@ -105,7 +105,6 @@ def process_city_step(message):
 @tg_bot.message_handler(state = "end_reg")
 def process_end_reg(message):
     # DEBUG
-    tg_bot.delete_state(message.chat.id)
     tg_bot.send_message(message.chat.id, "Hey")
     # End registration:
     if get_user_by_tg_id(message.chat.id) is not None:
@@ -118,6 +117,7 @@ def process_end_reg(message):
                                          f"{user.city}",
                         reply_markup = keyboard_hider)
 
+    tg_bot.delete_state(message.chat.id)
     # Send inline markup with actions after registration
     keyboard = {"Прочитать FAQ": "cd_faq", "Разберусь походу": "cd_faq_cancel"}
     tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["finish_registration"], reply_markup
