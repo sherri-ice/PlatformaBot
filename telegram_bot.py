@@ -217,22 +217,13 @@ def vk_reauth(call):
 def get_vk_profile_info_for_employee(user_id) -> str:
     vk = employee_table.get_vk_api(user_id)
     data = vk.users.get()[0]
-    return "Профиль: {} {}, \n Ссылка: vk.com/id{}".format(data["first_name"], data["last_name"], data["id"])
+    return "Профиль: {} {}, \nСсылка: vk.com/id{}".format(data["first_name"], data["last_name"], data["id"])
 
 
 def after_vk_auth_in_server(tg_id):
     user = user_table.get_user_by_tg_id(tg_id)
-    employee = employee_table.get_employee_by_id(user.id)
-    tg_bot.send_message(tg_id, get_vk_profile_info_for_employee(user.id))
-    # data = ping_vk(tg_id)
-    # if data is UserApiErrors.USER_BANNED:
-    #     message_to_user = messages_templates["vk"]["vk_banned_profile"]
-    #     keyboard = {"Выбрать другой аккаунт": "cd_reauth_vk"}
-    # else:
-    #     message_to_user = messages_templates["vk"]["vk_get_user_message"].format(data[0]["first_name"],
-    #                                                                              data[0]["last_name"], data[0]["id"])
-    #     keyboard = {"Я готов!": "cd_user_ready", "Выбрать другой аккаунт": "cd_reauth_vk"}
-    # tg_bot.send_message(tg_id, message_to_user, reply_markup = create_inline_keyboard(keyboard))
+    tg_bot.send_message(tg_id, get_vk_profile_info_for_employee(user.id), reply_markup = create_inline_keyboard(
+        buttons["employee_vk_auth_confirmation"]))
 
 
 @tg_bot.message_handler(commands = ['vk_auth'])
