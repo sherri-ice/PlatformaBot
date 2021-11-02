@@ -175,8 +175,8 @@ def switch_to_employee(call):
     employee = employee_table.get_employee_by_id(user.id)
     if employee is None:
         employee_table.add_employee(id = user.id)
-    # tg_bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
-    #                          text = messages_templates["chosen_role"].format("исполнитель."))
+    tg_bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
+                             text = messages_templates["chosen_role"].format("исполнитель."))
     show_employee_profile(user.id, user.tg_id)
 
 
