@@ -60,6 +60,9 @@ class UserTable(db.Model):
     def get_user_by_tg_id(self, user_id):
         return UserTable.query.filter_by(tg_id = user_id).first()
 
+    def get_user_by_id(self, id):
+        return UserTable.query.filter_by(id = id).first()
+
     def add_new_user(self, tg_id, age = None, salary = None, city = None):
         '''
         Ads new user to database.
@@ -85,6 +88,7 @@ class Employee(db.Model):
         Add new user to employee database.
         '''
         db.session.add(Employee(id = id))
+        user_table.get_user_by_id(id).employee_id = id
         apply_db_changes()
 
 
