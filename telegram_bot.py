@@ -158,14 +158,16 @@ def switch_to_employee(call):
     if employee is None:
         employee_table.add_employee(id = user.id)
         employee = employee_table.get_employee_by_id(call.from_user.id)
-    message = tg_bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
-                                       text = messages_templates["unregistered_user"]["is_user_ready"])
+    tg_bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
+                             text = messages_templates["unregistered_user"]["is_user_ready"])
+    tg_bot.edit_message_reply_markup(chat_id = call.message.chat.id, message_id = call.message.message_id,
+                                     reply_markup = keyboard_hider)
     # tg_bot.delete_message(chat_id = call.from_user.id, message_id = call.message.message_id)
     # tg_bot.send_message(call.from_user.id, messages_templates["chosen_role"].format("Исполнитель"))
 
     # Check if vk and insta are registered
     if employee.vk_access_token is None:
-        tg_bot.send_message(message.chat.id, "Vk is not auth")
+        tg_bot.send_message(call.from_user.id, "Vk is not auth")
     if employee.insta_access_token is None:
         tg_bot.send_message(call.from_user.id, "Insta is not auth")
 
