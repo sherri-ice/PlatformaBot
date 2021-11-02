@@ -3,7 +3,8 @@
     "✅Регистрация": "cd_reg"
   },
   "my_profile": {
-    "\uD83D\uDC65 Мой профиль": "cd_profile"
+    "\uD83D\uDC65 Мой профиль": "cd_profile",
+    "Выбрать роль": "cd_user_ready"
   },
   "ages": [
     "12-18",
@@ -38,5 +39,8 @@
   },
   "employee_vk_auth_confirmation": {
     "Сменить аккаунт": "cd_vk_auth"
+  },
+  "back_to_profile": {
+    "Назад": "cd_profile"
   }
 }

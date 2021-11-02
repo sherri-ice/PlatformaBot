@@ -224,7 +224,7 @@ def callback_profile(call):
     user = user_table.get_user_by_tg_id(call.from_user.id)
     message = messages_templates["registered_user"]["profile"].format(get_employee_profile_info(user.id),
                                                                       "Профиль заказчика:")
-    tg_bot.send_message(call.from_user.id, message)
+    tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id, text = message)
 
 
 @tg_bot.message_handler(commands = ['help'])
