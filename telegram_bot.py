@@ -161,7 +161,8 @@ def get_employee_profile_info(user_id):
     if employee.insta_access_token is None:
         keyboard.add(types.InlineKeyboardButton("Insta auth", callback_data = "cd_vk_auth"))
     message = messages_templates["employee"]["profile"].format(get_vk_profile_info_for_employee(user_id),
-                                                               employee.insta_access_token,
+                                                               "Не авторизирован" if employee.insta_access_token is
+                                                                                     None else employee.insta_access_token,
                                                                employee.balance)
     return message, keyboard
 
@@ -209,7 +210,7 @@ def get_vk_profile_info_for_employee(user_id) -> str:
     if vk is None:
         return "Not authorized"
     data = vk.users.get()[0]
-    return "Профиль: {} {}, \nСсылка: vk.com/id{}".format(data["first_name"], data["last_name"], data["id"])
+    return "\nПрофиль: {} {}, \nСсылка: vk.com/id{}".format(data["first_name"], data["last_name"], data["id"])
 
 
 def after_vk_auth_in_server(tg_id):
