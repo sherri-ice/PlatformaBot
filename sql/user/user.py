@@ -5,17 +5,6 @@ from loader import VK_API_APP_ID, VK_CLIENT_SECRET
 from enum import Enum
 
 
-# def get_vk_api(user_id):
-#     if get_user_by_tg_id(user_id) is None:
-#         return None
-#     try:
-#         vk_session = vk_api.VkApi(app_id = VK_API_APP_ID, client_secret = VK_CLIENT_SECRET, token = get_user_by_tg_id(
-#             user_id).vk_token)
-#     except vk_api.exceptions.ApiError as error:
-#         return None
-#     return vk_session.get_api()
-
-
 # def ping_vk(user_id):
 #     if get_user_by_tg_id(user_id) is None:
 #         return UserApiErrors.UNREGISTERED_USER
@@ -93,6 +82,21 @@ class Employee(db.Model):
 
     def get_employee_by_id(self, user_id):
         return Employee.query.filter_by(id = user_id).first()
+
+    def get_vk_api(self, user_id):
+        if self.get_employee_by_id(user_id) is None:
+            return None
+        try:
+            vk_session = vk_api.VkApi(app_id = VK_API_APP_ID, client_secret = VK_CLIENT_SECRET,
+                                      token = self.get_employee_by_id(
+                                          user_id).vk_access_token)
+        except vk_api.exceptions.ApiError as error:
+            return None
+        return vk_session.get_api()
+
+    def register_vk_token(self, user_id, vk_access_token):
+        self.get_employee_by_id(user_id).vk_access_token = authorize_vk_session(vk_access_token, user_id)
+        apply_db_changes()
 
 
 class Customer(db.Model):

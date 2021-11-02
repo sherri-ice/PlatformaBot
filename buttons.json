@@ -32,6 +32,7 @@
   "employee_profile_buttons": {
     "Выполнить задание": "cd_employee_get_new_task",
     "Мой баланс": "cd_employee_get_balance",
+    "Настройки": "cd_employee_settings",
     "FAQ": "cd_employee_faq",
     "Тех. поддержка": "cd_technical_help"
   }

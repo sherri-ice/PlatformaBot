@@ -186,15 +186,6 @@ def callback_vk_auth(call):
     request_vk_auth(user.id, user.tg_id)
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_reject_vk_tasks")
-def callback_vk_tasks_reject(call):
-    user = user_table.get_user_by_tg_id(call.from_user.id)
-    employee = employee_table.get_employee_by_id(user.id)
-    tg_bot.send_message(call.from_user.id, "Окей! Потом это можно будет изменить в настройках профиля.")
-    employee.vk_tasks = False
-    apply_db_changes()
-
-
 def request_vk_auth(user_id, tg_id, additional_buttons = None):
     keyboard = gen_markup_for_vk_auth(user_id)
     if additional_buttons is not None:
@@ -224,7 +215,9 @@ def vk_reauth(call):
                         reply_markup = gen_markup_for_vk_auth(call.message.chat.id))
 
 
-def after_vk_auth_in_server(tg_id):
+def after_vk_auth_in_server(user_id):
+    employee = employee_table.get_employee_by_id(user_id)
+    tg_bot.send_message(user_id, employee.vk_access_token)
     # data = ping_vk(tg_id)
     # if data is UserApiErrors.USER_BANNED:
     #     message_to_user = messages_templates["vk"]["vk_banned_profile"]
@@ -234,7 +227,6 @@ def after_vk_auth_in_server(tg_id):
     #                                                                              data[0]["last_name"], data[0]["id"])
     #     keyboard = {"Я готов!": "cd_user_ready", "Выбрать другой аккаунт": "cd_reauth_vk"}
     # tg_bot.send_message(tg_id, message_to_user, reply_markup = create_inline_keyboard(keyboard))
-    pass
 
 
 @tg_bot.message_handler(commands = ['vk_auth'])

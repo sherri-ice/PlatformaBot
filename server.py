@@ -2,7 +2,7 @@ import flask
 from flask import request
 from flask.blueprints import Blueprint
 
-from telegram_bot import get_telegram_bot, messages_templates, after_vk_auth_in_server
+from telegram_bot import get_telegram_bot, messages_templates, after_vk_auth_in_server, employee_table
 from telebot import types
 
 from loader import TELEGRAM_TOKEN, WEBHOOK_HOST
@@ -30,12 +30,12 @@ def index():
 @bot_handler.route('/vk_auth', methods = ['GET'])
 def redirect_from_vk():
     vk_code = request.args.get('code')
-    tg_id = request.args.get('tg_id')
+    user_id = request.args.get('tg_id')
     if vk_code is None:
-        telegram_bot.send_message(tg_id, messages_templates["vk"]["vk_error_not_found"])
+        telegram_bot.send_message(user_id, messages_templates["vk"]["vk_error_not_found"])
         return
-    # register_vk_token(vk_code, tg_id)
-    # after_vk_auth_in_server(tg_id)
+    employee_table.register_vk_token(user_id, vk_access_token = vk_code)
+    after_vk_auth_in_server(tg_id)
     return ''
 
 
