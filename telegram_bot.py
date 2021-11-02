@@ -155,7 +155,7 @@ def get_employee_profile_info(user_id):
         keyboard.add(types.InlineKeyboardButton("VK auth", callback_data = "cd_vk_auth"))
     if employee.insta_access_token is None:
         keyboard.add(types.InlineKeyboardButton("Insta auth", callback_data = "cd_vk_auth"))
-    message = messages_templates["employee"]["profile"].format(get_vk_profile_info_for_employee(user_id),
+    message = messages_templates["employee"]["profile"].format("no",
                                                                employee.insta_access_token,
                                                                employee.balance)
     return message
