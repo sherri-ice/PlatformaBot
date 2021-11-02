@@ -80,7 +80,7 @@ def process_age_step(message):
 @tg_bot.message_handler(state = "get_city", content_types=["location"])
 def process_city_step(message):
     with tg_bot.retrieve_data(message.chat.id) as data:
-        data['city'] = message.text
+        data['city'] = message.location
     # Send next step: salary
     tg_bot.set_state(message.chat.id, "get_salary")
     tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["salary_reg_step"],
