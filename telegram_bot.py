@@ -101,7 +101,6 @@ def process_salary_step(message):
     process_end_reg(message)
 
 
-@tg_bot.message_handler(state = "end_reg")
 def process_end_reg(message):
     # End registration:
     if get_user_by_tg_id(message.chat.id) is not None:
@@ -110,18 +109,48 @@ def process_end_reg(message):
     with tg_bot.retrieve_data(message.chat.id) as data:
         user = add_new_user(tg_id = message.chat.id, age = data["age"], salary = data['salary'], city = data["city"])
     apply_db_changes()
-    tg_bot.send_message(message.chat.id, f"Супер! \nТвой возраст: {user.age} \nГород: "
-                                         f"{user.city}",
+    tg_bot.send_message(message.chat.id, messages_templates["get_data_register_finished"].format(user.age, user.city),
                         reply_markup = keyboard_hider)
 
     tg_bot.delete_state(message.chat.id)
     # Send inline markup with actions after registration
-    keyboard = {"Прочитать FAQ": "cd_faq", "Разберусь походу": "cd_faq_cancel"}
-    tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["finish_registration"], reply_markup
-    = create_inline_keyboard(keyboard))
+    tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["finish_registration"],
+                        reply_markup = create_inline_keyboard(buttons["read_faq_after_reg"]))
+
+
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_faq" or call.data == "cd_faq_cancel")
+def handle_callback_faq(call):
+    if call.data == "cd_faq":
+        tg_bot.answer_callback_query(call.id, "Прочитать FAQ")
+        tg_bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
+                                 text = messages_templates["reg_faq"])
+        tg_bot.edit_message_reply_markup(chat_id = call.message.chat.id, message_id = call.message.message_id,
+                                         reply_markup = create_inline_keyboard(buttons["have_read_faq"]))
+    elif call.data == "cd_faq_cancel":
+        tg_bot.answer_callback_query(call.id, "Не читать FAQ")
+        keyboard = create_inline_keyboard(buttons["user_ready"])
+        tg_bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
+                                 text = messages_templates["unregistered_user"]["is_user_ready"])
+        tg_bot.edit_message_reply_markup(chat_id = call.message.chat.id, message_id = call.message.message_id,
+                                         reply_markup = keyboard)
+    # elif call.data == "cd_vk_auth":
+    #     keyboard = gen_markup_for_vk_auth(call.message.chat.id)
+    #     tg_bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
+    #                              text = messages_templates["vk"]["vk_auth_message"])
+    #     tg_bot.edit_message_reply_markup(chat_id = call.message.chat.id, message_id = call.message.message_id,
+    #                                      reply_markup = keyboard)
 
 
 # Creates a markup with link to auth url
+
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_user_ready")
+def user_ready(call):
+    tg_bot.delete_message(chat_id = call.message.chat.id, message_id = call.message.message_id)
+    keyboard = {"Выбрать исполнителя": "cd_employee", "Выбрать заказчика": "cd_customer"}
+    tg_bot.send_message(call.message.chat.id, messages_templates["choose_role"],
+                        reply_markup = create_inline_keyboard(keyboard))
+
+
 def gen_markup_for_vk_auth(chat_id):
     markup = types.InlineKeyboardMarkup()
     markup.row_width = 1
@@ -203,39 +232,6 @@ def handle_callback_re_auth(call):
     elif call.data == "cd_reauth_no":
         tg_bot.answer_callback_query(call.id, "Оставить всё как есть.")
         tg_bot.send_message(call.message.chat.id, "Окей, оставим как есть.")
-
-
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_faq" or call.data == "cd_faq_cancel" or call.data
-                                                   == "cd_vk_auth")
-def handle_callback_faq(call):
-    if call.data == "cd_faq":
-        tg_bot.answer_callback_query(call.id, "Прочитать FAQ")
-        tg_bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
-                                 text = messages_templates["reg_faq"])
-        tg_bot.edit_message_reply_markup(chat_id = call.message.chat.id, message_id = call.message.message_id,
-                                         reply_markup = create_inline_keyboard({"Понятно! Продолжить": "cd_vk_auth"}))
-    elif call.data == "cd_faq_cancel":
-        tg_bot.answer_callback_query(call.id, "Не читать FAQ")
-        keyboard = gen_markup_for_vk_auth(call.message.chat.id)
-        keyboard.add(types.InlineKeyboardButton(text = "Я передумал! Хочу прочитать FAQ", callback_data = "cd_faq"))
-        tg_bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
-                                 text = messages_templates["vk"]["vk_auth_message"])
-        tg_bot.edit_message_reply_markup(chat_id = call.message.chat.id, message_id = call.message.message_id,
-                                         reply_markup = keyboard)
-    elif call.data == "cd_vk_auth":
-        keyboard = gen_markup_for_vk_auth(call.message.chat.id)
-        tg_bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
-                                 text = messages_templates["vk"]["vk_auth_message"])
-        tg_bot.edit_message_reply_markup(chat_id = call.message.chat.id, message_id = call.message.message_id,
-                                         reply_markup = keyboard)
-
-
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_user_ready")
-def user_ready(call):
-    tg_bot.delete_message(chat_id = call.message.chat.id, message_id = call.message.message_id)
-    keyboard = {"Выбрать исполнителя": "cd_employee", "Выбрать заказчика": "cd_customer"}
-    tg_bot.send_message(call.message.chat.id, messages_templates["choose_role"],
-                        reply_markup = create_inline_keyboard(keyboard))
 
 
 @tg_bot.message_handler(commands = ['help'])

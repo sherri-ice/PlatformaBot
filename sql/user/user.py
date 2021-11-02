@@ -70,6 +70,7 @@ class UserTable(db.Model):
     customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'))
     employee = db.relationship("Employee", backref = db.backref("employee", uselist = False))
     customer = db.relationship("Customer", backref = db.backref("customer", uselist = False))
+    registered_data = db.Column(db.Date)
 
 
 class Employee(db.Model):

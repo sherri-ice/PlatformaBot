@@ -14,5 +14,16 @@
   "re_register": {
     "Да!": "cd_reauth_yes",
     "Оставить всё как есть": "cd_reauth_no"
+  },
+  "read_faq_after_reg": {
+    "Прочитать FAQ": "cd_faq",
+    "Разберусь походу": "cd_faq_cancel"
+  },
+  "have_read_faq": {
+    "Понятно! Продолжить": "cd_vk_auth"
+  },
+  "user_ready": {
+    "Я готов!" : "cd_user_ready",
+    "Я передумал! Хочу прочитать FAQ": "cd_faq"
   }
 }
