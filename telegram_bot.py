@@ -85,6 +85,7 @@ def process_city_step(message):
     tg_bot.delete_state(message.chat.id)
     tg_bot.set_state(message.chat.id, "end_reg")
     tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["salary_reg_step"])
+    tg_bot.send_message(message.chat.id, tg_bot.current_states._states)
                         # reply_markup = create_reply_keyboard(
                             # messages_templates["unregistered_user"]["salary_answers"]))
 
@@ -268,4 +269,3 @@ def get_telegram_bot():
 
 
 tg_bot.add_custom_filter(custom_filters.StateFilter(tg_bot))
-tg_bot.add_custom_filter(custom_filters.IsDigitFilter())

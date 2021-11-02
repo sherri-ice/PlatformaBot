@@ -58,5 +58,3 @@ time.sleep(0.1)
 
 # Set webhook
 telegram_bot.set_webhook(url = WEBHOOK_URL_BASE + WEBHOOK_URL_PATH)
-
-# TODO: unregistered user can't call smth except /start
