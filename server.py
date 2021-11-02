@@ -8,7 +8,7 @@ from telebot import types
 from loader import TELEGRAM_TOKEN, WEBHOOK_HOST
 import time
 
-from sql.user.user import register_vk_token
+# from sql.user.user import register_vk_token
 
 WEBHOOK_URL_BASE = "https://%s" % WEBHOOK_HOST
 WEBHOOK_URL_PATH = "/%s/" % TELEGRAM_TOKEN
@@ -34,8 +34,8 @@ def redirect_from_vk():
     if vk_code is None:
         telegram_bot.send_message(tg_id, messages_templates["vk"]["vk_error_not_found"])
         return
-    register_vk_token(vk_code, tg_id)
-    after_vk_auth_in_server(tg_id)
+    # register_vk_token(vk_code, tg_id)
+    # after_vk_auth_in_server(tg_id)
     return ''
 
 
