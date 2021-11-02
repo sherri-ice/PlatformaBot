@@ -158,8 +158,8 @@ def switch_to_employee(call):
     if employee is None:
         employee_table.add_employee(id = user.id)
         employee = employee_table.get_employee_by_id(call.from_user.id)
-    tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id,
-                             text = messages_templates["chosen_role"].format("Исполнитель"))
+    # tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id,
+    #                          text = messages_templates["chosen_role"].format("Исполнитель"))
 
     # Check if vk and insta are registered
     if employee.vk_access_token is None:
