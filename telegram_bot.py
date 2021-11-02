@@ -97,13 +97,14 @@ def process_salary_step(message):
         tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["incorrect_input"],
                             reply_markup = keyboard_hider)
         return
-    tg_bot.set_state(message.chat.id, 1)
+    tg_bot.set_state(message.chat.id, "end_reg")
+
+
+@tg_bot.message_handler(state = "end_reg")
+def end_reg(message):
     with tg_bot.retrieve_data(message.chat.id) as data:
         data['salary'] = message.text
 
-
-@tg_bot.message_handler(state = 1)
-def end_reg(message):
     # End registration:
     if get_user_by_id(message.chat.id) is not None:
         delete_user(message.chat.id)
