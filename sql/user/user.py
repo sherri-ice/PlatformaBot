@@ -61,6 +61,10 @@ class UserTable(db.Model):
         return UserTable.query.filter_by(tg_id = user_id).first()
 
     def add_new_user(self, tg_id, age = None, salary = None, city = None):
+        '''
+        Ads new user to database.
+        Note: you need to do apply_bd_commit()
+        '''
         db.session.add(UserTable(tg_id = tg_id, age = age, salary = salary, city = city))
         return self.get_user_by_tg_id(tg_id)
 
@@ -77,7 +81,11 @@ class Employee(db.Model):
     insta_access_token = db.Column(db.String(255))
 
     def add_employee(self, id):
+        '''
+        Add new user to employee database.
+        '''
         db.session.add(Employee(id = id))
+        apply_db_changes()
 
 
 class Customer(db.Model):
