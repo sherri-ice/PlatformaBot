@@ -2,9 +2,19 @@
   "reg": {
     "✅Регистрация": "cd_reg"
   },
-  "my_profile": {
-    "\uD83D\uDC65 Мой профиль": "cd_profile",
-    "Выбрать роль": "cd_user_ready"
+  "start_buttons": {
+    "\uD83D\uDC65 Мой профиль": "cd_profile"
+  },
+  "profile_buttons": {
+    "Выбрать роль": "cd_user_ready",
+    "Изменить данные": "cd_re_register",
+    "Рефералка": "",
+    "Ввести промокод": "",
+    "Мы Вконтакте": "",
+    "Мы в Telegram": "",
+    "Чат в телеграм": "",
+    "Реклама в Platforma": "",
+    "Техподдержка": ""
   },
   "ages": [
     "12-18",
@@ -28,7 +38,8 @@
   },
   "choose_type_of_account": {
     "Выбрать исполнителя": "cd_employee",
-    "Выбрать заказчика": "cd_customer"
+    "Выбрать заказчика": "cd_customer",
+    "Мой профиль": "cd_profile"
   },
   "employee_profile_buttons": {
     "Выполнить задание": "cd_employee_get_new_task",

@@ -39,7 +39,7 @@ def command_send_welcome(message):
     user = user_table.get_user_by_tg_id(message.chat.id)
     if user is not None:
         message_to_user, keyboard = messages_templates["registered_user"]["start_message"], create_inline_keyboard(
-            buttons["my_profile"])
+            buttons["start_buttons"])
     else:
         message_to_user, keyboard = messages_templates["unregistered_user"]["start_message"], create_inline_keyboard(
             buttons["reg"])
