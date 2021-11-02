@@ -39,7 +39,7 @@ def callback_reg(call):
     tg_bot.answer_callback_query(call.id, "Рег")
     tg_bot.set_state(call.from_user.id, "reg")
     message = tg_bot.current_states._states if tg_bot.current_states._states is None else "empty"
-    tg_bot.send_message(call.from_user.id, call.message.chat.id + " " + call.from_user.id)
+    tg_bot.send_message(call.from_user.id, "{} == {}".format(call.message.chat.id, call.from_user.id))
 
 
 @tg_bot.message_handler(commands = ['start'])
