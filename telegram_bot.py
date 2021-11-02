@@ -216,7 +216,7 @@ def vk_reauth(call):
 
 def get_vk_profile_info_for_employee(user_id) -> str:
     vk = employee_table.get_vk_api(user_id)
-    data = vk.users.get()
+    data = vk.users.get()['response'][0]
     return "Профиль: {} {}, \n Ссылка: vk.com/id{}".format(data["fist_name"], data["last_name"], data["id"])
 
 
