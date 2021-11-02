@@ -175,22 +175,21 @@ def switch_to_employee(call):
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_vk_auth")
 def callback_vk_auth(call):
-    request_vk_auth(call.from_user.id)
+    keyboard = gen_markup_for_vk_auth(call.id)
+    tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id,
+                             text = messages_templates["vk"]["vk_not_authorized"])
+    tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id, reply_markup
+    = keyboard)
 
 
-def request_vk_auth(tg_id, additional_buttons = None):
-    keyboard = gen_markup_for_vk_auth(tg_id)
-    if additional_buttons is not None:
-        for button in additional_buttons:
-            keyboard.add(button)
-    tg_bot.send_message(tg_id, messages_templates["vk"]["vk_not_authorized"], reply_markup = keyboard)
-
-
-def gen_markup_for_vk_auth(tg_id):
+def gen_markup_for_vk_auth(tg_id, additional_buttons = None):
     markup = types.InlineKeyboardMarkup()
     markup.row_width = 1
-
     markup.add(types.InlineKeyboardButton(text = "VK авторизация", url = request_vk_auth_code(tg_id)))
+    if additional_buttons is not None:
+        for button in additional_buttons:
+            markup.add(button)
+
     return markup
 
 
