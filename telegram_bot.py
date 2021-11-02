@@ -201,6 +201,8 @@ def cancel_vk_auth(call):
 
 def get_vk_profile_info_for_employee(user_id) -> str:
     vk = employee_table.get_vk_api(user_id)
+    if vk is None:
+        return "Not authorized"
     data = vk.users.get()[0]
     return "Профиль: {} {}, \nСсылка: vk.com/id{}".format(data["first_name"], data["last_name"], data["id"])
 
