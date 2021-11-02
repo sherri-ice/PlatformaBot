@@ -134,15 +134,7 @@ def handle_callback_faq(call):
                                  text = messages_templates["is_user_ready"])
         tg_bot.edit_message_reply_markup(chat_id = call.message.chat.id, message_id = call.message.message_id,
                                          reply_markup = keyboard)
-    # elif call.data == "cd_vk_auth":
-    #     keyboard = gen_markup_for_vk_auth(call.message.chat.id)
-    #     tg_bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
-    #                              text = messages_templates["vk"]["vk_auth_message"])
-    #     tg_bot.edit_message_reply_markup(chat_id = call.message.chat.id, message_id = call.message.message_id,
-    #                                      reply_markup = keyboard)
 
-
-# Creates a markup with link to auth url
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_user_ready")
 def user_ready(call):

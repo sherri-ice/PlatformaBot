@@ -2,25 +2,6 @@ import vk_api
 from sql.database import db, apply_db_changes
 from vk_auth import authorize_vk_session
 from loader import VK_API_APP_ID, VK_CLIENT_SECRET
-from enum import Enum
-
-
-# def ping_vk(user_id):
-#     if get_user_by_tg_id(user_id) is None:
-#         return UserApiErrors.UNREGISTERED_USER
-#     if get_user_by_tg_id(user_id).vk_token is None:
-#         return UserApiErrors.VK_NOT_AUTH
-#     vk = get_vk_api(user_id)
-#     data = vk.users.get()
-#     if "deactivated" in data[0]:
-#         return UserApiErrors.USER_BANNED
-#     return data
-
-
-# class UserApiErrors(Enum):
-#     VK_NOT_AUTH = 1
-#     USER_BANNED = 2
-#     UNREGISTERED_USER = 3
 
 
 class UserTable(db.Model):
@@ -68,7 +49,7 @@ class UserTable(db.Model):
 class Employee(db.Model):
     __tablename__ = 'employee'
     id = db.Column(db.Integer, primary_key = True)
-    balance = db.Column(db.Integer)
+    balance = db.Column(db.Integer, default = 0)
     vk_access_token = db.Column(db.String(255))
     insta_access_token = db.Column(db.String(255))
 
