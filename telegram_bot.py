@@ -98,6 +98,7 @@ def process_salary_step(message):
 
     # Next step: finish registration
     tg_bot.set_state(message.chat.id, "end_reg")
+    tg_bot.send_message(message.chat.id, "Okay! Finishing reg..", reply_markup = keyboard_hider)
 
 
 @tg_bot.message_handler(state = "end_reg")
