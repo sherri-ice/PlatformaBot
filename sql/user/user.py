@@ -12,7 +12,6 @@ class UserTable(db.Model):
     # For target
     age = db.Column(db.String(255))
     salary = db.Column(db.String(255))
-    city = db.Column(Geometry("POINT"))
     #
     appeals = db.Column(db.Integer, default = 0)
     banned = db.Column(db.Boolean, default = False)
@@ -21,6 +20,7 @@ class UserTable(db.Model):
     employee = db.relationship("Employee", backref = db.backref("employee", uselist = False))
     customer = db.relationship("Customer", backref = db.backref("customer", uselist = False))
     registered_data = db.Column(db.Date)
+    city = db.Column(Geometry("POINT"))
 
     def register_vk_token(self, code: str, user_id: int):
         if self.get_user_by_tg_id(user_id) is None:
