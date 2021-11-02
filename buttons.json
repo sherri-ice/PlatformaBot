@@ -1,13 +1,13 @@
 {
   "reg": {
-    "✅Регистрация": "cd_reg"
+    "✅ Регистрация": "cd_reg"
   },
   "start_buttons": {
     "\uD83D\uDC65 Мой профиль": "cd_profile"
   },
   "profile_buttons": {
-    "Выбрать роль": "cd_user_ready",
-    "Изменить данные": "cd_re_register"
+    "\uD83D\uDE80 Выбрать роль": "cd_user_ready",
+    "⚙️ Изменить данные": "cd_re_register"
   },
   "ages": [
     "12-18",
@@ -20,32 +20,32 @@
     "Оставить всё как есть": "cd_reauth_no"
   },
   "read_faq_after_reg": {
-    "Прочитать FAQ": "cd_faq",
-    "Разберусь походу": "cd_faq_cancel"
+    "\uD83D\uDCD5 Прочитать FAQ": "cd_faq",
+    "\uD83D\uDE0E Разберусь походу": "cd_faq_cancel"
   },
   "have_read_faq": {
-    "Понятно! Продолжить": "cd_user_ready"
+    "\uD83D\uDE0E Понятно! Продолжить": "cd_user_ready"
   },
   "user_ready": {
-    "Я передумал! Хочу прочитать FAQ": "cd_faq"
+    "❗️ Я передумал! Хочу прочитать FAQ": "cd_faq"
   },
   "choose_type_of_account": {
-    "Выбрать исполнителя": "cd_employee",
-    "Выбрать заказчика": "cd_customer",
-    "Мой профиль": "cd_profile"
+    "\uD83D\uDC77\uD83C\uDFFC Выбрать исполнителя": "cd_employee",
+    "\uD83D\uDC77\uD83C\uDFFC Выбрать заказчика": "cd_customer",
+    "\uD83D\uDC65 Мой профиль": "cd_profile"
   },
   "employee_profile_buttons": {
-    "Выполнить задание": "cd_employee_get_new_task",
-    "Мой баланс": "cd_employee_get_balance",
-    "Настройки": "cd_employee_settings",
-    "FAQ": "cd_employee_faq",
-    "Тех. поддержка": "cd_technical_help"
+    "✅ Выполнить задание": "cd_employee_get_new_task",
+    "\uD83D\uDCB8 Мой баланс": "cd_employee_get_balance",
+    "⚙️ Настройки": "cd_employee_settings",
+    "❓ FAQ": "cd_employee_faq",
+    "\uD83D\uDCBB Тех. поддержка": "cd_technical_help"
   },
   "employee_vk_auth_confirmation": {
-    "Сменить аккаунт": "cd_vk_auth",
-    "Вернуться": "cd_employee"
+    "♻️ Сменить аккаунт": "cd_vk_auth",
+    "↩️ Вернуться": "cd_employee"
   },
   "back_to_profile": {
-    "Назад": "cd_profile"
+    "↩️ Назад": "cd_profile"
   }
 }
