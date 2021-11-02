@@ -13,6 +13,10 @@ SQL_DATABASE = os.getenv("SQL_DATABASE")
 VK_API_APP_ID = os.getenv("VK_API_APP_ID")
 REDIRECT_FROM_VK: str = os.getenv("REDIRECT_FROM_VK")
 VK_CLIENT_SECRET = os.getenv("VK_CLIENT_SECRET")
+INSTA_API_APP_ID = os.getenv("INSTA_API_APP_ID")
+REDIRECT_FROM_INSTA: str = os.getenv("REDIRECT_FROM_INSTA")
+INSTA_CLIENT_SECRET = os.getenv("INSTA_CLIENT_SECRET")
+
 
 project_path = "/home/sherriice/PlatformaBot"
 

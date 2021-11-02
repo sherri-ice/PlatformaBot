@@ -47,11 +47,15 @@ def command_send_welcome(message):
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_reg")
-def command_register(call):
+def callback_reg(call):
+    command_register(call.message)
+
+
+@tg_bot.message_handler(commands = ['register'])
+def command_register(message):
     '''
     Register function.
     '''
-    message = call.message
     # Send next step: name
     if user_table.get_user_by_tg_id(message.chat.id) is None:
         tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["registration_start"],
@@ -77,7 +81,7 @@ def process_age_step(message):
                         reply_markup = keyboard_hider)
 
 
-@tg_bot.message_handler(state = "get_city", content_types=["location"])
+@tg_bot.message_handler(state = "get_city", content_types = ["location"])
 def process_city_step(message):
     with tg_bot.retrieve_data(message.chat.id) as data:
         data['city'] = message.location
