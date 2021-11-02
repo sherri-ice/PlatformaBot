@@ -131,7 +131,7 @@ def handle_callback_faq(call):
         tg_bot.answer_callback_query(call.id, "Не читать FAQ")
         keyboard = create_inline_keyboard(buttons["user_ready"])
         tg_bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
-                                 text = messages_templates["unregistered_user"]["is_user_ready"])
+                                 text = messages_templates["is_user_ready"])
         tg_bot.edit_message_reply_markup(chat_id = call.message.chat.id, message_id = call.message.message_id,
                                          reply_markup = keyboard)
     # elif call.data == "cd_vk_auth":
