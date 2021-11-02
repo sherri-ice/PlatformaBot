@@ -214,10 +214,16 @@ def vk_reauth(call):
                         reply_markup = gen_markup_for_vk_auth(call.message.chat.id))
 
 
+def get_vk_profile_info_for_employee(user_id) -> str:
+    vk = employee_table.get_vk_api(user_id)
+    data = vk.users.get()
+    return data
+
+
 def after_vk_auth_in_server(tg_id):
     user = user_table.get_user_by_tg_id(tg_id)
     employee = employee_table.get_employee_by_id(user.id)
-    tg_bot.send_message(tg_id, employee.vk_access_token)
+    tg_bot.send_message(tg_id, get_vk_profile_info_for_employee(user.id))
     # data = ping_vk(tg_id)
     # if data is UserApiErrors.USER_BANNED:
     #     message_to_user = messages_templates["vk"]["vk_banned_profile"]
