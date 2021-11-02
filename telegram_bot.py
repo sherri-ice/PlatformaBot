@@ -186,6 +186,7 @@ def callback_vk_auth(call):
 def callback_vk_tasks_reject(call):
     user = user_table.get_user_by_tg_id(call.from_user.id)
     employee = employee_table.get_employee_by_id(user.id)
+    tg_bot.send_message(call.from_user.id, "Окей! Потом это можно будет изменить в настройках профиля.")
     employee.vk_tasks = False
     apply_db_changes()
 
