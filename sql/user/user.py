@@ -96,7 +96,7 @@ class Employee(db.Model):
 
     def register_vk_token(self, tg_id, vk_code):
         user = user_table.get_user_by_tg_id(tg_id)
-        self.get_employee_by_id(user.id).vk_access_token = authorize_vk_session(vk_code, tg_id)
+        self.get_employee_by_id(user.id).vk_access_token = authorize_vk_session(vk_code, tg_id).token
         apply_db_changes()
 
 
