@@ -82,26 +82,24 @@ def process_city_step(message):
     with tg_bot.retrieve_data(message.chat.id) as data:
         data['city'] = message.text
     # Send next step: salary
-    tg_bot.delete_state(message.chat.id)
     tg_bot.set_state(message.chat.id, "end_reg")
     tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["salary_reg_step"])
-    tg_bot.send_message(message.chat.id, tg_bot.current_states._states)
                         # reply_markup = create_reply_keyboard(
                             # messages_templates["unregistered_user"]["salary_answers"]))
 
 
-@tg_bot.message_handler(state = "get_salary")
-def process_salary_step(message):
-    if message.text not in messages_templates["unregistered_user"]["salary_answers"]:
-        tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["incorrect_input"],
-                            reply_markup = keyboard_hider)
-        return
-    with tg_bot.retrieve_data(message.chat.id) as data:
-        data['salary'] = message.text
-
-    # Next step: finish registration
-    tg_bot.set_state(message.chat.id, "")
-    tg_bot.send_message(message.chat.id, "Okay! Finishing reg..", reply_markup = keyboard_hider)
+# @tg_bot.message_handler(state = "get_salary")
+# def process_salary_step(message):
+#     if message.text not in messages_templates["unregistered_user"]["salary_answers"]:
+#         tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["incorrect_input"],
+#                             reply_markup = keyboard_hider)
+#         return
+#     with tg_bot.retrieve_data(message.chat.id) as data:
+#         data['salary'] = message.text
+#
+#     # Next step: finish registration
+#     tg_bot.set_state(message.chat.id, "")
+#     tg_bot.send_message(message.chat.id, "Okay! Finishing reg..", reply_markup = keyboard_hider)
 
 
 @tg_bot.message_handler(state = "end_reg")
