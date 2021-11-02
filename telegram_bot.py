@@ -77,7 +77,7 @@ def process_age_step(message):
                         reply_markup = keyboard_hider)
 
 
-@tg_bot.message_handler(state = "get_city")
+@tg_bot.message_handler(state = "get_city", content_types=["location"])
 def process_city_step(message):
     with tg_bot.retrieve_data(message.chat.id) as data:
         data['city'] = message.text
