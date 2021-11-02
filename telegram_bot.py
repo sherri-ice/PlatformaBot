@@ -37,8 +37,8 @@ def create_reply_keyboard(data: list):
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_reg")
 def callback_reg(call):
     tg_bot.answer_callback_query(call.id, "Рег")
-    tg_bot.send_message(call.from_user.id, tg_bot.current_states._states)
     tg_bot.set_state(call.from_user.id, "reg")
+    tg_bot.send_message(call.from_user.id, tg_bot.current_states._states)
 
 
 @tg_bot.message_handler(commands = ['start'])
