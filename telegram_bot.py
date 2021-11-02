@@ -111,7 +111,6 @@ def end_reg(message):
         user = add_new_user(tg_id = message.chat.id, age = data["age"], salary = data[
             "salary"], city = data["city"])
     apply_db_changes()
-    tg_bot.delete_state(message.chat.id)
     tg_bot.send_message(message.chat.id, f"Супер! \nТвой возраст: {user.age} \nГород: "
                                          f"{user.city}",
                         reply_markup = keyboard_hider)
