@@ -225,6 +225,8 @@ def callback_profile(call):
     message = messages_templates["registered_user"]["profile"].format(get_employee_profile_info(user.id),
                                                                       "Профиль заказчика:")
     tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id, text = message)
+    tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id, reply_markup
+    = create_inline_keyboard(buttons["profile_buttons"]))
 
 
 @tg_bot.message_handler(commands = ['help'])
