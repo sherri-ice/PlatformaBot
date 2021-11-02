@@ -156,7 +156,7 @@ def command_choose_role(message):
         buttons["choose_type_of_account"]))
 
 
-def show_employee_profile(user_id, tg_id):
+def get_employee_profile_info(user_id):
     employee = employee_table.get_employee_by_id(user_id)
     keyboard = create_inline_keyboard(buttons["employee_profile_buttons"])
     if employee.vk_access_token is None:
@@ -166,7 +166,7 @@ def show_employee_profile(user_id, tg_id):
     message = messages_templates["employee"]["profile"].format(employee.vk_access_token,
                                                                employee.insta_access_token,
                                                                employee.balance)
-    tg_bot.send_message(tg_id, message, reply_markup = keyboard)
+    return message
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_employee")
@@ -177,7 +177,7 @@ def switch_to_employee(call):
         employee_table.add_employee(id = user.id)
     tg_bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
                              text = messages_templates["chosen_role"].format("исполнитель."))
-    show_employee_profile(user.id, user.tg_id)
+    tg_bot.send_message(user.tg_id, get_employee_profile_info(user.id))
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_vk_auth")
@@ -219,59 +219,19 @@ def after_vk_auth_in_server(tg_id):
         buttons["employee_vk_auth_confirmation"]))
 
 
-@tg_bot.message_handler(commands = ['vk_auth'])
-def command_vk_auth_register(message):
-    pass
-    # if get_user_by_tg_id(message.chat.id) is None:
-    #     tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["request_for_registration"])
-    #     return
-    # If error while auth appears:
-    # if get_vk_api(message.chat.id) is None:
-    #     tg_bot.send_message(message.chat.id, messages_templates["vk"]["vk_error_not_found"])
-    # else:
-    #     Generate button with link for OAuth VK auth
-    # tg_bot.send_message(message.chat.id, messages_templates["vk"]["vk_auth_message"],
-    #                     reply_markup = gen_markup_for_vk_auth(
-    #                         message.chat.id))
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_profile")
+def callback_profile(call):
+    user = user_table.get_user_by_tg_id(call.from_user.id)
+    message = messages_templates["registered_user"]["profile"].format(get_employee_profile_info(user.id),
+                                                                      "Профиль заказчика:")
+    tg_bot.send_message(call.from_user.id, message)
 
 
-@tg_bot.message_handler(commands = ['ping_vk'])
-# def command_ping_vk(message):
-#     data = ping_vk(message.chat.id)
-#     if data == UserApiErrors.UNREGISTERED_USER:
-#         tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["request_for_registration"])
-#         return
-#     if data == UserApiErrors.VK_NOT_AUTH:
-#         tg_bot.send_message(message.chat.id, messages_templates["vk"]["vk_not_authorized"])
-#     elif data == UserApiErrors.USER_BANNED:
-#         tg_bot.send_message(message.chat.id, messages_templates["vk"]["vk_banned_profile"])
-#         return
-#     else:
-#         message_to_user = messages_templates["vk"]["vk_get_user_message"].format(data[0]["first_name"],
-#                                                                                  data[0]["last_name"], data[0]["id"])
-#         tg_bot.send_message(message.chat.id, message_to_user,
-#                             reply_markup = create_inline_keyboard({"Сменить профиль": "cd_vk_reauth"}))
-#
-#
-# @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_reauth_yes" or call.data == "cd_reauth_no")
-# def handle_callback_re_auth(call):
-#     if call.data == "cd_reauth_yes":
-#         tg_bot.answer_callback_query(call.id, "Да")
-#         msg = tg_bot.send_message(call.message.chat.id,
-#                                   messages_templates["unregistered_user"]["registration_start"], reply_markup
-#                                   = create_reply_keyboard(["12-18", "19-24", "25-27", "27+"]))
-#         tg_bot.register_next_step_handler(msg, process_age_step)
-#     elif call.data == "cd_reauth_no":
-#         tg_bot.answer_callback_query(call.id, "Оставить всё как есть.")
-#         tg_bot.send_message(call.message.chat.id, "Окей, оставим как есть.")
-#
-#
 @tg_bot.message_handler(commands = ['help'])
 def command_help(message):
     tg_bot.send_message(message.chat.id, messages_templates["help"]["command_help_text"])
 
 
-#
 @tg_bot.message_handler(commands = ['faq'])
 def command_faq(message):
     tg_bot.send_message(message.chat.id, messages_templates["faq"])
