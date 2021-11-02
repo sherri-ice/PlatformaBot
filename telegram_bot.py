@@ -48,6 +48,9 @@ def command_send_welcome(message):
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_reg")
 def command_register(call):
+    '''
+    Register function.
+    '''
     message = call.message
     # Send next step: name
     if get_user_by_id(message.chat.id) is None:
@@ -65,23 +68,23 @@ def process_age_step(message):
         tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["incorrect_input"],
                             reply_markup = keyboard_hider)
         return
+    with tg_bot.retrieve_data(message.chat.id) as data:
+        data['age'] = message.text
     # Send next step: city
     tg_bot.set_state(message.chat.id, "get_city")
     tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["city_reg_step"],
                         reply_markup = keyboard_hider)
-    with tg_bot.retrieve_data(message.chat.id) as data:
-        data['age'] = message.text
 
 
 @tg_bot.message_handler(state = "get_city")
 def process_city_step(message):
+    with tg_bot.retrieve_data(message.chat.id) as data:
+        data['city'] = message.text
     # Send next step: salary
     tg_bot.set_state(message.chat.id, "get_salary")
     tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["salary_reg_step"],
                         reply_markup = create_reply_keyboard(
                             messages_templates["unregistered_user"]["salary_answers"]))
-    with tg_bot.retrieve_data(message.chat.id) as data:
-        data['city'] = message.text
 
 
 @tg_bot.message_handler(state = "get_salary")
@@ -90,14 +93,15 @@ def process_salary_step(message):
         tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["incorrect_input"],
                             reply_markup = keyboard_hider)
         return
+    with tg_bot.retrieve_data(message.chat.id) as data:
+        data['salary'] = message.text
+
+    # Next step: finish registration
     tg_bot.set_state(message.chat.id, "end_reg")
 
 
 @tg_bot.message_handler(state = "end_reg")
 def end_reg(message):
-    with tg_bot.retrieve_data(message.chat.id) as data:
-        data['salary'] = message.text
-
     # End registration:
     if get_user_by_id(message.chat.id) is not None:
         delete_user(message.chat.id)
