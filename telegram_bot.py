@@ -182,23 +182,22 @@ def switch_to_employee(call):
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_vk_auth")
 def callback_vk_auth(call):
-    user = user_table.get_user_by_tg_id(call.from_user.id)
-    request_vk_auth(user.id, user.tg_id)
+    request_vk_auth(call.from_user.id)
 
 
-def request_vk_auth(user_id, tg_id, additional_buttons = None):
-    keyboard = gen_markup_for_vk_auth(user_id)
+def request_vk_auth(tg_id, additional_buttons = None):
+    keyboard = gen_markup_for_vk_auth(tg_id)
     if additional_buttons is not None:
         for button in additional_buttons:
             keyboard.add(button)
     tg_bot.send_message(tg_id, messages_templates["vk"]["vk_not_authorized"], reply_markup = keyboard)
 
 
-def gen_markup_for_vk_auth(user_id):
+def gen_markup_for_vk_auth(tg_id):
     markup = types.InlineKeyboardMarkup()
     markup.row_width = 1
 
-    markup.add(types.InlineKeyboardButton(text = "VK авторизация", url = request_vk_auth_code(user_id)))
+    markup.add(types.InlineKeyboardButton(text = "VK авторизация", url = request_vk_auth_code(tg_id)))
     return markup
 
 
@@ -215,9 +214,10 @@ def vk_reauth(call):
                         reply_markup = gen_markup_for_vk_auth(call.message.chat.id))
 
 
-def after_vk_auth_in_server(user_id):
-    employee = employee_table.get_employee_by_id(user_id)
-    tg_bot.send_message(user_id, employee.vk_access_token)
+def after_vk_auth_in_server(tg_id):
+    user = user_table.get_user_by_tg_id(tg_id)
+    employee = employee_table.get_employee_by_id(user.id)
+    tg_bot.send_message(tg_id, employee.vk_access_token)
     # data = ping_vk(tg_id)
     # if data is UserApiErrors.USER_BANNED:
     #     message_to_user = messages_templates["vk"]["vk_banned_profile"]
