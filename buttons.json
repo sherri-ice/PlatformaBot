@@ -20,7 +20,7 @@
     "Разберусь походу": "cd_faq_cancel"
   },
   "have_read_faq": {
-    "Понятно! Продолжить": "cd_vk_auth"
+    "Понятно! Продолжить": "cd_user_ready"
   },
   "user_ready": {
     "Я готов!" : "cd_user_ready",
