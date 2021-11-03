@@ -46,10 +46,10 @@
     "↩️ Вернуться": "cd_employee"
   },
   "employee_balance_buttons": {
-    "Вывести деньги": "cd_get_money",
-    "Перевести на баланс заказчика": "cd_transfer_money_to_customer",
-    "История транзакций": "cd_transaction_history",
-    "Назад": "cd_employee"
+    "\uD83D\uDCB8 Вывести деньги": "cd_get_money",
+    "\uD83C\uDFE6 Перевести на баланс заказчика": "cd_transfer_money_to_customer",
+    "\uD83D\uDCD6 История транзакций": "cd_transaction_history",
+    "↩️ Назад": "cd_employee"
   },
   "back_to_profile": {
     "↩️ Назад": "cd_profile"
