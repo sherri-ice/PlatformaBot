@@ -52,7 +52,7 @@ def callback_reg(call):
     # For re reg
     user = user_table.get_user_by_tg_id(call.from_user.id)
     if user is not None:
-        user_table.delete_user(user_id = user.id)
+        user_table.delete_user(user.id)
 
     command_register(call.message)
 
