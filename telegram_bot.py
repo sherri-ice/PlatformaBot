@@ -160,9 +160,9 @@ def get_employee_profile_info(user_id):
                ":)", create_inline_keyboard(buttons["choose_type_of_account"])
     keyboard = create_inline_keyboard(buttons["employee_profile_buttons"])
     if employee.vk_access_token is None:
-        keyboard.add(types.InlineKeyboardButton("VK auth", callback_data = "cd_vk_auth"))
+        keyboard.add(types.InlineKeyboardButton("VK авторизация", callback_data = "cd_vk_auth"))
     if employee.insta_access_token is None:
-        keyboard.add(types.InlineKeyboardButton("Insta auth", callback_data = "cd_vk_auth"))
+        keyboard.add(types.InlineKeyboardButton("Instagram авторизация", callback_data = "cd_vk_auth"))
     message = messages_templates["employee"]["profile"].format("Не авторизирован" if employee.vk_access_token is None
                                                                else get_vk_profile_info_for_employee(user_id),
                                                                "Не авторизирован" if employee.insta_access_token is
@@ -231,6 +231,11 @@ def callback_profile(call):
     tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id, text = message)
     tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id, reply_markup
     = create_inline_keyboard(buttons["profile_buttons"]))
+
+
+@tg_bot.callback_query_handler(func = lambda call: True)
+def handle_unregistered_callback(call):
+    tg_bot.send_message(call.from_user.id, "В разработке! :)")
 
 
 @tg_bot.message_handler(commands = ['help'])
