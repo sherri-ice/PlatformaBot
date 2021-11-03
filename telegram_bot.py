@@ -168,7 +168,7 @@ def get_employee_profile_info(user_id):
     if employee.vk_access_token is None:
         keyboard.add(types.InlineKeyboardButton("VK авторизация", callback_data = "cd_vk_auth"))
     if employee.insta_access_token is None:
-        keyboard.add(types.InlineKeyboardButton("Instagram авторизация", callback_data = "cd_vk_auth"))
+        keyboard.add(types.InlineKeyboardButton("Instagram авторизация", callback_data = "cd_insta_auth"))
     message = messages_templates["employee"]["profile"].format("Не авторизирован" if employee.vk_access_token is None
                                                                else get_vk_profile_info_for_employee(user_id),
                                                                "Не авторизирован" if employee.insta_access_token is
