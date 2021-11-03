@@ -80,7 +80,10 @@
   "customer_balance_buttons": {
     "\uD83D\uDCB8 Пополнить баланс": "cd_donate",
     "\uD83D\uDCD6 История транзакций": "cd_transaction_history",
-    "↩️ Назад": "cd_employee"
+    "↩️ Назад": "cd_customer"
+  },
+  "customer_faq_buttons": {
+    "↩️ Назад": "cd_customer"
   },
   "back_to_profile": {
     "↩️ Назад": "cd_profile"

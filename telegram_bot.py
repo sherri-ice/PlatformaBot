@@ -336,6 +336,16 @@ def callback_get_customer_balance(call):
     = keyboard)
 
 
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_customer_faq")
+def callback_get_customer_faq(call):
+    message_to_user = messages_templates["customer"]["faq"]
+    keyboard = create_inline_keyboard(buttons["customer_faq_buttons"])
+    tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id,
+                             text = message_to_user)
+    tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id, reply_markup
+    = keyboard)
+
+
 @tg_bot.callback_query_handler(func = lambda call: True)
 def handle_unregistered_callback(call):
     tg_bot.send_message(call.from_user.id, "В разработке! :)")
