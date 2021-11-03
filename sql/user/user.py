@@ -58,17 +58,16 @@ class Employee(db.Model):
     vk_access_token = db.Column(db.String(255))
     insta_access_token = db.Column(db.String(255))
 
-    def add_employee(self, id):
+    def add_employee(self, user_id):
         '''
         Add new user to employee database.
         '''
-        db.session.add(Employee(id = id))
-        user_table.get_user_by_id(id).employee_id = id
+        db.session.add(Employee(id = user_id))
+        user_table.get_user_by_id(user_id).employee_id = user_id
         apply_db_changes()
 
     def get_employee_by_id(self, user_id):
-        return Employee.query.filter_by(id = user_id).first()
-
+        return self.query.filter_by(id = user_id).first()
 
     def get_vk_api(self, user_id):
         if self.get_employee_by_id(user_id) is None:
@@ -93,6 +92,14 @@ class Customer(db.Model):
     __tablename__ = 'customer'
     id = db.Column(db.Integer, primary_key = True)
     balance = db.Column(db.Integer)
+
+    def add_customer(self, user_id):
+        db.session.add(Customer(id = user_id))
+        user_table.get_user_by_id(user_id).customer_id = user_id
+        apply_db_changes()
+
+    def get_customer_by_id(self, user_id):
+        return self.query.filter_by(id = user_id).first()
 
 
 user_table = UserTable()
