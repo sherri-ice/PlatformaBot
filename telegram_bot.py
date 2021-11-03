@@ -197,7 +197,7 @@ def get_customer_profile_info(user_id):
     customer = customer_table.get_customer_by_id(user_id)
     if customer is None:
         return "Не зарегистрирован профиль заказчика. Попробуй выбрать роль \"Заказчик\" и выложить задание " \
-               ":)", create_inline_keyboard(buttons["choose_type_of_account"])
+               ":)"
     message = messages_templates["customer"]["profile"].format()
     return message
 
