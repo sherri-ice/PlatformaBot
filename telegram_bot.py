@@ -177,17 +177,17 @@ def get_profile_info(user_id):
 def get_employee_profile_info(user_id):
     employee = employee_table.get_employee_by_id(user_id)
     if employee is None:
-        return "Не зарегистрирован профиль исполнителя. Попробуй выбрать роль \"Исполнитель\" и выполнить задания " \
+        return "❗️ Не зарегистрирован профиль исполнителя. Попробуй выбрать роль \"Исполнитель\" и выполнить задания " \
                ":)", create_inline_keyboard(buttons["choose_type_of_account"])
     keyboard = create_inline_keyboard(buttons["employee_profile_buttons"])
     if employee.vk_access_token is None:
-        keyboard.add(types.InlineKeyboardButton("VK авторизация", callback_data = "cd_vk_auth"))
+        keyboard.add(types.InlineKeyboardButton("🔹 VK авторизация", callback_data = "cd_vk_auth"))
 
     if employee.insta_access_token is None:
-        keyboard.add(types.InlineKeyboardButton("Instagram авторизация", callback_data = "cd_insta_auth"))
-    message = messages_templates["employee"]["profile"].format("Не авторизирован" if employee.vk_access_token is None
+        keyboard.add(types.InlineKeyboardButton("🔸 Instagram авторизация", callback_data = "cd_insta_auth"))
+    message = messages_templates["employee"]["profile"].format("❗️ Не авторизирован" if employee.vk_access_token is None
                                                                else get_vk_profile_info_for_employee(user_id),
-                                                               "Не авторизирован" if employee.insta_access_token is
+                                                               "❗️ Не авторизирован" if employee.insta_access_token is
                                                                                      None else employee.insta_access_token,
                                                                employee.balance)
     return message, keyboard
@@ -196,7 +196,7 @@ def get_employee_profile_info(user_id):
 def get_customer_profile_info(user_id):
     customer = customer_table.get_customer_by_id(user_id)
     if customer is None:
-        return "Не зарегистрирован профиль заказчика. Попробуй выбрать роль \"Заказчик\" и выложить задание " \
+        return "❗️ Не зарегистрирован профиль заказчика. Попробуй выбрать роль \"Заказчик\" и выложить задание " \
                ":)"
     message = messages_templates["customer"]["profile"].format()
     return message
