@@ -45,6 +45,12 @@
     "♻️ Сменить аккаунт": "cd_vk_auth",
     "↩️ Вернуться": "cd_employee"
   },
+  "employee_balance_buttons": {
+    "Вывести деньги": "cd_get_money",
+    "Перевести на баланс заказчика": "cd_transfer_money_to_customer",
+    "История транзакций": "cd_transaction_history",
+    "Назад": "cd_employee"
+  },
   "back_to_profile": {
     "↩️ Назад": "cd_profile"
   }

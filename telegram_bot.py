@@ -189,6 +189,17 @@ def switch_to_employee(call):
     tg_bot.send_message(user.tg_id, employee_data, reply_markup = keyboard)
 
 
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_employee_get_balance")
+def callback_get_employee_balance(call):
+    user = user_table.get_user_by_tg_id(call.from_user.id)
+    employee = employee_table.get_employee_by_id(user.id)
+    message_to_user = messages_templates["employee"]["balance"].format(employee.balance)
+    keyboard = create_inline_keyboard(buttons["employee_balance_buttons"])
+    tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id, text = message_to_user)
+    tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id, reply_markup
+    = keyboard)
+
+
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_vk_auth")
 def callback_vk_auth(call):
     keyboard = gen_markup_for_vk_auth(call.from_user.id)
