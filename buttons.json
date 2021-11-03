@@ -48,7 +48,8 @@
     "\uD83D\uDCB8 Мой баланс": "cd_employee_get_balance",
     "⚙️ Настройки": "cd_employee_settings",
     "❓ FAQ": "cd_employee_faq",
-    "\uD83D\uDCBB Тех. поддержка": "cd_technical_help"
+    "\uD83D\uDCBB Тех. поддержка": "cd_technical_help",
+    "\uD83D\uDE80 Выбрать роль": "cd_user_ready"
   },
   "employee_vk_auth_confirmation": {
     "♻️ Сменить аккаунт": "cd_vk_auth",
@@ -72,7 +73,8 @@
     "Создать задание": "cd_create_task",
     "\uD83D\uDCB8 Мой баланс": "cd_customer_get_balance",
     "❓ FAQ": "cd_customer_faq",
-    "\uD83D\uDCBB Тех. поддержка": "cd_technical_help"
+    "\uD83D\uDCBB Тех. поддержка": "cd_technical_help",
+    "\uD83D\uDE80 Выбрать роль": "cd_user_ready"
   },
   "back_to_profile": {
     "↩️ Назад": "cd_profile"

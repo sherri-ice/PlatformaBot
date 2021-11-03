@@ -315,6 +315,9 @@ def callback_re_register(call):
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_customer")
 def callback_switch_to_customer(call):
     user = user_table.get_user_by_tg_id(call.from_user.id)
+    customer = customer_table.get_customer_by_id(user.id)
+    if customer is None:
+        customer_table.add_customer(user.id)
     message = get_customer_profile_info(user.id)
     keyboard = create_inline_keyboard(buttons["customer_profile_buttons"])
     tg_bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
