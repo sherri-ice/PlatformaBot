@@ -3,8 +3,8 @@
     "✅ Регистрация": "cd_reg"
   },
   "re_reg_buttons": {
-    "Да, перерегистрироваться и изменить данные": "cd_reg",
-    "Оставить всё как есть": "cd_profile"
+    "✅ Да, перерегистрироваться и изменить данные": "cd_reg",
+    "❌ Оставить всё как есть": "cd_profile"
   },
   "start_buttons": {
     "\uD83D\uDC65 Мой профиль": "cd_profile"
@@ -20,8 +20,8 @@
     "27+"
   ],
   "re_register": {
-    "Да!": "cd_reauth_yes",
-    "Оставить всё как есть": "cd_reauth_no"
+    "✅ Да!": "cd_reauth_yes",
+    "❌ Оставить всё как есть": "cd_reauth_no"
   },
   "read_faq_after_reg": {
     "\uD83D\uDCD5 Прочитать FAQ": "cd_faq",
@@ -34,9 +34,9 @@
     "❗️ Я передумал! Хочу прочитать FAQ": "cd_faq"
   },
   "vk_reauth_buttons": {
-    "Да, авторизировать другой аккаунт": "cd_vk_auth",
-    "Нет, хочу оставить всё как есть": "cd_employee",
-    "Назад": "cd_employee"
+    "✅ Да, авторизировать другой аккаунт": "cd_vk_auth",
+    "❌ Нет, хочу оставить всё как есть": "cd_employee",
+    "↩️ Назад": "cd_employee"
   },
   "choose_type_of_account": {
     "\uD83D\uDC77\uD83C\uDFFC Выбрать исполнителя": "cd_employee",
@@ -70,8 +70,8 @@
     "↩️ Назад": "cd_employee"
   },
   "customer_profile_buttons": {
-    "Мои задания": "cd_customer_my_tasks",
-    "Создать задание": "cd_create_task",
+    "\uD83D\uDCCB Мои задания": "cd_customer_my_tasks",
+    "\uD83D\uDCDD Создать задание": "cd_create_task",
     "\uD83D\uDCB8 Мой баланс": "cd_customer_get_balance",
     "❓ FAQ": "cd_customer_faq",
     "\uD83D\uDCBB Тех. поддержка": "cd_technical_help",
