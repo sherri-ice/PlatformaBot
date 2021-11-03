@@ -61,6 +61,9 @@
     "\uD83D\uDD38 Перепривязать профиль Инстаграм": "cd_insta_reauth",
     "↩️ Назад": "cd_employee"
   },
+  "employee_faq_buttons": {
+    "↩️ Назад": "cd_employee"
+  },
   "back_to_profile": {
     "↩️ Назад": "cd_profile"
   }

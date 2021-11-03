@@ -201,12 +201,20 @@ def callback_get_employee_balance(call):
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_employee_settings")
-def callback_get_employee_balance(call):
-    user = user_table.get_user_by_tg_id(call.from_user.id)
-    employee = employee_table.get_employee_by_id(user.id)
-    message_to_user = messages_templates["employee"]["settings"].format(employee.balance)
+def callback_get_employee_settings(call):
+    message_to_user = messages_templates["employee"]["settings"]
     keyboard = create_inline_keyboard(buttons["employee_settings_buttons"])
     tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id, text = message_to_user)
+    tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id, reply_markup
+    = keyboard)
+
+
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_employee_faq")
+def callback_get_employee_faq(call):
+    message_to_user = messages_templates["employee"]["faq"]
+    keyboard = create_inline_keyboard(buttons["employee_faq_buttons"])
+    tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id,
+                             text = message_to_user)
     tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id, reply_markup
     = keyboard)
 
