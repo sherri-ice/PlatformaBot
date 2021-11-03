@@ -317,6 +317,8 @@ def callback_switch_to_customer(call):
     user = user_table.get_user_by_tg_id(call.from_user.id)
     message = get_customer_profile_info(user.id)
     keyboard = create_inline_keyboard(buttons["customer_profile_buttons"])
+    tg_bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
+                             text = messages_templates["chosen_role"].format("заказчик"))
     tg_bot.send_message(call.from_user.id, message, reply_markup = keyboard)
 
 
