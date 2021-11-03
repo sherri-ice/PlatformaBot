@@ -156,7 +156,8 @@ def command_choose_role(message):
 def get_employee_profile_info(user_id):
     employee = employee_table.get_employee_by_id(user_id)
     if employee is None:
-        return "Не зарегистрирован профиль исполнителя. Попробуй выбрать роль \"Исполнитель\" и выполнить задания :)"
+        return "Не зарегистрирован профиль исполнителя. Попробуй выбрать роль \"Исполнитель\" и выполнить задания " \
+               ":)", create_inline_keyboard(buttons["choose_type_of_account"])
     keyboard = create_inline_keyboard(buttons["employee_profile_buttons"])
     if employee.vk_access_token is None:
         keyboard.add(types.InlineKeyboardButton("VK auth", callback_data = "cd_vk_auth"))
