@@ -30,10 +30,10 @@ class UserTable(db.Model):
         apply_db_changes()
 
     def get_user_by_tg_id(self, user_id):
-        return UserTable.query.filter_by(tg_id = user_id).first()
+        return self.query.filter_by(tg_id = user_id).first()
 
     def get_user_by_id(self, id):
-        return UserTable.query.filter_by(id = id).first()
+        return self.query.filter_by(id = id).first()
 
     def add_new_user(self, tg_id, age = None, salary = None, city = None):
         '''
@@ -44,7 +44,10 @@ class UserTable(db.Model):
         return self.get_user_by_tg_id(tg_id)
 
     def delete_user(self, user_id):
-        UserTable.query.filter_by(id = user_id).delete()
+        self.query.filter_by(id = user_id).delete()
+        if employee_table.get_employee_by_id(user_id) is not None:
+            employee_table.query.filter_by(id = user_id).delete()
+        # if customer_table
         apply_db_changes()
 
 
@@ -65,6 +68,7 @@ class Employee(db.Model):
 
     def get_employee_by_id(self, user_id):
         return Employee.query.filter_by(id = user_id).first()
+
 
     def get_vk_api(self, user_id):
         if self.get_employee_by_id(user_id) is None:
