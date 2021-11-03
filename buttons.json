@@ -68,6 +68,12 @@
   "employee_faq_buttons": {
     "↩️ Назад": "cd_employee"
   },
+  "customer_profile_buttons": {
+    "Создать задание": "cd_create_task",
+    "\uD83D\uDCB8 Мой баланс": "cd_customer_get_balance",
+    "❓ FAQ": "cd_customer_faq",
+    "\uD83D\uDCBB Тех. поддержка": "cd_technical_help"
+  },
   "back_to_profile": {
     "↩️ Назад": "cd_profile"
   }

@@ -170,7 +170,7 @@ def get_profile_info(user_id):
                                                                                       user.registered_date,
                                                                                       user.appeals)
     employee_data, _ = get_employee_profile_info(user_id)
-    customer_data = "Профиль заказчика:"
+    customer_data = get_customer_profile_info(user_id)
     return common_data + messages_templates["registered_user"]["profile"].format(customer_data, employee_data)
 
 
@@ -191,6 +191,15 @@ def get_employee_profile_info(user_id):
                                                                                      None else employee.insta_access_token,
                                                                employee.balance)
     return message, keyboard
+
+
+def get_customer_profile_info(user_id):
+    customer = customer_table.get_customer_by_id(user_id)
+    if customer is None:
+        return "Не зарегистрирован профиль заказчика. Попробуй выбрать роль \"Заказчик\" и выложить задание " \
+               ":)", create_inline_keyboard(buttons["choose_type_of_account"])
+    message = messages_templates["customer"]["profile"].format()
+    return message
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_employee")
@@ -301,6 +310,14 @@ def callback_re_register(call):
     tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id, text = message)
     tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id, reply_markup
     = create_inline_keyboard(buttons["re_reg_buttons"]))
+
+
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_customer")
+def callback_switch_to_customer(call):
+    user = user_table.get_user_by_tg_id(call.from_user.id)
+    message = get_customer_profile_info(user.id)
+    keyboard = create_inline_keyboard(buttons["customer_profile_buttons"])
+    tg_bot.send_message(call.from_user.id, message, reply_markup = keyboard)
 
 
 @tg_bot.callback_query_handler(func = lambda call: True)
