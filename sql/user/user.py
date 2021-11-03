@@ -91,7 +91,7 @@ class Employee(db.Model):
 class Customer(db.Model):
     __tablename__ = 'customer'
     id = db.Column(db.Integer, primary_key = True)
-    balance = db.Column(db.Integer)
+    balance = db.Column(db.Integer, default = 0)
 
     def add_customer(self, user_id):
         db.session.add(Customer(id = user_id))
