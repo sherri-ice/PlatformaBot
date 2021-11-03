@@ -47,6 +47,12 @@ def command_send_welcome(message):
     tg_bot.send_message(message.chat.id, message_to_user, reply_markup = keyboard)
 
 
+# Handle all other messages from unregistered users
+@tg_bot.message_handler(func = lambda message: user_table.get_user_by_tg_id(message.chat.id) is None)
+def echo_message(message):
+    tg_bot.reply_to(message, messages_templates["unregistered_user"]["request_for_registration"])
+
+
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_reg")
 def callback_reg(call):
     command_register(call.message)
@@ -246,13 +252,6 @@ def command_help(message):
 @tg_bot.message_handler(commands = ['faq'])
 def command_faq(message):
     tg_bot.send_message(message.chat.id, messages_templates["faq"])
-
-
-# Handle all other messages from unregistered users
-@tg_bot.message_handler(func = lambda message: user_table.get_user_by_tg_id(message.chat.id) is None, content_types =
-['text'])
-def echo_message(message):
-    tg_bot.reply_to(message, messages_templates["unregistered_user"]["request_for_registration"])
 
 
 @tg_bot.message_handler(func = lambda message: user_table.get_user_by_tg_id(message.chat.id) is not None,
