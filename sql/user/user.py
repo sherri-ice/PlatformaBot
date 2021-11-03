@@ -43,7 +43,7 @@ class UserTable(db.Model):
         db.session.add(UserTable(tg_id = tg_id, age = age, salary = salary, city = city))
         return self.get_user_by_tg_id(tg_id)
 
-    def delete_user(user_id):
+    def delete_user(self, user_id):
         UserTable.query.filter_by(id = user_id).delete()
         apply_db_changes()
 
