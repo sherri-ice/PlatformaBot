@@ -165,7 +165,6 @@ def get_profile_info(user_id):
                                                                                       user.registered_date,
                                                                                       user.appeals)
     employee_data, _ = get_employee_profile_info(user_id)
-    employee_data = get_employee_profile_info(user_id)
     customer_data = "Профиль заказчика:"
     return common_data + messages_templates["registered_user"]["profile"].format(customer_data, employee_data)
 
