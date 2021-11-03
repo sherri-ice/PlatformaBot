@@ -328,7 +328,7 @@ def callback_switch_to_customer(call):
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_customer_get_balance")
 def callback_get_customer_balance(call):
     user = user_table.get_user_by_tg_id(call.from_user.id)
-    customer = customer_table.get_employee_by_id(user.id)
+    customer = customer_table.get_customer_by_id(user.id)
     message_to_user = messages_templates["customer"]["balance"].format(customer.balance)
     keyboard = create_inline_keyboard(buttons["customer_balance_buttons"])
     tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id, text = message_to_user)
