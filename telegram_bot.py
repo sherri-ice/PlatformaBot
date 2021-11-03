@@ -167,6 +167,7 @@ def get_employee_profile_info(user_id):
     keyboard = create_inline_keyboard(buttons["employee_profile_buttons"])
     if employee.vk_access_token is None:
         keyboard.add(types.InlineKeyboardButton("VK авторизация", callback_data = "cd_vk_auth"))
+
     if employee.insta_access_token is None:
         keyboard.add(types.InlineKeyboardButton("Instagram авторизация", callback_data = "cd_insta_auth"))
     message = messages_templates["employee"]["profile"].format("Не авторизирован" if employee.vk_access_token is None
@@ -242,6 +243,7 @@ def gen_markup_for_vk_auth(tg_id, additional_buttons = None):
     markup = types.InlineKeyboardMarkup()
     markup.row_width = 1
     markup.add(types.InlineKeyboardButton(text = "VK авторизация", url = request_vk_auth_code(tg_id)))
+    markup.add(types.InlineKeyboardButton(text = "↩️ Назад", callback_data = "cd_employee"))
     if additional_buttons is not None:
         for button in additional_buttons:
             markup.add(button)
