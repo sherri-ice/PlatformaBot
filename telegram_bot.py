@@ -303,8 +303,7 @@ def command_help(message):
 @tg_bot.message_handler(commands = ['my_profile'])
 def command_help(message):
     user = user_table.get_user_by_tg_id(message.chat.id)
-    employee_data, _ = get_employee_profile_info(user.id)
-    message_for_user = messages_templates["registered_user"]["profile"].format(employee_data, "Профиль заказчика:")
+    message_for_user = get_profile_info(user.id)
     tg_bot.send_message(message.chat.id, message_for_user,
                         reply_markup = create_inline_keyboard(buttons["profile_buttons"]))
 
