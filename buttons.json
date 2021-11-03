@@ -57,8 +57,9 @@
     "↩️ Назад": "cd_employee"
   },
   "employee_settings_buttons": {
-    "Перепривязать профиль Вконтакте": "cd_vk_reauth",
-    "Перепривязать профиль Инстаграм": "cd_insta_reauth"
+    "\uD83D\uDD39 Перепривязать профиль Вконтакте": "cd_vk_reauth",
+    "\uD83D\uDD38 Перепривязать профиль Инстаграм": "cd_insta_reauth",
+    "↩️ Назад": "cd_employee"
   },
   "back_to_profile": {
     "↩️ Назад": "cd_profile"
