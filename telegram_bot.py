@@ -159,6 +159,17 @@ def command_choose_role(message):
         buttons["choose_type_of_account"]))
 
 
+def get_profile_info(user_id):
+    user = user_table.get_user_by_id(user_id)
+    common_data = messages_templates["registered_user"]["profile_common_data"].format(user.id, user.age, user.city,
+                                                                                      user.registered_date,
+                                                                                      user.appeals)
+    employee_data, _ = get_employee_profile_info(user_id)
+    employee_data = get_employee_profile_info(user_id)
+    customer_data = "Профиль заказчика:"
+    return common_data + messages_templates["registered_user"]["profile"].format(customer_data, employee_data)
+
+
 def get_employee_profile_info(user_id):
     employee = employee_table.get_employee_by_id(user_id)
     if employee is None:
@@ -274,8 +285,7 @@ def after_vk_auth_in_server(tg_id):
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_profile")
 def callback_profile(call):
     user = user_table.get_user_by_tg_id(call.from_user.id)
-    employee_data, _ = get_employee_profile_info(user.id)
-    message = messages_templates["registered_user"]["profile"].format(employee_data, "Профиль заказчика:")
+    message = get_profile_info(user.id)
     tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id, text = message)
     tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id, reply_markup
     = create_inline_keyboard(buttons["profile_buttons"]))
