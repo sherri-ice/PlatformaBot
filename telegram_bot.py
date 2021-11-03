@@ -209,6 +209,16 @@ def callback_vk_auth(call):
     = keyboard)
 
 
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_vk_reauth")
+def callback_vk_reauth(call):
+    user = user_table.get_user_by_tg_id(call.from_user.id)
+    message_for_user = messages_templates["vk"]["vk_re_register"] + "\n" + get_vk_profile_info_for_employee(user.id)
+    keyboard = create_inline_keyboard(buttons["vk_reauth_buttons"])
+    tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id, text = message_for_user)
+    tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id, reply_markup
+    = keyboard)
+
+
 def gen_markup_for_vk_auth(tg_id, additional_buttons = None):
     markup = types.InlineKeyboardMarkup()
     markup.row_width = 1

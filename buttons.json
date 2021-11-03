@@ -29,6 +29,11 @@
   "user_ready": {
     "❗️ Я передумал! Хочу прочитать FAQ": "cd_faq"
   },
+  "vk_reauth_buttons": {
+    "Да, авторизировать другой аккаунт": "cd_vk_auth",
+    "Нет, хочу оставить всё как есть" : "cd_employee",
+    "Назад": "cd_employee"
+  },
   "choose_type_of_account": {
     "\uD83D\uDC77\uD83C\uDFFC Выбрать исполнителя": "cd_employee",
     "\uD83D\uDC77\uD83C\uDFFC Выбрать заказчика": "cd_customer",
@@ -50,6 +55,10 @@
     "\uD83C\uDFE6 Перевести на баланс заказчика": "cd_transfer_money_to_customer",
     "\uD83D\uDCD6 История транзакций": "cd_transaction_history",
     "↩️ Назад": "cd_employee"
+  },
+  "employee_settings_buttons": {
+    "Перепривязать профиль Вконтакте": "cd_vk_reauth",
+    "Перепривязать профиль Инстаграм": "cd_insta_reauth"
   },
   "back_to_profile": {
     "↩️ Назад": "cd_profile"
