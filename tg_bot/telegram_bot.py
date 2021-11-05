@@ -272,10 +272,10 @@ def get_profile_info(user_id):
 def get_employee_profile_info(user_id):
     user = user_table.get_user_by_id(user_id)
     employee = employee_table.get_employee_by_id(user_id)
+    keyboard = create_inline_keyboard(buttons["employee_profile_buttons"])
     if employee is None:
         return "❗️ Не зарегистрирован профиль исполнителя. Попробуй выбрать роль \"Заказчик\" и выполнить задание " \
-               ":)"
-    keyboard = create_inline_keyboard(buttons["employee_profile_buttons"])
+               ":)", keyboard
 
     message = messages_templates["employee"]["profile"].format("❗️ Не авторизирован" if user.vk_access_token is None
                                                                else get_vk_profile_info(user.tg_id),
