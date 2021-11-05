@@ -21,7 +21,8 @@
   },
   "salary_reg_buttons": {
     "\uD83D\uDCB8 Да, я зарабатываю сам и лично распоряжаюсь своими доходами.": "cd_work_exists",
-    "\uD83D\uDE48 Нет, сижу на шее у родителей.": "cd_no_work"
+    "\uD83D\uDE48 Нет, сижу на шее у родителей.": "cd_no_work",
+    "Назад": "cd_city_back"
   },
   "vk_auth_confirmation_buttons": {
     "Всё верно": "cd_accept_vk",
