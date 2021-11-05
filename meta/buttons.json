@@ -54,7 +54,7 @@
     "\uD83D\uDE0E Разберусь походу": "cd_faq_cancel"
   },
   "have_read_faq": {
-    "\uD83D\uDE0E Понятно! Продолжить": "cd_user_ready"
+    "\uD83D\uDE0E Понятно! Продолжить": "cd_vk_auth"
   },
   "user_ready": {
     "❗️ Я передумал! Хочу прочитать FAQ": "cd_faq"

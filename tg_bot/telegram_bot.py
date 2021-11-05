@@ -149,13 +149,24 @@ def callback_salary_step(call):
     user.salary = call.data
     apply_db_changes()
 
-    tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id,
-                             text = messages_templates["vk"]["vk_auth_message"])
-    keyboard = gen_markup_for_vk_auth(user.tg_id)
-    keyboard.add(types.InlineKeyboardButton("Назад", callback_data = "cd_salary_back"))
-    keyboard.add(types.InlineKeyboardButton("Привязать позже", callback_data = "cd_vk_auth_cancel"))
-    tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id, reply_markup
-    = keyboard)
+    finish_registration(call.message)
+
+
+@tg_bot.callback_query_handler(func = lambda call: call.data in buttons["read_faq_after_reg"].values())
+def handle_callback_faq(call):
+    if call.data == "cd_faq":
+        tg_bot.answer_callback_query(call.id, "Прочитать FAQ")
+        tg_bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
+                                 text = messages_templates["reg_faq"])
+        tg_bot.edit_message_reply_markup(chat_id = call.message.chat.id, message_id = call.message.message_id,
+                                         reply_markup = create_inline_keyboard(buttons["have_read_faq"]))
+    elif call.data == "cd_faq_cancel":
+        tg_bot.answer_callback_query(call.id, "Не читать FAQ")
+        keyboard = create_inline_keyboard(buttons["user_ready"])
+        tg_bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
+                                 text = messages_templates["is_user_ready"])
+        tg_bot.edit_message_reply_markup(chat_id = call.message.chat.id, message_id = call.message.message_id,
+                                         reply_markup = keyboard)
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_vk_back")
@@ -202,6 +213,13 @@ def finish_registration(message):
                                                                                                         user.city_name,
                                                                                                         user.registered_date,
                                                                                                         user.appeals))
+    tg_bot.set_state(message.chat.id, "faq")
+
+
+@tg_bot.message_handler(state = "faq")
+def command_faq(message):
+    tg_bot.send_message(message.chat.id, messages_templates["finish_registration"],
+                        reply_markup = create_inline_keyboard(buttons["read_faq_after_reg"]))
 
 
 # def process_end_reg(message):
@@ -226,23 +244,6 @@ def finish_registration(message):
 @tg_bot.message_handler(func = lambda message: is_unregistered_user(message.chat.id))
 def unregistered_user_reply(message):
     command_send_welcome(message)
-
-
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_faq" or call.data == "cd_faq_cancel")
-def handle_callback_faq(call):
-    if call.data == "cd_faq":
-        tg_bot.answer_callback_query(call.id, "Прочитать FAQ")
-        tg_bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
-                                 text = messages_templates["reg_faq"])
-        tg_bot.edit_message_reply_markup(chat_id = call.message.chat.id, message_id = call.message.message_id,
-                                         reply_markup = create_inline_keyboard(buttons["have_read_faq"]))
-    elif call.data == "cd_faq_cancel":
-        tg_bot.answer_callback_query(call.id, "Не читать FAQ")
-        keyboard = create_inline_keyboard(buttons["user_ready"])
-        tg_bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
-                                 text = messages_templates["is_user_ready"])
-        tg_bot.edit_message_reply_markup(chat_id = call.message.chat.id, message_id = call.message.message_id,
-                                         reply_markup = keyboard)
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_user_ready")
