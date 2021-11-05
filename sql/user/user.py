@@ -10,6 +10,7 @@ class UserTable(db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key = True, nullable = False, autoincrement = True)
     tg_id = db.Column(db.Integer)
+    finished_reg = db.Column(db.Boolean, default = False)
     # For target
     age = db.Column(db.String(255))
     salary = db.Column(db.String(255))

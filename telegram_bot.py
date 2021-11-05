@@ -56,6 +56,8 @@ def callback_reg(call):
 
     command_register(call.message)
 
+def send_data_warning(tg_id):
+    tg_bot.send_message(tg_id, messages_templates["unregistered_user"]["data_collection_warning"])
 
 @tg_bot.message_handler(commands = ['register'])
 def command_register(message):
@@ -64,17 +66,20 @@ def command_register(message):
     '''
     # Send next step: name
     if user_table.get_user_by_tg_id(message.chat.id) is None:
-        tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["registration_start"],
-                            reply_markup = create_inline_keyboard(buttons["age_reg_buttons"]))
+        send_data_warning(message.chat.id)
+        tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["age_reg_step"], reply_markup =
+        create_inline_keyboard(buttons["age_reg_buttons"]))
     else:
         tg_bot.send_message(message.chat.id, messages_templates["registered_user"]["re_register"],
                             reply_markup = create_inline_keyboard(buttons["re_register"]))
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data in buttons["age_reg_buttons"].values())
-def callback(call):
-    tg_bot.answer_callback_query(call.id, "Ypu pressed button!")
-
+def callback_age_handler(call):
+    user = user_table.add_new_user(call.from_user.id)
+    user.age = call.data
+    tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id,
+                             text = messages_templates["unregistered_user"]["city_reg_step"])
 
 # @tg_bot.message_handler(state = "get_age")
 # def process_age_step(message):
