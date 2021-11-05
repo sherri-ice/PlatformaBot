@@ -217,7 +217,7 @@ def after_vk_auth_in_server(tg_id):
 def callback_accept_vk_account(call):
     tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id,
                              text = messages_templates["unregistered_user"]["after_faq_message"])
-    command_choose_role(call.message)
+    choose_role(call.message)
 
 
 def finish_registration(message):
@@ -244,9 +244,18 @@ def unregistered_user_reply(message):
     tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["after_faq_message"])
 
 
-def command_choose_role(message):
+def choose_role(message):
     tg_bot.send_message(message.chat.id, messages_templates["choose_role"], reply_markup = create_inline_keyboard(
         buttons["choose_type_of_account"]))
+
+
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_choose_role")
+def callback_choose_role(call):
+    tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id,
+                             text = messages_templates["choose_role"])
+    tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id,
+                                     reply_markup = create_inline_keyboard(
+                                         buttons["choose_type_of_account"]))
 
 
 def get_profile_info(user_id):
@@ -263,6 +272,9 @@ def get_profile_info(user_id):
 def get_employee_profile_info(user_id):
     user = user_table.get_user_by_id(user_id)
     employee = employee_table.get_employee_by_id(user_id)
+    if employee is None:
+        return "❗️ Не зарегистрирован профиль исполнителя. Попробуй выбрать роль \"Заказчик\" и выполнить задание " \
+               ":)"
     keyboard = create_inline_keyboard(buttons["employee_profile_buttons"])
 
     message = messages_templates["employee"]["profile"].format("❗️ Не авторизирован" if user.vk_access_token is None
