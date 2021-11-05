@@ -239,8 +239,6 @@ def finish_registration(message):
                                             user.city_name,
                                             user.registered_date,
                                             user.appeals))
-        tg_bot.edit_message_reply_markup(chat_id = message.chat.id, message_id = message.message_id, reply_markup =
-        create_reply_keyboard(buttons["main_buttons"]))
         return
     user.finished_reg = True
     apply_db_changes()
@@ -250,6 +248,8 @@ def finish_registration(message):
                                                                                                         user.city_name,
                                                                                                         user.registered_date,
                                                                                                         user.appeals))
+    tg_bot.edit_message_reply_markup(chat_id = message.chat.id, message_id = message.message_id, reply_markup =
+    create_reply_keyboard(buttons["main_buttons"]))
     show_faq_after_req(message)
 
 
