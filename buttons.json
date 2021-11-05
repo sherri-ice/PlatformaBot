@@ -9,7 +9,7 @@
     "30+": "cd_old"
   },
   "city_reg_buttons": {
-    "Назад": "cd_reg",
+    "Назад": "cd_age_back",
     "Как отправить геопозицию?": "cd_faq_geopos"
   },
   "re_reg_buttons": {

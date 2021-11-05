@@ -76,7 +76,8 @@ def command_register(message):
                             reply_markup = create_inline_keyboard(buttons["re_register"]))
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data in buttons["age_reg_buttons"].values())
+@tg_bot.callback_query_handler(func = lambda call: call.data in buttons["age_reg_buttons"].values() or
+                                                   call.data == "cd_age_back")
 def callback_age_handler(call):
     user = user_table.add_new_user(call.from_user.id)
     apply_db_changes()
