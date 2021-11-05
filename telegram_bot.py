@@ -100,6 +100,13 @@ def callback_age_handler(call):
     tg_bot.set_state(call.from_user.id, "get_city")
 
 
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_city_back")
+def callback_return_to_city_step(call):
+    tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id, reply_markup
+    = create_inline_keyboard(buttons["city_reg_buttons"]))
+    tg_bot.set_state(call.from_user.id, "get_city")
+
+
 @tg_bot.message_handler(state = "get_city", content_types = ["location"])
 def process_city_step(message):
     user = user_table.get_user_by_tg_id(message.from_user.id)
@@ -107,10 +114,12 @@ def process_city_step(message):
     apply_db_changes()
 
     address = get_address_from_coordinates(f"{user.city_longitude},{user.city_latitude}")
-    tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["city_get_data"].format(address))
+    tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["city_get_data"].format(address),
+                        reply_markup = create_inline_keyboard(buttons["city_back_button"]))
     # Send next step: salary
     tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["salary_reg_step"],
                         reply_markup = create_inline_keyboard(buttons["salary_reg_buttons"]))
+
 
 # @tg_bot.message_handler(state = "get_city")
 # def process_city_step(message):
