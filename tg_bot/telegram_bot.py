@@ -213,6 +213,7 @@ def callback_vk_auth(call):
 def cancel_vk_auth(call):
     tg_bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
                              text = messages_templates["vk"]["vk_cancel_auth"])
+    choose_role(call.message)
 
 
 def after_vk_auth_in_server(tg_id):
