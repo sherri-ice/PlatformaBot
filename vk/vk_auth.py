@@ -23,3 +23,7 @@ def authorize_vk_session(code: str, tg_id: int):
     except vk_api.AuthError as error_msg:
         print(error_msg)
         return None
+
+if __name__ == '__main__':
+    print(request_vk_auth_code(299065458))
+    print(authorize_vk_session("ca7382db72e385e42e", 299065458))

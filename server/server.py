@@ -35,7 +35,7 @@ def redirect_from_vk():
         telegram_bot.send_message(tg_id, messages_templates["vk"]["vk_error_not_found"])
         return
     user_table.register_vk_token(tg_id, vk_code = vk_code)
-    after_vk_auth_in_server(tg_id)
+    # after_vk_auth_in_server(tg_id)
     return ''
 
 

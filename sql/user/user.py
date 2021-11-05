@@ -61,9 +61,9 @@ class UserTable(db.Model):
         try:
             vk_session = vk_api.VkApi(app_id = VK_API_APP_ID, client_secret = VK_CLIENT_SECRET,
                                       token = self.get_user_by_tg_id(tg_id).vk_access_token)
+            return vk_session.get_api()
         except vk_api.exceptions.ApiError as error:
             return None
-        return vk_session.get_api()
 
 
 class Employee(db.Model):
