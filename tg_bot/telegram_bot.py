@@ -182,6 +182,12 @@ def cancel_vk_auth(call):
                              text = messages_templates["vk"]["vk_cancel_auth"])
 
 
+def after_vk_auth_in_server(tg_id):
+    user = user_table.get_user_by_tg_id(tg_id)
+    tg_bot.send_message(tg_id, get_vk_profile_info(user.id), reply_markup = create_inline_keyboard(
+        buttons["vk_auth_confirmation_buttons"]))
+
+
 # def process_end_reg(message):
 #     # End registration:
 #     if user_table.get_user_by_tg_id(message.chat.id) is not None:
@@ -254,14 +260,14 @@ def get_employee_profile_info(user_id):
     if employee.vk_access_token is None:
         keyboard.add(types.InlineKeyboardButton("🔹 VK авторизация", callback_data = "cd_vk_auth"))
 
-    if employee.insta_access_token is None:
-        keyboard.add(types.InlineKeyboardButton("🔸 Instagram авторизация", callback_data = "cd_insta_auth"))
-    message = messages_templates["employee"]["profile"].format("❗️ Не авторизирован" if employee.vk_access_token is None
-                                                               else get_vk_profile_info_for_employee(user_id),
-                                                               "❗️ Не авторизирован" if employee.insta_access_token is
-                                                                                        None else employee.insta_access_token,
-                                                               employee.balance)
-    return message, keyboard
+    # if employee.insta_access_token is None:
+    #     keyboard.add(types.InlineKeyboardButton("🔸 Instagram авторизация", callback_data = "cd_insta_auth"))
+    # # message = messages_templates["employee"]["profile"].format("❗️ Не авторизирован" if employee.vk_access_token is None
+    #                                                            else get_vk_profile_info_for_employee(user_id),
+    #                                                            "❗️ Не авторизирован" if employee.insta_access_token is
+    #                                                                                     None else employee.insta_access_token,
+    #                                                            employee.balance)
+    # return message, keyboard
 
 
 def get_customer_profile_info(user_id):
@@ -318,9 +324,9 @@ def callback_get_employee_faq(call):
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_vk_reauth")
 def callback_vk_reauth(call):
     user = user_table.get_user_by_tg_id(call.from_user.id)
-    message_for_user = messages_templates["vk"]["vk_re_register"] + "\n" + get_vk_profile_info_for_employee(user.id)
+    # message_for_user = messages_templates["vk"]["vk_re_register"] + "\n" + get_vk_profile_info_for_employee(user.id)
     keyboard = create_inline_keyboard(buttons["vk_reauth_buttons"])
-    tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id, text = message_for_user)
+    # tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id, text = message_for_user)
     tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id, reply_markup
     = keyboard)
 
@@ -332,18 +338,12 @@ def gen_markup_for_vk_auth(tg_id):
     return markup
 
 
-def get_vk_profile_info_for_employee(user_id) -> str:
-    vk = employee_table.get_vk_api(user_id)
+def get_vk_profile_info(user_id) -> str:
+    vk = user_table.get_vk_api(user_id)
     if vk is None:
         return "Not authorized"
     data = vk.users.get()[0]
     return "\nПрофиль: {} {}, \nСсылка: vk.com/id{}".format(data["first_name"], data["last_name"], data["id"])
-
-
-def after_vk_auth_in_server(tg_id):
-    user = user_table.get_user_by_tg_id(tg_id)
-    tg_bot.send_message(tg_id, get_vk_profile_info_for_employee(user.id), reply_markup = create_inline_keyboard(
-        buttons["employee_vk_auth_confirmation"]))
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_profile")
