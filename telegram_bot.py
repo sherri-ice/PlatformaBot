@@ -35,10 +35,9 @@ def create_reply_keyboard(data: list):
     return markup
 
 
-@tg_bot.message_handler(func = lambda message: not is_unregistered_user(message.chat.id), commands = ['start'])
+@tg_bot.message_handler(ommands = ['start'])
 def command_send_welcome(message):
-    user = user_table.get_user_by_tg_id(message.chat.id)
-    if user is not None:
+    if not is_unregistered_user(message.chat.id):
         message_to_user, keyboard = messages_templates["registered_user"]["start_message"], create_inline_keyboard(
             buttons["start_buttons"])
     else:
