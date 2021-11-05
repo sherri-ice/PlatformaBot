@@ -218,7 +218,7 @@ def finish_registration(message):
 
 
 def show_faq_after_req(message):
-    tg_bot.send_message(message.chat.id, messages_templates["finish_registration"],
+    tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["finish_registration"],
                         reply_markup = create_inline_keyboard(buttons["read_faq_after_reg"]))
 
 
