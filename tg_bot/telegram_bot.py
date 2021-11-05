@@ -183,8 +183,7 @@ def cancel_vk_auth(call):
 
 
 def after_vk_auth_in_server(tg_id):
-    user = user_table.get_user_by_tg_id(tg_id)
-    tg_bot.send_message(tg_id, get_vk_profile_info(user.id), reply_markup = create_inline_keyboard(
+    tg_bot.send_message(tg_id, get_vk_profile_info(tg_id), reply_markup = create_inline_keyboard(
         buttons["vk_auth_confirmation_buttons"]))
 
 
@@ -338,8 +337,8 @@ def gen_markup_for_vk_auth(tg_id):
     return markup
 
 
-def get_vk_profile_info(user_id) -> str:
-    vk = user_table.get_vk_api(user_id)
+def get_vk_profile_info(tg_id) -> str:
+    vk = user_table.get_vk_api(tg_id)
     if vk is None:
         return "Not authorized"
     data = vk.users.get()[0]

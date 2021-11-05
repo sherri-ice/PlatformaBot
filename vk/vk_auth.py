@@ -19,7 +19,7 @@ def request_vk_auth_code(tg_id: int) -> str:
 def authorize_vk_session(code: str, tg_id: int):
     try:
         vk_session.code_auth(code, f"{REDIRECT_FROM_VK}?tg_id={tg_id}")
+        return vk_session
     except vk_api.AuthError as error_msg:
         print(error_msg)
         return None
-    return vk_session
