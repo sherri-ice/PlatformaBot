@@ -7,7 +7,7 @@ vk_session = vk_api.VkApi(app_id = VK_API_APP_ID, client_secret = VK_CLIENT_SECR
 
 # Returns url for vk auth
 def request_vk_auth_code(tg_id: int) -> str:
-    vk_request_auth_url = "https://oauth.vk.com/authorize?" \
+    vk_request_auth_url = "http://oauth.vk.com/authorize?" \
                           f"client_id={VK_API_APP_ID}&" \
                           "scope=friends,status&" \
                           f"redirect_uri={REDIRECT_FROM_VK}?tg_id={tg_id}&" \
@@ -26,4 +26,5 @@ def authorize_vk_session(code: str, tg_id: int):
 
 if __name__ == '__main__':
     print(request_vk_auth_code(299065458))
-    print(authorize_vk_session("ca7382db72e385e42e", 299065458))
+    code = input().split(" ")
+    print(authorize_vk_session("afda8912647e5a7cc7", 299065458))
