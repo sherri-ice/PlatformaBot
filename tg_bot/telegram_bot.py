@@ -164,6 +164,7 @@ def handle_callback_faq(call):
         tg_bot.answer_callback_query(call.id, "Не читать FAQ")
         keyboard = gen_markup_for_vk_auth(call.from_user.id)
         keyboard.add(types.InlineKeyboardButton("Я передумал! Хочу прочитать FAQ", callback_data = "cd_faq"))
+        keyboard.add(types.InlineKeyboardButton("Привязать позже", callback_data = "cd_vk_auth_cancel"))
         tg_bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
                                  text = messages_templates["vk"]["vk_auth_message"])
 
