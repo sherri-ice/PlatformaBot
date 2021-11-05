@@ -126,6 +126,7 @@ def process_city_step(message):
     if address == "error":
         tg_bot.send_message(message.chat.id, "Упс! Что-то не так с координатами, проверь их и попробуй ещё раз!",
                             reply_markup = create_inline_keyboard(buttons["city_error_button"]))
+        return
     tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["city_get_data"].format(address),
                         reply_markup = create_inline_keyboard(buttons["city_data_buttons"]))
 
