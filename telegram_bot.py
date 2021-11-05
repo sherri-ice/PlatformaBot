@@ -56,8 +56,10 @@ def callback_reg(call):
 
     command_register(call.message)
 
+
 def send_data_warning(tg_id):
     tg_bot.send_message(tg_id, messages_templates["unregistered_user"]["data_collection_warning"])
+
 
 @tg_bot.message_handler(commands = ['register'])
 def command_register(message):
@@ -80,6 +82,10 @@ def callback_age_handler(call):
     user.age = call.data
     tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id,
                              text = messages_templates["unregistered_user"]["city_reg_step"])
+    tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id, reply_markup
+    = create_inline_keyboard(buttons["city_reg_buttons"]))
+    tg_bot.set_state("get_city")
+
 
 # @tg_bot.message_handler(state = "get_age")
 # def process_age_step(message):
