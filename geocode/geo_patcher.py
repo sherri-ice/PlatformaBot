@@ -7,7 +7,7 @@ def get_address_from_coordinates(coords: str):
         "apikey": f"{MAPS_TOKEN}",
         "format": "json",
         "lang": "ru_RU",
-        "kind": "house",
+        "kind": "locality",
         "geocode": coords
     }
     try:
