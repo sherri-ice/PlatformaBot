@@ -205,7 +205,7 @@ def after_vk_auth_in_server(tg_id):
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_accept_vk")
 def callback_accept_vk_account(call):
-    finish_registration(call.message)
+    command_choose_role(call.message)
 
 
 def finish_registration(message):
@@ -226,37 +226,12 @@ def show_faq_after_req(message):
                         reply_markup = create_inline_keyboard(buttons["read_faq_after_reg"]))
 
 
-# def process_end_reg(message):
-#     # End registration:
-#     if user_table.get_user_by_tg_id(message.chat.id) is not None:
-#         user_table.delete_user(message.chat.id)
-#
-#     with tg_bot.retrieve_data(message.chat.id) as data:
-#         user = user_table.add_new_user(tg_id = message.chat.id, age = data["age"], salary = data['salary'], city = data[
-#             "city"])
-#     apply_db_changes()
-#     tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"][
-#         "get_data_register_finished"].format(user.age, user.city), reply_markup = keyboard_hider)
-#
-#     tg_bot.delete_state(message.chat.id)
-#     # Send inline markup with actions after registration
-#     tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["finish_registration"],
-#                         reply_markup = create_inline_keyboard(buttons["read_faq_after_reg"]))
-
-
 # Handle all other messages from unregistered users
 @tg_bot.message_handler(func = lambda message: is_unregistered_user(message.chat.id))
 def unregistered_user_reply(message):
     command_send_welcome(message)
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_user_ready")
-def user_ready(call):
-    tg_bot.delete_message(chat_id = call.message.chat.id, message_id = call.message.message_id)
-    tg_bot.send_message(call.from_user.id, messages_templates["is_user_ready"])
-
-
-@tg_bot.message_handler(commands = ['choose_role'])
 def command_choose_role(message):
     tg_bot.send_message(message.chat.id, messages_templates["choose_role"], reply_markup = create_inline_keyboard(
         buttons["choose_type_of_account"]))
