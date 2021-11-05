@@ -1,5 +1,5 @@
 import requests
-from loader import MAPS_TOKEN
+from meta.loader import MAPS_TOKEN
 
 
 def get_address_from_coordinates(coords: str):

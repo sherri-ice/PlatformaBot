@@ -2,10 +2,10 @@ import flask
 from flask import request
 from flask.blueprints import Blueprint
 
-from telegram_bot import get_telegram_bot, messages_templates, after_vk_auth_in_server, employee_table
+from tg_bot.telegram_bot import get_telegram_bot, messages_templates, after_vk_auth_in_server, employee_table
 from telebot import types
 
-from loader import TELEGRAM_TOKEN, WEBHOOK_HOST
+from meta.loader import TELEGRAM_TOKEN, WEBHOOK_HOST
 import time
 
 # from sql.user.user import register_vk_token

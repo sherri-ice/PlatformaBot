@@ -37,4 +37,4 @@ def load_buttons():
 
 
 if __name__ == '__main__':
-    print(os.environ)
+    print(MAPS_TOKEN)

@@ -1,12 +1,12 @@
 import logging
 import telebot
 from telebot import types
-from vk_auth import request_vk_auth_code
+from vk.vk_auth import request_vk_auth_code
 from sql.database import apply_db_changes
 from sql.user.user import user_table, employee_table, customer_table
 
-from loader import TELEGRAM_TOKEN
-from loader import load_messages, load_buttons
+from meta.loader import TELEGRAM_TOKEN
+from meta.loader import load_messages, load_buttons
 
 from telebot import custom_filters
 from geocode.geo_patcher import get_address_from_coordinates
