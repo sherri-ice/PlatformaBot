@@ -107,8 +107,7 @@ def process_city_step(message):
 
     # Send next step: salary
     tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["salary_reg_step"],
-                        reply_markup = create_reply_keyboard(
-                            messages_templates["unregistered_user"]["salary_answers"]))
+                        reply_markup = create_inline_keyboard(buttons["salary_reg_buttons"]))
 
 # @tg_bot.message_handler(state = "get_city")
 # def process_city_step(message):
