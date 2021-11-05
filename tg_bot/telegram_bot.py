@@ -205,6 +205,8 @@ def after_vk_auth_in_server(tg_id):
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_accept_vk")
 def callback_accept_vk_account(call):
+    tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id,
+                             text = messages_templates["unregistered_user"]["after_faq_message"])
     command_choose_role(call.message)
 
 
@@ -229,7 +231,8 @@ def show_faq_after_req(message):
 # Handle all other messages from unregistered users
 @tg_bot.message_handler(func = lambda message: is_unregistered_user(message.chat.id))
 def unregistered_user_reply(message):
-    command_send_welcome(message)
+    tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["after_faq_message"])
+
 
 
 def command_choose_role(message):
