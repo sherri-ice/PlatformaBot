@@ -14,8 +14,9 @@ class UserTable(db.Model):
     # For target
     age = db.Column(db.String(255))
     salary = db.Column(db.String(255))
-    city_longitude = db.Column(db.String(255))
-    city_latitude = db.Column(db.String(255))
+    city_longitude = db.Column(db.Integer)
+    city_latitude = db.Column(db.Integer)
+    city_name = db.Column(db.String(255))
     #
     appeals = db.Column(db.Integer, default = 0)
     banned = db.Column(db.Boolean, default = False)

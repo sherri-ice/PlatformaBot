@@ -122,13 +122,14 @@ def callback_accept_city_step(call):
 def process_city_step(message):
     user = user_table.get_user_by_tg_id(message.from_user.id)
     user.city_longitude, user.city_latitude = message.location.longitude, message.location.latitude
-    apply_db_changes()
 
     address = get_address_from_coordinates(f"{user.city_longitude},{user.city_latitude}")
     if address == "error":
         tg_bot.send_message(message.chat.id, "Упс! Что-то не так с координатами, проверь их и попробуй ещё раз!",
                             reply_markup = create_inline_keyboard(buttons["city_error_button"]))
         return
+    user.city_name = address
+    apply_db_changes()
     tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["city_get_data"].format(address),
                         reply_markup = create_inline_keyboard(buttons["city_data_buttons"]))
 
@@ -185,6 +186,20 @@ def cancel_vk_auth(call):
 def after_vk_auth_in_server(tg_id):
     tg_bot.send_message(tg_id, get_vk_profile_info(tg_id), reply_markup = create_inline_keyboard(
         buttons["vk_auth_confirmation_buttons"]))
+
+
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_accept_vk")
+def callback_accept_vk_account(call):
+    finish_registration(call.message)
+
+
+def finish_registration(message):
+    user = user_table.get_user_by_tg_id(message.chat.id)
+    tg_bot.edit_message_text(chat_id = message.chat.id, message_id = message.message_id,
+                             text = messages_templates["registered_user"]["profile_common_data"].format(user.tg_id,
+                                                                                                        user.age,
+                                                                                                        user.city_name,
+                                                                                                        user.registered_date))
 
 
 # def process_end_reg(message):
