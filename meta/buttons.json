@@ -83,6 +83,7 @@
   },
   "customer_profile_buttons": {
     "\uD83D\uDCCB Мои задания": "cd_customer_my_tasks",
+    "\uD83D\uDCDD Создать задание": "cd_create_task",
     "\uD83D\uDCB8 Мой баланс": "cd_customer_get_balance",
     "❓ FAQ": "cd_customer_faq",
     "\uD83D\uDCBB Тех. поддержка": "cd_technical_help",
