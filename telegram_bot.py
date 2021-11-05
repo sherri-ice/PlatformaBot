@@ -111,8 +111,10 @@ def callback_return_to_city_step(call):
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_accept_city")
 def callback_return_to_city_step(call):
-    tg_bot.send_message(call.from_user.id, messages_templates["unregistered_user"]["salary_reg_step"],
-                        reply_markup = create_inline_keyboard(buttons["salary_reg_buttons"]))
+    tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id,
+                             text = messages_templates["unregistered_user"]["salary_reg_step"])
+    tg_bot.edit_message_reply_markup(chat_id = call.from_user, message_id = call.message.message_id,
+                                     reply_markup = create_inline_keyboard(buttons["salary_reg_buttons"]))
     tg_bot.set_state(call.from_user.id, "get_salary")
 
 
@@ -131,15 +133,24 @@ def process_city_step(message):
                         reply_markup = create_inline_keyboard(buttons["city_data_buttons"]))
 
 
-# @tg_bot.message_handler(state = "get_city")
-# def process_city_step(message):
-#     with tg_bot.retrieve_data(message.chat.id) as data:
-#         data['city'] = f"{message.location.longitude}, {message.location.latitude}"
-#     # Send next step: salary
-#     tg_bot.set_state(message.chat.id, "get_salary")
-#     tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["salary_reg_step"],
-#                         reply_markup = create_reply_keyboard(
-#                             messages_templates["unregistered_user"]["salary_answers"]))
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_salary_back")
+def callback_return_to_age_step(call):
+    tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id,
+                             text = messages_templates["unregistered_user"]["salary_reg_step"])
+    tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id, reply_markup
+    = create_inline_keyboard(buttons["salary_reg_buttons"]))
+
+
+@tg_bot.callback_query_handler(func = lambda call: call.data in buttons["salary_reg_buttons"].values())
+def callback_salary_step(call):
+    user = user_table.get_user_by_tg_id(call.from_user.id)
+    user.salary = call.data
+    apply_db_changes()
+
+    tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id,
+                             text = messages_templates["vk"]["vk_auth_message"])
+    tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id, reply_markup
+    = gen_markup_for_vk_auth(user.tg_id, types.InlineKeyboardButton("Назад", "cd_salary_back")))
 
 
 # @tg_bot.message_handler(state = "get_salary")
