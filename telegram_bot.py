@@ -123,6 +123,9 @@ def process_city_step(message):
     apply_db_changes()
 
     address = get_address_from_coordinates(f"{user.city_longitude},{user.city_latitude}")
+    if address == "error":
+        tg_bot.send_message(message.chat.id, "Упс! Что-то не так с координатами, проверь их и попробуй ещё раз!",
+                            reply_markup = create_inline_keyboard(buttons["city_error_button"]))
     tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["city_get_data"].format(address),
                         reply_markup = create_inline_keyboard(buttons["city_data_buttons"]))
 

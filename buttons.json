@@ -12,6 +12,9 @@
     "Назад": "cd_age_back",
     "Как отправить геопозицию?": "cd_faq_geopos"
   },
+  "city_error_button": {
+    "Попробовать ещё раз": "cd_city_back"
+  },
   "city_data_buttons": {
     "Всё верно": "cd_accept_city",
     "Назад": "cd_city_back"
