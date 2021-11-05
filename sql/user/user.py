@@ -43,7 +43,7 @@ class UserTable(db.Model):
         Ads new user to database.
         Note: you need to do apply_bd_commit()
         '''
-        db.session.add(UserTable(tg_id = tg_id, age = age, salary = salary, city = city))
+        db.session.add(UserTable(tg_id = tg_id, age = age, salary = salary))
         return self.get_user_by_tg_id(tg_id)
 
     def delete_user(self, user_id):
