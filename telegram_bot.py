@@ -79,8 +79,15 @@ def command_register(message):
                             reply_markup = create_inline_keyboard(buttons["re_register"]))
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data in buttons["age_reg_buttons"].values() or
-                                                   call.data == "cd_age_back")
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_age_back")
+def callback_return_to_age_step(call):
+    tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id,
+                             text = messages_templates["unregistered_user"]["age_reg_step"])
+    tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id, reply_markup
+    = create_inline_keyboard(buttons["age_reg_buttons"]))
+
+
+@tg_bot.callback_query_handler(func = lambda call: call.data in buttons["age_reg_buttons"].values())
 def callback_age_handler(call):
     user = user_table.add_new_user(call.from_user.id)
     apply_db_changes()
