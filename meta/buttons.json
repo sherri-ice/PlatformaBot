@@ -45,19 +45,12 @@
     "25-27",
     "27+"
   ],
-  "re_register": {
-    "✅ Да!": "cd_reauth_yes",
-    "❌ Оставить всё как есть": "cd_reauth_no"
-  },
   "read_faq_after_reg": {
     "\uD83D\uDCD5 Прочитать FAQ": "cd_faq",
     "\uD83D\uDE0E Разберусь походу": "cd_faq_cancel"
   },
   "have_read_faq": {
     "\uD83D\uDE0E Понятно! Продолжить": "cd_vk_auth"
-  },
-  "user_ready": {
-    "❗️ Я передумал! Хочу прочитать FAQ": "cd_faq"
   },
   "vk_reauth_buttons": {
     "✅ Да, авторизировать другой аккаунт": "cd_vk_auth",

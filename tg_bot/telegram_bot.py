@@ -162,9 +162,11 @@ def handle_callback_faq(call):
                                          reply_markup = create_inline_keyboard(buttons["have_read_faq"]))
     elif call.data == "cd_faq_cancel":
         tg_bot.answer_callback_query(call.id, "Не читать FAQ")
-        keyboard = create_inline_keyboard(buttons["user_ready"])
+        keyboard = gen_markup_for_vk_auth(call.from_user.id)
+        keyboard.add(types.InlineKeyboardButton("Я передумал! Хочу прочитать FAQ", callback_data = "cd_faq"))
         tg_bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
-                                 text = messages_templates["is_user_ready"])
+                                 text = messages_templates["vk"]["vk_auth_message"])
+
         tg_bot.edit_message_reply_markup(chat_id = call.message.chat.id, message_id = call.message.message_id,
                                          reply_markup = keyboard)
 
@@ -183,6 +185,7 @@ def callback_return_to_vk_step(call):
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_vk_auth")
 def callback_vk_auth(call):
     keyboard = gen_markup_for_vk_auth(call.from_user.id)
+    keyboard.add(types.InlineKeyboardButton("Привяжу позже", callback_data = "cd_vk_auth_cancel"))
     tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id,
                              text = messages_templates["vk"]["vk_not_authorized"])
     tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id, reply_markup
