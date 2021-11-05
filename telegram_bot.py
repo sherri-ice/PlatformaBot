@@ -110,10 +110,10 @@ def callback_return_to_city_step(call):
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_accept_city")
-def callback_return_to_city_step(call):
+def callback_accept_city_step(call):
     tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id,
                              text = messages_templates["unregistered_user"]["salary_reg_step"])
-    tg_bot.edit_message_reply_markup(chat_id = call.from_user, message_id = call.message.message_id,
+    tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id,
                                      reply_markup = create_inline_keyboard(buttons["salary_reg_buttons"]))
     tg_bot.set_state(call.from_user.id, "get_salary")
 
