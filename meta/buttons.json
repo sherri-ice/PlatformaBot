@@ -69,6 +69,7 @@
     "✅ Выполнить задание": "cd_employee_get_new_task",
     "\uD83D\uDCB8 Мой баланс": "cd_employee_get_balance",
     "❓ FAQ": "cd_employee_faq",
+    "Перейти в аккаунт Заказчика": "cd_customer",
     "\uD83D\uDCBB Тех. поддержка": "cd_technical_help",
     "Назад": "cd_choose_role"
   },
@@ -86,6 +87,7 @@
     "\uD83D\uDCDD Создать задание": "cd_create_task",
     "\uD83D\uDCB8 Мой баланс": "cd_customer_get_balance",
     "❓ FAQ": "cd_customer_faq",
+    "Перейти в аккаунт Исполнителя": "cd_employee",
     "\uD83D\uDCBB Тех. поддержка": "cd_technical_help",
     "Назад": "cd_choose_role"
   },
