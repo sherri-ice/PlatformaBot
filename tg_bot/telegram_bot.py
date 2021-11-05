@@ -91,7 +91,8 @@ def callback_return_to_age_step(call):
 @tg_bot.callback_query_handler(func = lambda call: call.data in buttons["age_reg_buttons"].values())
 def callback_age_handler(call):
     user = user_table.add_new_user(call.from_user.id)
-    user.age = call.data
+    # Gets text from button
+    user.age = list(buttons["age_reg_buttons"].keys())[list(buttons["age_reg_buttons"].values()).index(call.data)]
     apply_db_changes()
     tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id,
                              text = messages_templates["unregistered_user"]["city_reg_step"])
