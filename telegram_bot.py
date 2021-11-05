@@ -151,23 +151,37 @@ def callback_salary_step(call):
                              text = messages_templates["vk"]["vk_auth_message"])
     keyboard = gen_markup_for_vk_auth(user.tg_id)
     keyboard.add(types.InlineKeyboardButton("Назад", callback_data = "cd_salary_back"))
+    keyboard.add(types.InlineKeyboardButton("Привязать позже", callback_data = "cd_vk_auth_cancel"))
     tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id, reply_markup
     = keyboard)
 
 
-# @tg_bot.message_handler(state = "get_salary")
-# def process_salary_step(message):
-#     if message.text not in messages_templates["unregistered_user"]["salary_answers"]:
-#         tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["incorrect_input"],
-#                             reply_markup = keyboard_hider)
-#         return
-#     with tg_bot.retrieve_data(message.chat.id) as data:
-#         data['salary'] = message.text
-#
-#     # Next step: finish registration
-#     process_end_reg(message)
-#
-#
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_vk_back")
+def callback_return_to_vk_step(call):
+    tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id,
+                             text = messages_templates["vk"]["vk_auth_message"])
+    keyboard = gen_markup_for_vk_auth(call.from_user.id)
+    keyboard.add(types.InlineKeyboardButton("Назад", callback_data = "cd_salary_back"))
+    keyboard.add(types.InlineKeyboardButton("Привязать позже", callback_data = "cd_vk_auth_cancel"))
+    tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id, reply_markup
+    = keyboard)
+
+
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_vk_auth")
+def callback_vk_auth(call):
+    keyboard = gen_markup_for_vk_auth(call.from_user.id)
+    tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id,
+                             text = messages_templates["vk"]["vk_not_authorized"])
+    tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id, reply_markup
+    = keyboard)
+
+
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_vk_auth_cancel")
+def cancel_vk_auth(call):
+    tg_bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
+                             text = messages_templates["vk"]["vk_cancel_auth"])
+
+
 # def process_end_reg(message):
 #     # End registration:
 #     if user_table.get_user_by_tg_id(message.chat.id) is not None:
@@ -301,15 +315,6 @@ def callback_get_employee_faq(call):
     = keyboard)
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_vk_auth")
-def callback_vk_auth(call):
-    keyboard = gen_markup_for_vk_auth(call.from_user.id)
-    tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id,
-                             text = messages_templates["vk"]["vk_not_authorized"])
-    tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id, reply_markup
-    = keyboard)
-
-
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_vk_reauth")
 def callback_vk_reauth(call):
     user = user_table.get_user_by_tg_id(call.from_user.id)
@@ -325,12 +330,6 @@ def gen_markup_for_vk_auth(tg_id):
     markup.row_width = 1
     markup.add(types.InlineKeyboardButton(text = "VK авторизация", url = request_vk_auth_code(tg_id)))
     return markup
-
-
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_vk_auth_cancel")
-def cancel_vk_auth(call):
-    tg_bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
-                             text = messages_templates["vk"]["vk_cancel_auth"])
 
 
 def get_vk_profile_info_for_employee(user_id) -> str:

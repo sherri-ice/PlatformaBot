@@ -23,6 +23,10 @@
     "\uD83D\uDCB8 Да, я зарабатываю сам и лично распоряжаюсь своими доходами.": "cd_work_exists",
     "\uD83D\uDE48 Нет, сижу на шее у родителей.": "cd_no_work"
   },
+  "vk_auth_confirmation_buttons": {
+    "Всё верно": "cd_accept_vk",
+    "♻️ Сменить аккаунт": "cd_vk_back"
+  },
   "re_reg_buttons": {
     "✅ Да, перерегистрироваться и изменить данные": "cd_reg",
     "❌ Оставить всё как есть": "cd_profile"
@@ -71,10 +75,6 @@
     "❓ FAQ": "cd_employee_faq",
     "\uD83D\uDCBB Тех. поддержка": "cd_technical_help",
     "\uD83D\uDE80 Выбрать роль": "cd_user_ready"
-  },
-  "employee_vk_auth_confirmation": {
-    "♻️ Сменить аккаунт": "cd_vk_auth",
-    "↩️ Вернуться": "cd_employee"
   },
   "employee_balance_buttons": {
     "\uD83D\uDCB8 Вывести деньги": "cd_get_money",
