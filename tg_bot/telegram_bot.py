@@ -222,6 +222,18 @@ def callback_accept_vk_account(call):
 
 def finish_registration(message):
     user = user_table.get_user_by_tg_id(message.chat.id)
+    if user.finished_reg:
+        tg_bot.edit_message_text(chat_id = message.chat.id, message_id = message.message_id,
+                                 text = messages_templates["registered_user"]["re_register_finish"] +
+                                        messages_templates["registered_user"]["profile_common_data"].format(
+                                            user.tg_id,
+                                            user.age,
+                                            user.city_name,
+                                            user.registered_date,
+                                            user.appeals))
+        tg_bot.edit_message_reply_markup(chat_id = message.chat.id, message_id = message.message_id, reply_markup =
+        create_inline_keyboard(buttons["start_buttons"]))
+        return
     user.finished_reg = True
     apply_db_changes()
     tg_bot.edit_message_text(chat_id = message.chat.id, message_id = message.message_id,
