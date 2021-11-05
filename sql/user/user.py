@@ -72,6 +72,7 @@ class Employee(db.Model):
 
     id = db.Column(db.Integer, primary_key = True)
     balance = db.Column(db.Integer, default = 0)
+    appeals = db.Column(db.Integer, default = 0)
 
     def add_employee(self, user_id):
         '''
@@ -89,6 +90,7 @@ class Customer(db.Model):
     __tablename__ = 'customer'
     id = db.Column(db.Integer, primary_key = True)
     balance = db.Column(db.Integer, default = 0)
+    appeals = db.Column(db.Integer, default = 0)
 
     def add_customer(self, user_id):
         db.session.add(Customer(id = user_id))
