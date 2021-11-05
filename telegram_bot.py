@@ -71,7 +71,7 @@ def command_register(message):
                             reply_markup = create_inline_keyboard(buttons["re_register"]))
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data in buttons["age_reg_buttons"].values)
+@tg_bot.callback_query_handler(func = lambda call: call.data in buttons["age_reg_buttons"].values())
 def callback(call):
     tg_bot.answer_callback_query(call.id, "Ypu pressed button!")
 
