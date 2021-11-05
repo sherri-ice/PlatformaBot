@@ -63,7 +63,7 @@
     "⚙️ Настройки": "cd_employee_settings",
     "❓ FAQ": "cd_employee_faq",
     "\uD83D\uDCBB Тех. поддержка": "cd_technical_help",
-    "\uD83D\uDE80 Выбрать роль": "cd_choose_role"
+    "Назад": "cd_choose_role"
   },
   "employee_balance_buttons": {
     "\uD83D\uDCB8 Вывести деньги": "cd_get_money",
@@ -84,7 +84,7 @@
     "\uD83D\uDCB8 Мой баланс": "cd_customer_get_balance",
     "❓ FAQ": "cd_customer_faq",
     "\uD83D\uDCBB Тех. поддержка": "cd_technical_help",
-    "\uD83D\uDE80 Выбрать роль": "cd_user_ready"
+    "Назад": "cd_choose_role"
   },
   "customer_balance_buttons": {
     "\uD83D\uDCB8 Пополнить баланс": "cd_donate",
