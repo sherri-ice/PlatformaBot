@@ -33,10 +33,10 @@ def redirect_from_vk():
     tg_id = request.args.get('tg_id')
     if vk_code is None:
         telegram_bot.send_message(tg_id, messages_templates["vk"]["vk_error_not_found"])
-        return ''
+        return "Что-то пошло не так. Видимо, аккаунт вк не существует. Возвращайся в бота."
     user_table.register_vk_token(tg_id, vk_code)
     after_vk_auth_in_server(tg_id)
-    return ""
+    return "Авторизация прошла успешно! Возвращайся в бота."
 
 
 # Process webhook calls
