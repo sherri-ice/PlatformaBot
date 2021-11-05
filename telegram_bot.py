@@ -65,68 +65,68 @@ def command_register(message):
     # Send next step: name
     if user_table.get_user_by_tg_id(message.chat.id) is None:
         tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["registration_start"],
-                            reply_markup = create_reply_keyboard(buttons["ages"]))
-        tg_bot.set_state(message.chat.id, "get_age")
+                            reply_markup = create_inline_keyboard(buttons["age_reg_buttons"]))
     else:
         tg_bot.send_message(message.chat.id, messages_templates["registered_user"]["re_register"],
                             reply_markup = create_inline_keyboard(buttons["re_register"]))
 
 
-@tg_bot.message_handler(state = "get_age")
-def process_age_step(message):
-    if message.text not in buttons["ages"]:
-        tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["incorrect_input"],
-                            reply_markup = keyboard_hider)
-        return
-    with tg_bot.retrieve_data(message.chat.id) as data:
-        data['age'] = message.text
-
-    # Send next step: city
-    tg_bot.set_state(message.chat.id, "get_city")
-    tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["city_reg_step"],
-                        reply_markup = keyboard_hider)
-
-
-@tg_bot.message_handler(state = "get_city", content_types = ["location"])
-def process_city_step(message):
-    with tg_bot.retrieve_data(message.chat.id) as data:
-        data['city'] = f"{message.location.longitude}, {message.location.latitude}"
-    # Send next step: salary
-    tg_bot.set_state(message.chat.id, "get_salary")
-    tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["salary_reg_step"],
-                        reply_markup = create_reply_keyboard(
-                            messages_templates["unregistered_user"]["salary_answers"]))
+# @tg_bot.message_handler(state = "get_age")
+# def process_age_step(message):
+#     if message.text not in buttons["ages"]:
+#         tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["incorrect_input"],
+#                             reply_markup = keyboard_hider)
+#         return
+#     with tg_bot.retrieve_data(message.chat.id) as data:
+#         data['age'] = message.text
+#
+#     # Send next step: city
+#     tg_bot.set_state(message.chat.id, "get_city")
+#     tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["city_reg_step"],
+#                         reply_markup = keyboard_hider)
 
 
-@tg_bot.message_handler(state = "get_salary")
-def process_salary_step(message):
-    if message.text not in messages_templates["unregistered_user"]["salary_answers"]:
-        tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["incorrect_input"],
-                            reply_markup = keyboard_hider)
-        return
-    with tg_bot.retrieve_data(message.chat.id) as data:
-        data['salary'] = message.text
 
-    # Next step: finish registration
-    process_end_reg(message)
+# @tg_bot.message_handler(state = "get_city", content_types = ["location"])
+# def process_city_step(message):
+#     with tg_bot.retrieve_data(message.chat.id) as data:
+#         data['city'] = f"{message.location.longitude}, {message.location.latitude}"
+#     # Send next step: salary
+#     tg_bot.set_state(message.chat.id, "get_salary")
+#     tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["salary_reg_step"],
+#                         reply_markup = create_reply_keyboard(
+#                             messages_templates["unregistered_user"]["salary_answers"]))
+#
 
-
-def process_end_reg(message):
-    # End registration:
-    if user_table.get_user_by_tg_id(message.chat.id) is not None:
-        user_table.delete_user(message.chat.id)
-
-    with tg_bot.retrieve_data(message.chat.id) as data:
-        user = user_table.add_new_user(tg_id = message.chat.id, age = data["age"], salary = data['salary'], city = data[
-            "city"])
-    apply_db_changes()
-    tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"][
-        "get_data_register_finished"].format(user.age, user.city), reply_markup = keyboard_hider)
-
-    tg_bot.delete_state(message.chat.id)
-    # Send inline markup with actions after registration
-    tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["finish_registration"],
-                        reply_markup = create_inline_keyboard(buttons["read_faq_after_reg"]))
+# @tg_bot.message_handler(state = "get_salary")
+# def process_salary_step(message):
+#     if message.text not in messages_templates["unregistered_user"]["salary_answers"]:
+#         tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["incorrect_input"],
+#                             reply_markup = keyboard_hider)
+#         return
+#     with tg_bot.retrieve_data(message.chat.id) as data:
+#         data['salary'] = message.text
+#
+#     # Next step: finish registration
+#     process_end_reg(message)
+#
+#
+# def process_end_reg(message):
+#     # End registration:
+#     if user_table.get_user_by_tg_id(message.chat.id) is not None:
+#         user_table.delete_user(message.chat.id)
+#
+#     with tg_bot.retrieve_data(message.chat.id) as data:
+#         user = user_table.add_new_user(tg_id = message.chat.id, age = data["age"], salary = data['salary'], city = data[
+#             "city"])
+#     apply_db_changes()
+#     tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"][
+#         "get_data_register_finished"].format(user.age, user.city), reply_markup = keyboard_hider)
+#
+#     tg_bot.delete_state(message.chat.id)
+#     # Send inline markup with actions after registration
+#     tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["finish_registration"],
+#                         reply_markup = create_inline_keyboard(buttons["read_faq_after_reg"]))
 
 
 # Handle all other messages from unregistered users
@@ -188,7 +188,7 @@ def get_employee_profile_info(user_id):
     message = messages_templates["employee"]["profile"].format("❗️ Не авторизирован" if employee.vk_access_token is None
                                                                else get_vk_profile_info_for_employee(user_id),
                                                                "❗️ Не авторизирован" if employee.insta_access_token is
-                                                                                     None else employee.insta_access_token,
+                                                                                        None else employee.insta_access_token,
                                                                employee.balance)
     return message, keyboard
 
