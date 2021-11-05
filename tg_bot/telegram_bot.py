@@ -207,6 +207,7 @@ def callback_accept_vk_account(call):
 
 def finish_registration(message):
     user = user_table.get_user_by_tg_id(message.chat.id)
+    user.finished_reg = True
     tg_bot.edit_message_text(chat_id = message.chat.id, message_id = message.message_id,
                              text = messages_templates["registered_user"]["profile_common_data"].format(user.tg_id,
                                                                                                         user.age,
