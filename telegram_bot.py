@@ -90,8 +90,8 @@ def callback_return_to_age_step(call):
 @tg_bot.callback_query_handler(func = lambda call: call.data in buttons["age_reg_buttons"].values())
 def callback_age_handler(call):
     user = user_table.add_new_user(call.from_user.id)
-    apply_db_changes()
     user.age = call.data
+    apply_db_changes()
     tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id,
                              text = messages_templates["unregistered_user"]["city_reg_step"])
     tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id, reply_markup
@@ -99,22 +99,18 @@ def callback_age_handler(call):
     tg_bot.set_state(call.from_user.id, "get_city")
 
 
-# @tg_bot.message_handler(state = "get_age")
-# def process_age_step(message):
-#     if message.text not in buttons["ages"]:
-#         tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["incorrect_input"],
-#                             reply_markup = keyboard_hider)
-#         return
-#     with tg_bot.retrieve_data(message.chat.id) as data:
-#         data['age'] = message.text
-#
-#     # Send next step: city
-#     tg_bot.set_state(message.chat.id, "get_city")
-#     tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["city_reg_step"],
-#                         reply_markup = keyboard_hider)
+@tg_bot.message_handler(state = "get_city", content_types = ["location"])
+def process_city_step(message):
+    user = user_table.get_user_by_tg_id(message.from_user.id)
+    user.city_longitude, user.city_latitude = message.location.longitude, message.location.latitude
+    apply_db_changes()
 
+    # Send next step: salary
+    tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["salary_reg_step"],
+                        reply_markup = create_reply_keyboard(
+                            messages_templates["unregistered_user"]["salary_answers"]))
 
-# @tg_bot.message_handler(state = "get_city", content_types = ["location"])
+# @tg_bot.message_handler(state = "get_city")
 # def process_city_step(message):
 #     with tg_bot.retrieve_data(message.chat.id) as data:
 #         data['city'] = f"{message.location.longitude}, {message.location.latitude}"
@@ -123,7 +119,7 @@ def callback_age_handler(call):
 #     tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["salary_reg_step"],
 #                         reply_markup = create_reply_keyboard(
 #                             messages_templates["unregistered_user"]["salary_answers"]))
-#
+
 
 # @tg_bot.message_handler(state = "get_salary")
 # def process_salary_step(message):
