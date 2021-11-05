@@ -150,7 +150,7 @@ def callback_salary_step(call):
     tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id,
                              text = messages_templates["vk"]["vk_auth_message"])
     keyboard = gen_markup_for_vk_auth(user.tg_id)
-    keyboard.add(types.InlineKeyboardButton("Назад", "cd_salary_back"))
+    keyboard.add(types.InlineKeyboardButton("Назад", callback_data = "cd_salary_back"))
     tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id, reply_markup
     = keyboard)
 
