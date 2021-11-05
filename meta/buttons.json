@@ -52,11 +52,6 @@
   "have_read_faq": {
     "\uD83D\uDE0E Понятно! Продолжить": "cd_vk_auth"
   },
-  "vk_reauth_buttons": {
-    "✅ Да, авторизировать другой аккаунт": "cd_vk_reauth",
-    "❌ Нет, хочу оставить всё как есть": "cd_employee",
-    "↩️ Назад": "cd_employee"
-  },
   "choose_type_of_account": {
     "\uD83D\uDC77\uD83C\uDFFC Выбрать исполнителя": "cd_employee",
     "\uD83D\uDC77\uD83C\uDFFC Выбрать заказчика": "cd_customer",
