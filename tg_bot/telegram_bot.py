@@ -213,10 +213,10 @@ def finish_registration(message):
                                                                                                         user.city_name,
                                                                                                         user.registered_date,
                                                                                                         user.appeals))
-    tg_bot.set_state(message.chat.id, "faq")
+    command_faq(message)
 
 
-@tg_bot.message_handler(state = "faq")
+@tg_bot.message_handler(commands = ['faq'])
 def command_faq(message):
     tg_bot.send_message(message.chat.id, messages_templates["finish_registration"],
                         reply_markup = create_inline_keyboard(buttons["read_faq_after_reg"]))
