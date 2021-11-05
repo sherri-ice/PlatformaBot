@@ -20,8 +20,8 @@
     "Назад": "cd_city_back"
   },
   "salary_reg_buttons": {
-    "\uD83D\uDCB8 Да, я зарабатываю сам и лично распоряжаюсь своими доходами.": "cd_work_exists",
-    "\uD83D\uDE48 Нет, сижу на шее у родителей.": "cd_no_work",
+    "\uD83D\uDCB8 Да, имею": "cd_work_exists",
+    "\uD83D\uDE48 Нет, не имею": "cd_no_work",
     "Назад": "cd_city_back"
   },
   "vk_auth_confirmation_buttons": {
@@ -101,5 +101,11 @@
   },
   "back_to_profile": {
     "↩️ Назад": "cd_profile"
-  }
+  },
+  "main_buttons": [
+    "Домой",
+    "Мой профиль",
+    "Мой баланс",
+    "Сменить роль"
+  ]
 }

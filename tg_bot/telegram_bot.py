@@ -65,7 +65,6 @@ def is_unregistered_user(tg_id):
     return (user_table.get_user_by_tg_id(tg_id) is None) or (user_table.get_user_by_tg_id(tg_id).finished_reg is False)
 
 
-@tg_bot.message_handler(commands = ['register'])
 def command_register(message):
     '''
     Register function.
@@ -241,7 +240,7 @@ def finish_registration(message):
                                             user.registered_date,
                                             user.appeals))
         tg_bot.edit_message_reply_markup(chat_id = message.chat.id, message_id = message.message_id, reply_markup =
-        create_inline_keyboard(buttons["start_buttons"]))
+        create_reply_keyboard(buttons["main_buttons"]))
         return
     user.finished_reg = True
     apply_db_changes()
