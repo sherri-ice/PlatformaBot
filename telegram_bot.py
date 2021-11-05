@@ -70,7 +70,7 @@ def command_register(message):
     Register function.
     '''
     # Send next step: name
-    if user_table.get_user_by_tg_id(message.chat.id) is None:
+    if is_unregistered_user(message.chat.id):
         send_data_warning(message.chat.id)
         tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["age_reg_step"], reply_markup =
         create_inline_keyboard(buttons["age_reg_buttons"]))
