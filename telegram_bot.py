@@ -71,6 +71,11 @@ def command_register(message):
                             reply_markup = create_inline_keyboard(buttons["re_register"]))
 
 
+@tg_bot.callback_query_handler(func = lambda call: call.data in buttons["age_reg_buttons"].values)
+def callback(call):
+    tg_bot.answer_callback_query(call.id, "Ypu pressed button!")
+
+
 # @tg_bot.message_handler(state = "get_age")
 # def process_age_step(message):
 #     if message.text not in buttons["ages"]:
@@ -84,7 +89,6 @@ def command_register(message):
 #     tg_bot.set_state(message.chat.id, "get_city")
 #     tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["city_reg_step"],
 #                         reply_markup = keyboard_hider)
-
 
 
 # @tg_bot.message_handler(state = "get_city", content_types = ["location"])
