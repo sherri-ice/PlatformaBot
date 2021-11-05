@@ -147,7 +147,8 @@ def callback_age_handler(call):
 
 
 # Handle all other messages from unregistered users
-@tg_bot.message_handler(func = lambda message: user_table.get_user_by_tg_id(message.chat.id) is None)
+@tg_bot.message_handler(func = lambda message: user_table.get_user_by_tg_id(message.chat.id) is None
+                                               or user_table.get_user_by_tg_id(message.chat.id).finished_reg is False)
 def echo_message(message):
     tg_bot.reply_to(message, messages_templates["unregistered_user"]["request_for_registration"])
 
