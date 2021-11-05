@@ -16,15 +16,10 @@ def request_vk_auth_code(tg_id: int) -> str:
     return vk_request_auth_url
 
 
-def authorize_vk_session(code: str, tg_id: int):
+def authorize_vk_session(vk_code: str, tg_id: int):
     try:
-        vk_session.code_auth(code, f"{REDIRECT_FROM_VK}?tg_id={tg_id}")
+        vk_session.code_auth(vk_code, f"{REDIRECT_FROM_VK}?tg_id={tg_id}")
         return vk_session
     except vk_api.AuthError as error_msg:
         print(error_msg)
         return None
-
-if __name__ == '__main__':
-    print(request_vk_auth_code(299065458))
-    code = input().split(" ")
-    print(authorize_vk_session("afda8912647e5a7cc7", 299065458))

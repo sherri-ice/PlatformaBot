@@ -36,7 +36,7 @@ def redirect_from_vk():
         return ''
     user_table.register_vk_token(tg_id, vk_code)
     after_vk_auth_in_server(tg_id)
-    return f"{vk_code}, {tg_id}"
+    return ""
 
 
 # Process webhook calls
