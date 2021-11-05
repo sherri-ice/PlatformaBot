@@ -215,7 +215,7 @@ def after_vk_auth_in_server(tg_id):
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_accept_vk")
 def callback_accept_vk_account(call):
-    tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message_id,
+    tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id,
                              text = messages_templates["unregistered_user"]["after_faq_message"])
     choose_role(call.message)
 
