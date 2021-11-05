@@ -335,16 +335,6 @@ def callback_get_employee_faq(call):
     = keyboard)
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_vk_reauth")
-def callback_vk_reauth(call):
-    user = user_table.get_user_by_tg_id(call.from_user.id)
-    # message_for_user = messages_templates["vk"]["vk_re_register"] + "\n" + get_vk_profile_info_for_employee(user.id)
-    keyboard = create_inline_keyboard(buttons["vk_reauth_buttons"])
-    # tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id, text = message_for_user)
-    tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id, reply_markup
-    = keyboard)
-
-
 def gen_markup_for_vk_auth(tg_id):
     markup = types.InlineKeyboardMarkup()
     markup.row_width = 1
@@ -355,7 +345,7 @@ def gen_markup_for_vk_auth(tg_id):
 def get_vk_profile_info(tg_id) -> str:
     vk = user_table.get_vk_api(tg_id)
     if vk is None:
-        return "Not authorized"
+        return "Не авторизирован"
     data = vk.users.get()[0]
     return "\nПрофиль: {} {}, \nСсылка: vk.com/id{}".format(data["first_name"], data["last_name"], data["id"])
 
@@ -386,8 +376,9 @@ def callback_switch_to_customer(call):
     message = get_customer_profile_info(user.id)
     keyboard = create_inline_keyboard(buttons["customer_profile_buttons"])
     tg_bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
-                             text = messages_templates["chosen_role"].format("заказчик"))
-    tg_bot.send_message(call.from_user.id, message, reply_markup = keyboard)
+                             text = message)
+    tg_bot.edit_message_reply_markup(chat_id = call.message.chat.id, message_id = call.message.message_id,
+                             reply_markup = keyboard)
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_customer_get_balance")
