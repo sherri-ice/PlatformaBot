@@ -199,7 +199,8 @@ def finish_registration(message):
                              text = messages_templates["registered_user"]["profile_common_data"].format(user.tg_id,
                                                                                                         user.age,
                                                                                                         user.city_name,
-                                                                                                        user.registered_date))
+                                                                                                        user.registered_date,
+                                                                                                        user.appeals))
 
 
 # def process_end_reg(message):
