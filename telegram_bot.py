@@ -35,7 +35,7 @@ def create_reply_keyboard(data: list):
     return markup
 
 
-@tg_bot.message_handler(commands = ['start'])
+@tg_bot.message_handler(func = lambda message: not is_unregistered_user(message.chat.id), commands = ['start'])
 def command_send_welcome(message):
     user = user_table.get_user_by_tg_id(message.chat.id)
     if user is not None:
@@ -62,10 +62,10 @@ def send_data_warning(tg_id):
 
 
 def is_unregistered_user(tg_id):
-    return user_table.get_user_by_tg_id(tg_id) is None or user_table.get_user_by_tg_id(tg_id).finished_reg is False
+    return (user_table.get_user_by_tg_id(tg_id) is None) or (user_table.get_user_by_tg_id(tg_id).finished_reg is False)
 
 
-@tg_bot.message_handler(func = lambda message: not is_unregistered_user(message.chat.id), commands = ['register'])
+@tg_bot.message_handler(commands = ['register'])
 def command_register(message):
     '''
     Register function.
