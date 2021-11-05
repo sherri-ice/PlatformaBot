@@ -20,8 +20,8 @@ REDIRECT_FROM_INSTA: str = os.getenv("REDIRECT_FROM_INSTA")
 INSTA_CLIENT_SECRET = os.getenv("INSTA_CLIENT_SECRET")
 MAPS_TOKEN: str = os.getenv("MAPS_TOKEN")
 
-# project_path = "/home/sherriice/PlatformaBot"
-project_path = os.getcwd()
+project_path = "/home/sherriice/PlatformaBot"
+# project_path = os.getcwd()
 
 
 def load_messages():
