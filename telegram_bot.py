@@ -106,7 +106,7 @@ def process_city_step(message):
     user.city_longitude, user.city_latitude = message.location.longitude, message.location.latitude
     apply_db_changes()
 
-    address = get_address_from_coordinates(f"{user.city_longitude}, {user.city_latitude}")
+    address = get_address_from_coordinates(f"{user.city_latitude}, {user.city_longitude}")
     tg_bot.send_message(message.chat.id, f"Your address: {address}")
     # Send next step: salary
     tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["salary_reg_step"],
