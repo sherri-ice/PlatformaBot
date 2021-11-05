@@ -237,7 +237,7 @@ def finish_registration(message):
     user.finished_reg = True
     apply_db_changes()
     tg_bot.edit_message_text(chat_id = message.chat.id, message_id = message.message_id,
-                             text = messages_templates["registered_user"]["profile_common_data"].format(user.tg_id,
+                             text = messages_templates["registered_user"]["profile_common_data"].format(user.id,
                                                                                                         user.age,
                                                                                                         user.city_name,
                                                                                                         user.registered_date,
