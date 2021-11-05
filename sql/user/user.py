@@ -26,10 +26,10 @@ class UserTable(db.Model):
     registered_date = db.Column(db.Date, default = datetime.now())
     vk_access_token = db.Column(db.String(255))
 
-    def register_vk_token(self, tg_id: int, vk_code: str):
+    def register_vk_token(self, tg_id, vk_code):
         if self.get_user_by_tg_id(tg_id) is None:
             return None
-        self.get_user_by_tg_id(tg_id).vk_token = authorize_vk_session(vk_code, tg_id).token['access_token']
+        self.get_user_by_tg_id(tg_id).vk_access_token = authorize_vk_session(vk_code, tg_id).token['access_token']
         apply_db_changes()
 
     def get_user_by_tg_id(self, user_id):
