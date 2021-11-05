@@ -275,10 +275,11 @@ def switch_to_employee(call):
     employee = employee_table.get_employee_by_id(user.id)
     if employee is None:
         employee_table.add_employee(user.id)
-    tg_bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
-                             text = messages_templates["chosen_role"].format("исполнитель."))
     employee_data, keyboard = get_employee_profile_info(user.id)
-    tg_bot.send_message(user.tg_id, employee_data, reply_markup = keyboard)
+    tg_bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
+                             text = employee_data)
+    tg_bot.edit_message_reply_markup(chat_id = call.message.chat.id, message_id = call.message.message_id,
+                                     reply_markup = keyboard)
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_employee_get_balance")
