@@ -84,7 +84,7 @@ def callback_age_handler(call):
                              text = messages_templates["unregistered_user"]["city_reg_step"])
     tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id, reply_markup
     = create_inline_keyboard(buttons["city_reg_buttons"]))
-    tg_bot.set_state("get_city")
+    tg_bot.set_state(call.from_user.id, "get_city")
 
 
 # @tg_bot.message_handler(state = "get_age")
