@@ -1,6 +1,3 @@
-import json
-from telebot import types
-
 import vk_api
 
 from loader import VK_API_APP_ID, REDIRECT_FROM_VK, VK_CLIENT_SECRET
