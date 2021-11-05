@@ -194,8 +194,15 @@ def callback_vk_auth(call):
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_vk_reauth")
 def callback_vk_auth(call):
+    user = user_table.get_user_by_tg_id(call.from_user.id)
+    if user.vk_access_token is not None:
+        tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id,
+                                 text = messages_templates["vk"]["vk_re_register"])
+        tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id, reply_markup
+        = create_inline_keyboard(buttons["vk_re_auth_buttons"]))
+        return
     keyboard = gen_markup_for_vk_auth(call.from_user.id)
-    keyboard.add(types.InlineKeyboardButton("Назад", callback_data = "cd_employee_settings"))
+    keyboard.add(types.InlineKeyboardButton("Назад", callback_data = "cd_profile"))
     tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id,
                              text = messages_templates["vk"]["vk_not_authorized"])
     tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id, reply_markup
@@ -323,15 +330,6 @@ def callback_get_employee_balance(call):
     employee = employee_table.get_employee_by_id(user.id)
     message_to_user = messages_templates["employee"]["balance"].format(employee.balance)
     keyboard = create_inline_keyboard(buttons["employee_balance_buttons"])
-    tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id, text = message_to_user)
-    tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id, reply_markup
-    = keyboard)
-
-
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_employee_settings")
-def callback_get_employee_settings(call):
-    message_to_user = messages_templates["employee"]["settings"]
-    keyboard = create_inline_keyboard(buttons["employee_settings_buttons"])
     tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id, text = message_to_user)
     tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id, reply_markup
     = keyboard)
