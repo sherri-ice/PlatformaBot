@@ -25,13 +25,13 @@ project_path = "/home/sherriice/PlatformaBot"
 
 
 def load_messages():
-    with open(f'{project_path}/messages_answers.json') as json_file:
+    with open(f'{project_path}/meta/messages_answers.json') as json_file:
         data = json.load(json_file)
         return data
 
 
 def load_buttons():
-    with open(f'{project_path}/buttons.json') as json_file:
+    with open(f'{project_path}/meta/buttons.json') as json_file:
         data = json.load(json_file)
         return data
 
