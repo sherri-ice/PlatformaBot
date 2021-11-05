@@ -79,6 +79,7 @@ def command_register(message):
 @tg_bot.callback_query_handler(func = lambda call: call.data in buttons["age_reg_buttons"].values())
 def callback_age_handler(call):
     user = user_table.add_new_user(call.from_user.id)
+    apply_db_changes()
     user.age = call.data
     tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id,
                              text = messages_templates["unregistered_user"]["city_reg_step"])
