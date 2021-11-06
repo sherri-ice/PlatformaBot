@@ -427,7 +427,7 @@ def callback_get_customer_faq(call):
     = keyboard)
 
 
-@tg_bot.message_handler(text = 'Домой')
+@tg_bot.message_handler(func=lambda message: message.text == "Домой")
 def reply_home(message):
     tg_bot.edit_message_text(chat_id = message.chat.id, message_id = message.message_id, text = "Домой!")
 
