@@ -450,7 +450,7 @@ def reply_home(message):
                         reply_markup = create_inline_keyboard(buttons["common_balance_buttons"]))
 
 
-@tg_bot.message_handler(func = lambda message: message.text == "U+1F465 Сменить роль")
+@tg_bot.message_handler(func = lambda message: message.text == "👥 Сменить роль")
 def reply_home(message):
     choose_role(message)
 
