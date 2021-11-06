@@ -63,11 +63,6 @@ def command_send_welcome(message):
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_reg")
 def callback_reg(call):
-    # For re reg
-    user = user_table.get_user_by_tg_id(call.from_user.id)
-    if user is not None:
-        user_table.delete_user(user.id)
-
     command_register(call.message)
 
 
@@ -86,12 +81,10 @@ def command_register(message):
     '''
     # Send next step: name
     if is_unregistered_user(message.chat.id):
-        send_data_warning(message.chat.id)
-        tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["age_reg_step"], reply_markup =
-        create_inline_keyboard(buttons["age_reg_buttons"]))
-    else:
-        tg_bot.send_message(message.chat.id, messages_templates["registered_user"]["re_register"],
-                            reply_markup = create_inline_keyboard(buttons["re_register"]))
+        user_table.add_new_user(message.from_user.id)
+    send_data_warning(message.chat.id)
+    tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["age_reg_step"], reply_markup =
+    create_inline_keyboard(buttons["age_reg_buttons"]))
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_age_back")
@@ -104,7 +97,7 @@ def callback_return_to_age_step(call):
 
 @tg_bot.callback_query_handler(func = lambda call: call.data in buttons["age_reg_buttons"].values())
 def callback_age_handler(call):
-    user = user_table.add_new_user(call.from_user.id)
+    user = user_table.get_user_by_tg_id(call.from_user.id)
     # Gets text from button
     user.age = list(buttons["age_reg_buttons"].keys())[list(buttons["age_reg_buttons"].values()).index(call.data)]
     apply_db_changes()
