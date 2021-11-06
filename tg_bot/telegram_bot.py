@@ -67,10 +67,10 @@ def callback_reg(call):
 
 
 def send_data_warning(message):
-    tg_bot.edit_message_text(chat_id = message.chat.id, message_id = message.message_id,
-                             text = messages_templates["unregistered_user"]["data_collection_warning"])
     tg_bot.edit_message_media(chat_id = message.chat.id, message_id = message.message_id,
-                              media = types.InputMediaPhoto(images["reg_start"]))
+                              media = types.InputMediaPhoto(images["reg_start"],
+                                                            caption = messages_templates["unregistered_user"][
+                                                                "data_collection_warning"]))
 
 
 def is_unregistered_user(tg_id):
