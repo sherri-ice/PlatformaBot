@@ -397,10 +397,8 @@ def callback_switch_to_customer(call):
         customer_table.add_customer(user.id)
     message = get_customer_profile_info(user.id)
     keyboard = create_inline_keyboard(buttons["customer_profile_buttons"])
-    tg_bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
-                             text = message)
-    tg_bot.edit_message_reply_markup(chat_id = call.message.chat.id, message_id = call.message.message_id,
-                                     reply_markup = keyboard)
+    tg_bot.delete_message(chat_id = call.message.chat.id, message_id = call.message.message_id)
+    tg_bot.send_photo(call.message.chat.id, photo = images["customer"], caption = message, reply_markup = keyboard)
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_customer_get_balance")
@@ -409,19 +407,16 @@ def callback_get_customer_balance(call):
     customer = customer_table.get_customer_by_id(user.id)
     message_to_user = messages_templates["customer"]["balance"].format(customer.balance)
     keyboard = create_inline_keyboard(buttons["customer_balance_buttons"])
-    tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id, text = message_to_user)
-    tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id, reply_markup
-    = keyboard)
+    tg_bot.delete_message(chat_id = call.from_user.id, message_id = call.message.message_id)
+    tg_bot.send_message(call.from_user.id, message_to_user, reply_markup = keyboard)
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_customer_faq")
 def callback_get_customer_faq(call):
     message_to_user = messages_templates["customer"]["faq"]
     keyboard = create_inline_keyboard(buttons["customer_faq_buttons"])
-    tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id,
-                             text = message_to_user)
-    tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id, reply_markup
-    = keyboard)
+    tg_bot.delete_message(chat_id = call.from_user.id, message_id = call.message.message_id)
+    tg_bot.send_message(call.from_user.id, message_to_user, reply_markup = keyboard)
 
 
 @tg_bot.message_handler(func = lambda message: message.text == "Домой")
