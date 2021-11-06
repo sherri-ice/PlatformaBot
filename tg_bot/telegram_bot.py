@@ -275,7 +275,7 @@ def show_faq_after_req(message):
 @tg_bot.message_handler(func = lambda message: is_unregistered_user(message.chat.id))
 def unregistered_user_reply(message):
     tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["request_for_registration"],
-                        reply_markup = create_inline_keyboard(buttons("reg")))
+                        reply_markup = create_inline_keyboard(buttons["reg"])
 
 
 def choose_role(message):
