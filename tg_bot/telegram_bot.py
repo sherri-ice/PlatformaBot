@@ -330,10 +330,9 @@ def switch_to_employee(call):
     if employee is None:
         employee_table.add_employee(user.id)
     employee_data, keyboard = get_employee_profile_info(user.id)
-    tg_bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
-                             text = employee_data)
-    tg_bot.edit_message_reply_markup(chat_id = call.message.chat.id, message_id = call.message.message_id,
-                                     reply_markup = keyboard)
+    tg_bot.delete_message(call.message.chat.id, call.message.message_id)
+    tg_bot.send_photo(call.message.chat.id, photo = images["employee"], caption = employee_data,
+                      reply_markup = keyboard)
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_employee_get_balance")
@@ -342,19 +341,16 @@ def callback_get_employee_balance(call):
     employee = employee_table.get_employee_by_id(user.id)
     message_to_user = messages_templates["employee"]["balance"].format(employee.balance)
     keyboard = create_inline_keyboard(buttons["employee_balance_buttons"])
-    tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id, text = message_to_user)
-    tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id, reply_markup
-    = keyboard)
+    tg_bot.delete_message(call.message.chat.id, call.message.message_id)
+    tg_bot.send_message(call.message.chat.id, message_to_user, reply_markup = keyboard)
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_employee_faq")
 def callback_get_employee_faq(call):
     message_to_user = messages_templates["employee"]["faq"]
     keyboard = create_inline_keyboard(buttons["employee_faq_buttons"])
-    tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id,
-                             text = message_to_user)
-    tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id, reply_markup
-    = keyboard)
+    tg_bot.delete_message(call.message.chat.id, call.message.message_id)
+    tg_bot.send_message(call.message.chat.id, message_to_user, reply_markup = keyboard)
 
 
 def gen_markup_for_vk_auth(tg_id):
