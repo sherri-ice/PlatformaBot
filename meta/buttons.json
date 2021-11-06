@@ -9,18 +9,18 @@
     "30+": "cd_old"
   },
   "city_error_button": {
-    "Попробовать ещё раз": "cd_city_back"
+    "↩️ Попробовать ещё раз": "cd_city_back"
   },
   "city_data_buttons": {
-    "Всё верно": "cd_accept_city",
-    "Назад": "cd_city_back"
+    "✅ Всё верно": "cd_accept_city",
+    "↩️ Назад": "cd_city_back"
   },
   "salary_reg_buttons": {
     "\uD83D\uDCB8 Да, имею": "cd_work_exists",
     "\uD83D\uDE48 Нет, не имею": "cd_no_work"
   },
   "vk_auth_confirmation_buttons": {
-    "Всё верно": "cd_accept_vk",
+    "✅ Всё верно": "cd_accept_vk",
     "♻️ Сменить аккаунт": "cd_vk_back"
   },
   "re_reg_buttons": {
@@ -36,9 +36,9 @@
     "\uD83D\uDE80 Выбрать роль": "cd_choose_role"
   },
   "profile_buttons": {
-    "Рефералка": "cd_refer",
-    "Ввести промокод": "cd_promo",
-    "Привязать ВК": "cd_vk_reauth",
+    "\uD83D\uDC65 Рефералка": "cd_refer",
+    "\uD83D\uDCB4 Ввести промокод": "cd_promo",
+    "\uD83D\uDD39 Привязать ВК": "cd_vk_reauth",
     "⚙️ Изменить данные": "cd_re_register"
   },
   "ages": [
@@ -62,11 +62,11 @@
     "✅ Выполнить задание": "cd_employee_get_new_task",
     "\uD83D\uDCB8 Мой баланс": "cd_employee_get_balance",
     "❓ FAQ": "cd_employee_faq",
-    "Перейти в аккаунт Заказчика": "cd_customer",
+    "\uD83D\uDC65 Перейти в аккаунт Заказчика": "cd_customer",
     "\uD83D\uDCBB Тех. поддержка": "cd_technical_help"
   },
   "employee_balance_buttons": {
-    "\uD83D\uDCB8 Вывести деньги": "cd_get_money",
+    "\uD83E\uDD11 Вывести деньги": "cd_get_money",
     "\uD83C\uDFE6 Перевести на баланс заказчика": "cd_transfer_money_to_customer",
     "\uD83D\uDCD6 История транзакций": "cd_transaction_history",
     "↩️ Назад": "cd_employee"
@@ -79,7 +79,7 @@
     "\uD83D\uDCDD Создать задание": "cd_create_task",
     "\uD83D\uDCB8 Мой баланс": "cd_customer_get_balance",
     "❓ FAQ": "cd_customer_faq",
-    "Перейти в аккаунт Исполнителя": "cd_employee",
+    "\uD83D\uDC65 Перейти в аккаунт Исполнителя": "cd_employee",
     "\uD83D\uDCBB Тех. поддержка": "cd_technical_help"
   },
   "customer_balance_buttons": {
@@ -88,9 +88,9 @@
     "↩️ Назад": "cd_customer"
   },
   "common_balance_buttons": {
-    "Вывести": "cd_get_money",
-    "Пополнить баланс": "cd_donate",
-    "История транзакций": "cd_transaction_history"
+    "\uD83E\uDD11 Вывести": "cd_get_money",
+    "\uD83D\uDCB8 Пополнить баланс": "cd_donate",
+    "\uD83D\uDCD6 История транзакций": "cd_transaction_history"
   },
   "customer_faq_buttons": {
     "↩️ Назад": "cd_customer"
