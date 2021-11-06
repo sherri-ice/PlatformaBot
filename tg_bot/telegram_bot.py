@@ -22,7 +22,7 @@ tg_bot = telebot.TeleBot(TELEGRAM_TOKEN, threaded = False)
 
 
 def create_inline_keyboard(data: dict):
-    markup = types.InlineKeyboardMarkup(row_width = 2)
+    markup = types.InlineKeyboardMarkup()
     markup.row_width = 3
     for key in data:
         markup.add(types.InlineKeyboardButton(text = key, callback_data = data[key]))
@@ -30,7 +30,7 @@ def create_inline_keyboard(data: dict):
 
 
 def create_reply_keyboard(data: list):
-    markup = types.ReplyKeyboardMarkup()
+    markup = types.ReplyKeyboardMarkup(row_width = 2)
     for button in data:
         markup.add(types.KeyboardButton(text = button))
     return markup
