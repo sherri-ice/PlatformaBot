@@ -55,8 +55,8 @@
     "\uD83D\uDE0E Понятно! Продолжить": "cd_vk_auth"
   },
   "choose_type_of_account": {
-    "\uD83D\uDC77\uD83C\uDFFC Выбрать исполнителя": "cd_employee",
-    "\uD83D\uDC77\uD83C\uDFFC Выбрать заказчика": "cd_customer"
+    "\uD83D\uDC68\uD83C\uDFFC\u200D\uD83D\uDCBC Выбрать исполнителя": "cd_employee",
+    "\uD83E\uDDD1\uD83C\uDFFB\u200D\uD83D\uDD27 Выбрать заказчика": "cd_customer"
   },
   "employee_profile_buttons": {
     "✅ Выполнить задание": "cd_employee_get_new_task",
