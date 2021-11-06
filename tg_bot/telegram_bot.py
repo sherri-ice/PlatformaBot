@@ -242,12 +242,13 @@ def finish_registration(message):
         return
     user.finished_reg = True
     apply_db_changes()
-    tg_bot.edit_message_text(chat_id = message.chat.id, message_id = message.message_id,
-                             text = messages_templates["registered_user"]["profile_common_data"].format(user.id,
-                                                                                                        user.age,
-                                                                                                        user.city_name,
-                                                                                                        user.registered_date,
-                                                                                                        user.appeals))
+    tg_bot.delete_message(chat_id = message.chat.id, message_id = message.message_id)
+    tg_bot.send_message(message.chat.id, messages_templates["registered_user"]["profile_common_data"].format(user.id,
+                                                                                                             user.age,
+                                                                                                             user.city_name,
+                                                                                                             user.registered_date,
+                                                                                                             user.appeals),
+                        create_inline_keyboard(buttons["main_buttons"]))
     # tg_bot.edit_message_reply_markup(chat_id = message.chat.id, message_id = message.message_id, reply_markup =
     # create_reply_keyboard(buttons["main_buttons"]))
     show_faq_after_req(message)
