@@ -434,7 +434,8 @@ def reply_home(message):
 
 @tg_bot.message_handler(func = lambda message: message.text == "Мой профиль")
 def reply_home(message):
-    tg_bot.send_message(message.chat.id, get_profile_info(message.chat.id), reply_markup = create_inline_keyboard(
+    user = user_table.get_user_by_tg_id(message.chat.id)
+    tg_bot.send_message(message.chat.id, get_profile_info(user.id), reply_markup = create_inline_keyboard(
         buttons["profile_buttons"]))
 
 
