@@ -439,6 +439,29 @@ def reply_home(message):
         buttons["profile_buttons"]))
 
 
+def get_user_balance(user_id):
+    user = user_table.get_user_by_id(user_id)
+    employee = employee_table.get_employee_by_id(user.id)
+    customer = customer_table.get_customer_by_id(user.id)
+    if employee is None:
+        employee_balance = "Нет профиля Исполнителя. Попробуй выбрать роль \"Исполнитель\" и выполнить задание :)"
+    else:
+        employee_balance = employee.balance
+    if customer is None:
+        customer_balance = "Нет профиля Исполнителя. Попробуй выбрать роль \"Заказчик\" и выложить задание :)"
+    else:
+        customer_balance = customer.balance
+    return messages_templates["registered_user"]["common_balance"].format(customer_balance, employee_balance)
+
+
+@tg_bot.message_handler(func = lambda message: message.text == "Мой баланс")
+def reply_home(message):
+    user = user_table.get_user_by_tg_id(message.chat.id)
+    message_for_user = get_user_balance(user.id)
+    tg_bot.send_message(message.chat.id, message_for_user,
+                        reply_markup = create_inline_keyboard(buttons["common_balance_buttons"]))
+
+
 @tg_bot.callback_query_handler(func = lambda call: True)
 def handle_unregistered_callback(call):
     tg_bot.send_message(call.from_user.id, "В разработке! :)")

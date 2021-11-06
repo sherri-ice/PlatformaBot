@@ -94,6 +94,11 @@
     "\uD83D\uDCD6 История транзакций": "cd_transaction_history",
     "↩️ Назад": "cd_customer"
   },
+  "common_balance_buttons": {
+    "Вывести" : "cd_get_money",
+    "Пополнить баланс": "cd_donate",
+    "История транзакций": "cd_transaction_history"
+  },
   "customer_faq_buttons": {
     "↩️ Назад": "cd_customer"
   },
