@@ -415,12 +415,12 @@ def callback_get_customer_faq(call):
     tg_bot.send_message(call.from_user.id, message_to_user, reply_markup = keyboard)
 
 
-@tg_bot.message_handler(func = lambda message: message.text == "Домой")
+@tg_bot.message_handler(func = lambda message: message.text == "🏠 Домой")
 def reply_home(message):
     tg_bot.send_message(message.chat.id, messages_templates["registered_user"]["start_message"])
 
 
-@tg_bot.message_handler(func = lambda message: message.text == "Мой профиль")
+@tg_bot.message_handler(func = lambda message: message.text == "👤 Мой профиль")
 def reply_home(message):
     user = user_table.get_user_by_tg_id(message.chat.id)
     tg_bot.send_message(message.chat.id, get_profile_info(user.id), reply_markup = create_inline_keyboard(
@@ -442,7 +442,7 @@ def get_user_balance(user_id):
     return messages_templates["registered_user"]["common_balance"].format(customer_balance, employee_balance)
 
 
-@tg_bot.message_handler(func = lambda message: message.text == "Мой баланс")
+@tg_bot.message_handler(func = lambda message: message.text == "💴 Мой баланс")
 def reply_home(message):
     user = user_table.get_user_by_tg_id(message.chat.id)
     message_for_user = get_user_balance(user.id)
@@ -450,7 +450,7 @@ def reply_home(message):
                         reply_markup = create_inline_keyboard(buttons["common_balance_buttons"]))
 
 
-@tg_bot.message_handler(func = lambda message: message.text == "Сменить роль")
+@tg_bot.message_handler(func = lambda message: message.text == "👥 Сменить роль")
 def reply_home(message):
     choose_role(message)
 
