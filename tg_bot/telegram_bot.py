@@ -460,6 +460,11 @@ def reply_home(message):
                         reply_markup = create_inline_keyboard(buttons["common_balance_buttons"]))
 
 
+@tg_bot.message_handler(func = lambda message: message.text == "Сменить роль")
+def reply_home(message):
+    choose_role(message)
+
+
 @tg_bot.callback_query_handler(func = lambda call: True)
 def handle_unregistered_callback(call):
     tg_bot.send_message(call.from_user.id, "В разработке! :)")
