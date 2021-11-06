@@ -62,8 +62,7 @@
   },
   "choose_type_of_account": {
     "\uD83D\uDC77\uD83C\uDFFC Выбрать исполнителя": "cd_employee",
-    "\uD83D\uDC77\uD83C\uDFFC Выбрать заказчика": "cd_customer",
-    "\uD83D\uDC65 Мой профиль": "cd_profile"
+    "\uD83D\uDC77\uD83C\uDFFC Выбрать заказчика": "cd_customer"
   },
   "employee_profile_buttons": {
     "✅ Выполнить задание": "cd_employee_get_new_task",

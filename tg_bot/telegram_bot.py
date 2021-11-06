@@ -427,6 +427,11 @@ def callback_get_customer_faq(call):
     = keyboard)
 
 
+@tg_bot.message_handler(text = 'Домой')
+def reply_home(message):
+    tg_bot.edit_message_text(chat_id = message.chat.id, message_id = message.message_id, text = "Домой!")
+
+
 @tg_bot.callback_query_handler(func = lambda call: True)
 def handle_unregistered_callback(call):
     tg_bot.send_message(call.from_user.id, "В разработке! :)")
