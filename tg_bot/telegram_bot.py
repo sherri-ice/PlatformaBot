@@ -53,7 +53,7 @@ def command_send_welcome(message):
     if not is_unregistered_user(message.chat.id):
         message_to_user = messages_templates["registered_user"]["start_message"]
 
-        tg_bot.send_photo(message.chat.id, photo = images["welcome"], caption = message_to_user)
+        tg_bot.send_photo(message.chat.id, photo = images["buttons_helper"], caption = message_to_user)
     else:
         message_to_user, keyboard = messages_templates["unregistered_user"]["start_message"], create_inline_keyboard(
             buttons["reg"])
@@ -224,6 +224,8 @@ def callback_vk_auth(call):
 def cancel_vk_auth(call):
     tg_bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
                              text = messages_templates["vk"]["vk_cancel_auth"])
+    tg_bot.send_photo(call.from_user.id, photo = images["buttons_helper"], caption = messages_templates[
+        "registered_user"]["start_message"])
     tg_bot.send_message(call.from_user.id, messages_templates["unregistered_user"]["after_faq_message"], reply_markup
     = create_main_buttons_reply_markup())
     choose_role(call.message)
@@ -417,7 +419,8 @@ def callback_get_customer_faq(call):
 
 @tg_bot.message_handler(func = lambda message: message.text == "🏠 Домой")
 def reply_home(message):
-    tg_bot.send_message(message.chat.id, messages_templates["registered_user"]["start_message"])
+    tg_bot.send_photo(message.chat.id, photo = images["buttons_helper"], caption = messages_templates[
+        "registered_user"]["start_message"])
 
 
 @tg_bot.message_handler(func = lambda message: message.text == "👤 Мой профиль")
