@@ -308,8 +308,7 @@ def get_employee_profile_info(user_id):
     employee = employee_table.get_employee_by_id(user_id)
     keyboard = create_inline_keyboard(buttons["employee_profile_buttons"])
     if employee is None:
-        return "❗️ Не зарегистрирован профиль исполнителя. Попробуй выбрать роль \"Заказчик\" и выполнить задание " \
-               ":)", keyboard
+        return messages_templates["employee"]["no_profile"], keyboard
 
     message = messages_templates["employee"]["profile"].format("❗️ Не авторизирован" if user.vk_access_token is None
                                                                else get_vk_profile_info(user.tg_id),
@@ -320,8 +319,7 @@ def get_employee_profile_info(user_id):
 def get_customer_profile_info(user_id):
     customer = customer_table.get_customer_by_id(user_id)
     if customer is None:
-        return "❗️ Не зарегистрирован профиль заказчика. Попробуй выбрать роль \"Заказчик\" и выложить задание " \
-               ":)"
+        return messages_templates["customer"]["no_profile"]
     message = messages_templates["customer"]["profile"].format()
     return message
 
@@ -444,11 +442,11 @@ def get_user_balance(user_id):
     employee = employee_table.get_employee_by_id(user.id)
     customer = customer_table.get_customer_by_id(user.id)
     if employee is None:
-        employee_balance = "Нет профиля Исполнителя. Попробуй выбрать роль \"Исполнитель\" и выполнить задание :)"
+        employee_balance = messages_templates["employee"]["no_profile"]
     else:
         employee_balance = str(employee.balance) + " PTF"
     if customer is None:
-        customer_balance = "Нет профиля Исполнителя. Попробуй выбрать роль \"Заказчик\" и выложить задание :)"
+        customer_balance = messages_templates["customer"]["no_profile"]
     else:
         customer_balance = str(customer.balance) + " PTF"
     return messages_templates["registered_user"]["common_balance"].format(customer_balance, employee_balance)
