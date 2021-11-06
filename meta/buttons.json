@@ -44,8 +44,7 @@
     "Рефералка": "cd_refer",
     "Ввести промокод": "cd_promo",
     "Привязать ВК": "cd_vk_reauth",
-    "⚙️ Изменить данные": "cd_re_register",
-    "\uD83D\uDE80 Выбрать роль": "cd_choose_role"
+    "⚙️ Изменить данные": "cd_re_register"
   },
   "ages": [
     "12-18",

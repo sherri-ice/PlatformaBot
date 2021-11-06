@@ -427,9 +427,15 @@ def callback_get_customer_faq(call):
     = keyboard)
 
 
-@tg_bot.message_handler(func=lambda message: message.text == "Домой")
+@tg_bot.message_handler(func = lambda message: message.text == "Домой")
 def reply_home(message):
-    tg_bot.send_message(message.chat.id, "Домой!")
+    tg_bot.send_message(message.chat.id, messages_templates["registered_user"]["start_message"])
+
+
+@tg_bot.message_handler(func = lambda message: message.text == "Мой профиль")
+def reply_home(message):
+    tg_bot.send_message(message.chat.id, get_profile_info(message.chat.id), reply_markup = create_inline_keyboard(
+        buttons["profile_buttons"]))
 
 
 @tg_bot.callback_query_handler(func = lambda call: True)
