@@ -213,7 +213,9 @@ def callback_vk_auth(call):
 def cancel_vk_auth(call):
     tg_bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
                              text = messages_templates["vk"]["vk_cancel_auth"])
-    tg_bot.send_message(call.from_user.id, messages_templates["unregistered_user"]["after_faq_message"])
+    tg_bot.send_message(call.from_user.id, messages_templates["unregistered_user"]["after_faq_message"], reply_markup
+    = create_reply_keyboard(buttons["main_buttons"]))
+    choose_role(call.message)
 
 
 def after_vk_auth_in_server(tg_id):
@@ -225,6 +227,7 @@ def after_vk_auth_in_server(tg_id):
 def callback_accept_vk_account(call):
     tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id,
                              text = messages_templates["unregistered_user"]["after_faq_message"])
+    choose_role(call.message)
 
 
 def finish_registration(message):
@@ -247,9 +250,7 @@ def finish_registration(message):
         user.age,
         user.city_name,
         user.registered_date,
-        user.appeals),
-                                  reply_markup =
-                                  create_reply_keyboard(buttons["main_buttons"]))
+        user.appeals))
     # tg_bot.edit_message_reply_markup(chat_id = message.chat.id, message_id = message.message_id, reply_markup =
     # create_reply_keyboard(buttons["main_buttons"]))
     show_faq_after_req(message)
