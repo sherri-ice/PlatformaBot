@@ -310,9 +310,7 @@ def get_employee_profile_info(user_id):
     if employee is None:
         return messages_templates["employee"]["no_profile"], keyboard
 
-    message = messages_templates["employee"]["profile"].format("❗️ Не авторизирован" if user.vk_access_token is None
-                                                               else get_vk_profile_info(user.tg_id),
-                                                               employee.balance, employee.appeals)
+    message = messages_templates["employee"]["profile"].format(employee.appeals)
     return message, keyboard
 
 
