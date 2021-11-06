@@ -374,8 +374,6 @@ def get_vk_profile_info(tg_id) -> str:
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_profile")
 def callback_profile(call):
-    tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id, reply_markup
-    = create_main_buttons_reply_markup())
     user = user_table.get_user_by_tg_id(call.from_user.id)
     message = get_profile_info(user_id = user.id) + "\nВыберете действие:"
     tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id, text = message)
@@ -385,11 +383,10 @@ def callback_profile(call):
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_re_register")
 def callback_re_register(call):
-    tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id, reply_markup
-    = keyboard_hider)
+    tg_bot.delete_message(chat_id = call.from_user.id, message_id = call.message.message_id)
     message = messages_templates["registered_user"]["re_register"]
-    tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id, text = message)
-    tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id, reply_markup
+    msg = tg_bot.send_message(call.from_user, message, reply_markup = keyboard_hider)
+    tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = msg.message_id, reply_markup
     = create_inline_keyboard(buttons["re_reg_buttons"]))
 
 
