@@ -68,8 +68,7 @@
     "\uD83D\uDCB8 Мой баланс": "cd_employee_get_balance",
     "❓ FAQ": "cd_employee_faq",
     "Перейти в аккаунт Заказчика": "cd_customer",
-    "\uD83D\uDCBB Тех. поддержка": "cd_technical_help",
-    "Назад": "cd_choose_role"
+    "\uD83D\uDCBB Тех. поддержка": "cd_technical_help"
   },
   "employee_balance_buttons": {
     "\uD83D\uDCB8 Вывести деньги": "cd_get_money",
@@ -86,8 +85,7 @@
     "\uD83D\uDCB8 Мой баланс": "cd_customer_get_balance",
     "❓ FAQ": "cd_customer_faq",
     "Перейти в аккаунт Исполнителя": "cd_employee",
-    "\uD83D\uDCBB Тех. поддержка": "cd_technical_help",
-    "Назад": "cd_choose_role"
+    "\uD83D\uDCBB Тех. поддержка": "cd_technical_help"
   },
   "customer_balance_buttons": {
     "\uD83D\uDCB8 Пополнить баланс": "cd_donate",
@@ -95,7 +93,7 @@
     "↩️ Назад": "cd_customer"
   },
   "common_balance_buttons": {
-    "Вывести" : "cd_get_money",
+    "Вывести": "cd_get_money",
     "Пополнить баланс": "cd_donate",
     "История транзакций": "cd_transaction_history"
   },
