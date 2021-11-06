@@ -446,11 +446,11 @@ def get_user_balance(user_id):
     if employee is None:
         employee_balance = "Нет профиля Исполнителя. Попробуй выбрать роль \"Исполнитель\" и выполнить задание :)"
     else:
-        employee_balance = employee.balance
+        employee_balance = str(employee.balance) + " PTF"
     if customer is None:
         customer_balance = "Нет профиля Исполнителя. Попробуй выбрать роль \"Заказчик\" и выложить задание :)"
     else:
-        customer_balance = customer.balance
+        customer_balance = str(customer.balance) + " PTF"
     return messages_templates["registered_user"]["common_balance"].format(customer_balance, employee_balance)
 
 
