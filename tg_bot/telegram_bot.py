@@ -100,6 +100,7 @@ def callback_return_to_age_step(call):
 
 @tg_bot.callback_query_handler(func = lambda call: call.data in buttons["age_reg_buttons"].values())
 def callback_age_handler(call):
+    tg_bot.set_state(call.from_user.id, "registering")
     user = user_table.get_user_by_tg_id(call.from_user.id)
     # Gets text from button
     user.age = list(buttons["age_reg_buttons"].keys())[list(buttons["age_reg_buttons"].values()).index(call.data)]
@@ -373,6 +374,8 @@ def get_vk_profile_info(tg_id) -> str:
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_profile")
 def callback_profile(call):
+    tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id, reply_markup
+    = create_main_buttons_reply_markup())
     user = user_table.get_user_by_tg_id(call.from_user.id)
     message = get_profile_info(user_id = user.id) + "\nВыберете действие:"
     tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id, text = message)
@@ -382,6 +385,8 @@ def callback_profile(call):
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_re_register")
 def callback_re_register(call):
+    tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id, reply_markup
+    = keyboard_hider)
     message = messages_templates["registered_user"]["re_register"]
     tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id, text = message)
     tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id, reply_markup
