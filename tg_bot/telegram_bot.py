@@ -213,7 +213,7 @@ def callback_vk_auth(call):
 def cancel_vk_auth(call):
     tg_bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
                              text = messages_templates["vk"]["vk_cancel_auth"])
-    choose_role(call.message)
+    tg_bot.send_message(call.from_user.id, messages_templates["unregistered_user"]["after_faq_message"])
 
 
 def after_vk_auth_in_server(tg_id):
@@ -225,7 +225,6 @@ def after_vk_auth_in_server(tg_id):
 def callback_accept_vk_account(call):
     tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id,
                              text = messages_templates["unregistered_user"]["after_faq_message"])
-    choose_role(call.message)
 
 
 def finish_registration(message):
