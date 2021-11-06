@@ -1,6 +1,7 @@
-import os
+import os, cv2
 from dotenv import load_dotenv
 import json
+
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
 
 # Connect the path with your '.env' file name
@@ -21,6 +22,8 @@ INSTA_CLIENT_SECRET = os.getenv("INSTA_CLIENT_SECRET")
 MAPS_TOKEN: str = os.getenv("MAPS_TOKEN")
 
 project_path = "/home/sherriice/PlatformaBot"
+
+
 # project_path = os.getcwd()
 
 
@@ -36,5 +39,11 @@ def load_buttons():
         return data
 
 
-if __name__ == '__main__':
-    print(MAPS_TOKEN)
+def load_images_from_folder():
+    images = []
+    folder = f'{project_path}/meta/photos'
+    for filename in os.listdir(folder):
+        img = cv2.imread(os.path.join(folder, filename))
+        if img is not None:
+            images.append(img)
+    return images
