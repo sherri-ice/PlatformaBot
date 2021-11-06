@@ -50,12 +50,12 @@ def create_main_buttons_reply_markup():
 @tg_bot.message_handler(commands = ['start'])
 def command_send_welcome(message):
     if not is_unregistered_user(message.chat.id):
-        message_to_user, keyboard = messages_templates["registered_user"]["start_message"], create_inline_keyboard(
-            buttons["start_buttons"])
+        message_to_user = messages_templates["registered_user"]["start_message"]
+        tg_bot.send_message(message.chat.id, message_to_user)
     else:
         message_to_user, keyboard = messages_templates["unregistered_user"]["start_message"], create_inline_keyboard(
             buttons["reg"])
-    tg_bot.send_message(message.chat.id, message_to_user, reply_markup = keyboard)
+        tg_bot.send_message(message.chat.id, message_to_user, reply_markup = keyboard)
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_reg")
