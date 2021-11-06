@@ -38,10 +38,10 @@ def create_reply_keyboard(data: list):
 
 
 def create_main_buttons_reply_markup():
-    button_1 = types.KeyboardButton('Домой')
-    button_2 = types.KeyboardButton('Мой профиль')
-    button_3 = types.KeyboardButton('Мой баланс')
-    button_4 = types.KeyboardButton('Сменить роль')
+    button_1 = types.KeyboardButton(buttons["main_buttons"][0])
+    button_2 = types.KeyboardButton(buttons["main_buttons"][1])
+    button_3 = types.KeyboardButton(buttons["main_buttons"][2])
+    button_4 = types.KeyboardButton(buttons["main_buttons"][3])
     markup = types.ReplyKeyboardMarkup(resize_keyboard = True)
     markup.add(button_1, button_2)
     markup.add(button_3, button_4)
