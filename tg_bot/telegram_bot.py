@@ -6,7 +6,7 @@ from sql.database import apply_db_changes
 from sql.user.user import user_table, employee_table, customer_table
 
 from meta.loader import TELEGRAM_TOKEN
-from meta.loader import load_messages, load_buttons, load_images_from_folder
+from meta.loader import load_messages, load_buttons, load_photos
 
 from telebot import custom_filters
 from geocode.geo_patcher import get_address_from_coordinates
@@ -14,7 +14,7 @@ from geocode.geo_patcher import get_address_from_coordinates
 messages_templates = load_messages()
 buttons = load_buttons()
 keyboard_hider = types.ReplyKeyboardRemove()
-images = load_images_from_folder()
+images = load_photos()
 
 logger = telebot.logger
 telebot.logger.setLevel(logging.INFO)
@@ -53,11 +53,12 @@ def command_send_welcome(message):
     if not is_unregistered_user(message.chat.id):
         message_to_user = messages_templates["registered_user"]["start_message"]
 
-        tg_bot.send_photo(message.chat.id, photo = "https://i.ibb.co/H4LxWY2/customer.png", caption = message_to_user)
+        tg_bot.send_photo(message.chat.id, photo = images["welcome"], caption = message_to_user)
     else:
         message_to_user, keyboard = messages_templates["unregistered_user"]["start_message"], create_inline_keyboard(
             buttons["reg"])
-        tg_bot.send_photo(message.chat.id, photo = "https://i.ibb.co/H4LxWY2/customer.png", caption = message_to_user, reply_markup = keyboard)
+        tg_bot.send_photo(message.chat.id, photo = images["welcome"], caption = message_to_user,
+                          reply_markup = keyboard)
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_reg")
@@ -71,7 +72,8 @@ def callback_reg(call):
 
 
 def send_data_warning(tg_id):
-    tg_bot.send_message(tg_id, messages_templates["unregistered_user"]["data_collection_warning"])
+    tg_bot.send_photo(tg_id, photo = images["reg_start"], caption = messages_templates["unregistered_user"][
+        "data_collection_warning"])
 
 
 def is_unregistered_user(tg_id):

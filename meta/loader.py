@@ -39,11 +39,7 @@ def load_buttons():
         return data
 
 
-def load_images_from_folder():
-    images = []
-    folder = f'{project_path}/meta/photos'
-    for filename in os.listdir(folder):
-        img = cv2.imread(os.path.join(folder, filename))
-        if img is not None:
-            images.append(img)
-    return images
+def load_photos():
+    with open(f'{project_path}/meta/photos.json') as json_file:
+        data = json.load(json_file)
+        return data

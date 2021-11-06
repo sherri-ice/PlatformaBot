@@ -1,5 +1,6 @@
 {
-  "customer": "/photos/customer.png",
-  "employee": "/photos/employee.png",
-  "reg_start": "/photos/"
+  "customer": "https://i.ibb.co/H4LxWY2/customer.png",
+  "employee": "https://i.ibb.co/8DXVKBD/employee.png",
+  "reg_start": "https://i.ibb.co/3m5VK7s/reg-start.png",
+  "welcome": "https://i.ibb.co/7rjmTLq/welcome.png"
 }
