@@ -463,29 +463,10 @@ def handle_unregistered_callback(call):
     tg_bot.send_message(call.from_user.id, "В разработке! :)")
 
 
-@tg_bot.message_handler(commands = ['help'])
-def command_help(message):
-    tg_bot.send_message(message.chat.id, messages_templates["help"]["command_help_text"])
-
-
-@tg_bot.message_handler(commands = ['my_profile'])
-def command_help(message):
-    user = user_table.get_user_by_tg_id(message.chat.id)
-    message_for_user = get_profile_info(user.id)
-    tg_bot.send_message(message.chat.id, message_for_user,
-                        reply_markup = create_inline_keyboard(buttons["profile_buttons"]))
-
-
-@tg_bot.message_handler(commands = ['faq'])
-def command_faq(message):
-    tg_bot.send_message(message.chat.id, messages_templates["faq"])
-
-
-@tg_bot.message_handler(func = lambda message: user_table.get_user_by_tg_id(message.chat.id) is not None,
-                        content_types = [
-                            'text'])
+@tg_bot.message_handler(func = lambda message: not is_unregistered_user(message.chat.id), content_types = ['text'])
 def echo_message(message):
-    tg_bot.reply_to(message, "В разработке! :)")
+    tg_bot.send_photo(message.chat.id, photo = images["buttons_helper"], caption = "Если пропали кнопки, то нажми на "
+                                                                                   "иконку, как на картинке:")
 
 
 def get_telegram_bot():
