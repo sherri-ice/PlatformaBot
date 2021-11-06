@@ -383,10 +383,9 @@ def callback_profile(call):
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_re_register")
 def callback_re_register(call):
-    tg_bot.delete_message(chat_id = call.from_user.id, message_id = call.message.message_id)
     message = messages_templates["registered_user"]["re_register"]
-    msg = tg_bot.send_message(call.from_user, message, reply_markup = keyboard_hider)
-    tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = msg.message_id, reply_markup
+    tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id, text = message)
+    tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id, reply_markup
     = create_inline_keyboard(buttons["re_reg_buttons"]))
 
 
