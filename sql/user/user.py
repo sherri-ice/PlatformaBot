@@ -51,7 +51,8 @@ class UserTable(db.Model):
         self.query.filter_by(id = user_id).delete()
         if employee_table.get_employee_by_id(user_id) is not None:
             employee_table.query.filter_by(id = user_id).delete()
-        # TODO: if customer_table
+        if customer_table.get_customer_by_id(user_id) is not None:
+            customer_table.query.filter_by(id = user_id).delete()
         apply_db_changes()
 
     def get_vk_api(self, tg_id):
