@@ -52,7 +52,7 @@
     "\uD83D\uDE0E Разберусь походу": "cd_faq_cancel"
   },
   "have_read_faq": {
-    "\uD83D\uDE0E Понятно! Продолжить": "cd_vk_auth"
+    "⏩ Понятно! Продолжить": "cd_vk_auth"
   },
   "choose_type_of_account": {
     "\uD83D\uDC68\uD83C\uDFFC\u200D\uD83D\uDCBC Выбрать исполнителя": "cd_employee",
