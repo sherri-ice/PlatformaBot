@@ -8,9 +8,6 @@
     "24-30": "cd_upper_midle",
     "30+": "cd_old"
   },
-  "city_reg_buttons": {
-    "Назад": "cd_age_back"
-  },
   "city_error_button": {
     "Попробовать ещё раз": "cd_city_back"
   },
@@ -21,7 +18,6 @@
   "salary_reg_buttons": {
     "\uD83D\uDCB8 Да, имею": "cd_work_exists",
     "\uD83D\uDE48 Нет, не имею": "cd_no_work",
-    "Назад": "cd_city_back"
   },
   "vk_auth_confirmation_buttons": {
     "Всё верно": "cd_accept_vk",

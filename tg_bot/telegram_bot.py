@@ -106,17 +106,16 @@ def callback_age_handler(call):
     apply_db_changes()
     tg_bot.delete_message(chat_id = call.from_user.id, message_id = call.message.message_id)
 
-    tg_bot.send_photo(call.from_user.id, photo = images["geo_send_help"], caption =  messages_templates[
-        "unregistered_user"]["city_reg_step"], reply_markup = create_inline_keyboard(buttons["city_reg_buttons"]))
+    tg_bot.send_photo(call.from_user.id, photo = images["geo_send_help"], caption = messages_templates[
+        "unregistered_user"]["city_reg_step"])
     tg_bot.set_state(call.from_user.id, "get_city")
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_city_back")
 def callback_return_to_city_step(call):
-    tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id,
-                             text = messages_templates["unregistered_user"]["city_reg_step"])
-    tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id, reply_markup
-    = create_inline_keyboard(buttons["city_reg_buttons"]))
+    tg_bot.edit_message_media(chat_id = call.from_user.id, message_id = call.message.message_id,
+                              media = types.InputMediaPhoto(images["geo_send_help"], caption = messages_templates[
+                                  "unregistered_user"]["city_reg_step"]))
     tg_bot.set_state(call.from_user.id, "get_city")
 
 
