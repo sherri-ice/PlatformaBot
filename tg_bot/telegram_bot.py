@@ -36,6 +36,14 @@ def create_reply_keyboard(data: list):
     return markup
 
 
+def create_main_buttons_reply_markup():
+    button_1 = types.KeyboardButton('Домой')
+    button_2 = types.KeyboardButton('Мой профиль')
+    button_3 = types.KeyboardButton('Мой баланс')
+    button_4 = types.KeyboardButton('Сменить роль')
+    return types.ReplyKeyboardMarkup(button_1, button_2, button_3, button_4)
+
+
 @tg_bot.message_handler(commands = ['start'])
 def command_send_welcome(message):
     if not is_unregistered_user(message.chat.id):
@@ -214,7 +222,7 @@ def cancel_vk_auth(call):
     tg_bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
                              text = messages_templates["vk"]["vk_cancel_auth"])
     tg_bot.send_message(call.from_user.id, messages_templates["unregistered_user"]["after_faq_message"], reply_markup
-    = create_reply_keyboard(buttons["main_buttons"]))
+    = create_main_buttons_reply_markup())
     choose_role(call.message)
 
 
