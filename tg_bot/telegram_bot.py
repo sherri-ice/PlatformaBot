@@ -66,9 +66,11 @@ def callback_reg(call):
     command_register(call.message)
 
 
-def send_data_warning(tg_id):
-    tg_bot.send_photo(tg_id, photo = images["reg_start"], caption = messages_templates["unregistered_user"][
-        "data_collection_warning"])
+def send_data_warning(message):
+    tg_bot.edit_message_text(chat_id = message.chat.id, message_id = message.message_id,
+                             text = messages_templates["unregistered_user"]["data_collection_warning"])
+    tg_bot.edit_message_media(chat_id = message.chat.id, message_id = message.message_id,
+                              media = types.InputMediaPhoto(images["reg_start"]))
 
 
 def is_unregistered_user(tg_id):
@@ -83,7 +85,7 @@ def command_register(message):
     if is_unregistered_user(message.chat.id):
         user_table.add_new_user(message.chat.id)
         apply_db_changes()
-    send_data_warning(message.chat.id)
+    send_data_warning(message)
     tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["age_reg_step"], reply_markup =
     create_inline_keyboard(buttons["age_reg_buttons"]))
 
