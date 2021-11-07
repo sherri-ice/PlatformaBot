@@ -249,22 +249,20 @@ def finish_registration(message):
     if user.finished_reg:
         tg_bot.edit_message_text(chat_id = message.chat.id, message_id = message.message_id,
                                  text = messages_templates["registered_user"]["re_register_finish"] +
-                                        messages_templates["registered_user"]["profile_common_data"].format(
+                                        messages_templates["registered_user"]["registration_common_data"].format(
                                             user.id,
                                             user.age,
                                             user.city_name,
-                                            user.registered_date,
-                                            user.appeals))
+                                            user.registered_date))
         return
     user.finished_reg = True
     apply_db_changes()
     tg_bot.delete_message(chat_id = message.chat.id, message_id = message.message_id)
-    message = tg_bot.send_message(message.chat.id, messages_templates["registered_user"]["profile_common_data"].format(
+    message = tg_bot.send_message(message.chat.id, messages_templates["registered_user"]["registration_common_data"].format(
         user.id,
         user.age,
         user.city_name,
-        user.registered_date,
-        user.appeals))
+        user.registered_date))
     # tg_bot.edit_message_reply_markup(chat_id = message.chat.id, message_id = message.message_id, reply_markup =
     # create_reply_keyboard(buttons["main_buttons"]))
     show_faq_after_req(message)
@@ -301,11 +299,19 @@ def get_profile_info(user_id):
     employee = employee_table.get_employee_by_id(user.id)
     customer = customer_table.get_customer_by_id(user.id)
     vk_data = get_vk_profile_info(user.tg_id)
+    if employee is None:
+        employee_data = messages_templates["employee"]["no_profile"]
+    else:
+        employee_data = employee.balance
+    if customer is None:
+        customer_data = messages_templates["customer"]["no_profile"]
+    else:
+        customer_data = customer.balance
     common_data = messages_templates["registered_user"]["profile_common_data"].format(user.id, user.age,
                                                                                       user.city_name,
                                                                                       user.registered_date,
-                                                                                      employee.balance,
-                                                                                      customer.balance, vk_data)
+                                                                                      employee_data,
+                                                                                      customer_data, vk_data)
     return common_data
 
 
