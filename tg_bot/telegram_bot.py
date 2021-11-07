@@ -302,11 +302,11 @@ def get_profile_info(user_id):
     if employee is None:
         employee_data = messages_templates["employee"]["no_profile"]
     else:
-        employee_data = employee.balance
+        employee_data = employee.balance + "PTF"
     if customer is None:
         customer_data = messages_templates["customer"]["no_profile"]
     else:
-        customer_data = customer.balance
+        customer_data = customer.balance + "PTF"
     common_data = messages_templates["registered_user"]["profile_common_data"].format(user.id, user.age,
                                                                                       user.city_name,
                                                                                       user.registered_date,
