@@ -298,13 +298,16 @@ def callback_choose_role(call):
 
 def get_profile_info(user_id):
     user = user_table.get_user_by_id(user_id)
+    employee = employee_table.get_employee_by_id(user.id)
+    customer = customer_table.get_customer_by_id(user.id)
+    vk_data = get_vk_profile_info(user.tg_id)
     common_data = messages_templates["registered_user"]["profile_common_data"].format(user.id, user.age,
                                                                                       user.city_name,
                                                                                       user.registered_date,
-                                                                                      user.appeals)
-    employee_data, _ = get_employee_profile_info(user_id)
-    customer_data = get_customer_profile_info(user_id)
-    return common_data + messages_templates["registered_user"]["profile"].format(customer_data, employee_data)
+                                                                                      employee.balance,
+                                                                                      customer.balance, vk_data)
+    return common_data
+
 
 
 def get_employee_profile_info(user_id):
