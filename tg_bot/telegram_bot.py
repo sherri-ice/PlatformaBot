@@ -54,7 +54,7 @@ def command_send_welcome(message):
         message_to_user = messages_templates["registered_user"]["start_message"]
 
         tg_bot.send_photo(message.chat.id, photo = images["buttons_helper"], caption = message_to_user, reply_markup
-        = buttons["main_buttons"])
+        = create_main_buttons_reply_markup())
     else:
         message_to_user, keyboard = messages_templates["unregistered_user"]["start_message"], create_inline_keyboard(
             buttons["reg"])
