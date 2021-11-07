@@ -83,7 +83,7 @@ def command_register(message):
     Register function.
     '''
     # Send next step: name
-    if is_unregistered_user(message.chat.id):
+    if user_table.get_user_by_tg_id(message.chat.id) is None:
         user_table.add_new_user(message.chat.id)
         apply_db_changes()
     send_data_warning(message)
