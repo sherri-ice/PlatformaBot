@@ -15,8 +15,8 @@ class Task(db.Model):
     customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'))
     creation_date = db.Column(db.Date, default = datetime.now())
     platform = db.Column(db.String(255))
-    employee = db.relationship("employee_id", backref = db.backref("employee", uselist = False))
-    customer = db.relationship("customer_id", backref = db.backref("customer", uselist = False))
+    employee = db.relationship("Employee", backref = db.backref("employee_id", uselist = False))
+    customer = db.relationship("Customer", backref = db.backref("customer_id", uselist = False))
 
     def add_new_task(self, customer_id, ref, guarantee, platform):
         db.session.add(Task(ref = ref, customer_id = customer_id, guarantee = guarantee, platform = platform))
