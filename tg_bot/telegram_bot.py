@@ -331,7 +331,7 @@ def get_employee_profile_info(user_id):
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_employee_get_new_task")
 def employee_get_new_task(call):
     new_tasks = task_table.get_new_tasks()
-    if new_tasks is None:
+    if len(new_tasks) == 0:
         message_text = "Нет заданий :("
     else:
         message_text = "Ура!"
