@@ -18,7 +18,7 @@ class Task(db.Model):
     # for target
     age = db.Column(db.Integer)
     city = db.Column(db.String(255))
-    salary = db.Column(db.String)
+    salary = db.Column(db.String(255))
     #
     employee = db.relationship("Employee", backref = db.backref("employee_id", uselist = False))
     customer = db.relationship("Customer", backref = db.backref("customer_id", uselist = False))
