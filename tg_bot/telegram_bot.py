@@ -328,6 +328,11 @@ def get_employee_profile_info(user_id):
     return message, keyboard
 
 
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_employee_get_new_task")
+def employee_get_new_task(call):
+    tg_bot.answer_callback_query(call.from_user.id, text = "P")
+
+
 def get_customer_profile_info(user_id):
     customer = customer_table.get_customer_by_id(user_id)
     if customer is None:
