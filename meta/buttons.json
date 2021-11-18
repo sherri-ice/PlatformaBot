@@ -1,0 +1,107 @@
+{
+  "reg": {
+    "✅ Регистрация": "cd_reg"
+  },
+  "age_reg_buttons": {
+    "12-17": "cd_young",
+    "18-24": "cd_middle",
+    "24-30": "cd_upper_midle",
+    "30+": "cd_old"
+  },
+  "city_error_button": {
+    "↩️ Попробовать ещё раз": "cd_city_back"
+  },
+  "city_data_buttons": {
+    "✅ Всё верно": "cd_accept_city",
+    "↩️ Назад": "cd_city_back"
+  },
+  "salary_reg_buttons": {
+    "\uD83D\uDCB8 Да, имею": "cd_work_exists",
+    "\uD83D\uDE48 Нет, не имею": "cd_no_work"
+  },
+  "vk_auth_confirmation_buttons": {
+    "✅ Всё верно": "cd_accept_vk",
+    "♻️ Сменить аккаунт": "cd_vk_back"
+  },
+  "re_reg_buttons": {
+    "✅ Да, перерегистрироваться и изменить данные": "cd_age_back",
+    "❌ Оставить всё как есть": "cd_profile"
+  },
+  "vk_re_au\nth_buttons": {
+    "✅ Да, перепривязать профиль": "cd_vk_auth",
+    "❌ Оставить всё как есть": "cd_profile"
+  },
+  "start_buttons": {
+    "\uD83D\uDC65 Мой профиль": "cd_profile",
+    "\uD83D\uDE80 Выбрать роль": "cd_choose_role"
+  },
+  "profile_buttons": {
+    "\uD83D\uDC65 Рефералка": "cd_refer",
+    "\uD83D\uDCB4 Ввести промокод": "cd_promo",
+    "\uD83D\uDD39 Привязать ВК": "cd_vk_reauth",
+    "⚙️ Изменить данные": "cd_re_register"
+  },
+  "ages": [
+    "12-18",
+    "19-24",
+    "25-27",
+    "27+"
+  ],
+  "read_faq_after_reg": {
+    "\uD83D\uDCD5 Прочитать FAQ": "cd_faq",
+    "\uD83D\uDE0E Разберусь походу": "cd_faq_cancel"
+  },
+  "have_read_faq": {
+    "⏩ Понятно! Продолжить": "cd_vk_auth"
+  },
+  "choose_type_of_account": {
+    "\uD83D\uDC68\uD83C\uDFFC\u200D\uD83D\uDCBC Выбрать исполнителя": "cd_employee",
+    "\uD83E\uDDD1\uD83C\uDFFB\u200D\uD83D\uDD27 Выбрать заказчика": "cd_customer"
+  },
+  "employee_profile_buttons": {
+    "✅ Выполнить задание": "cd_employee_get_new_task",
+    "\uD83D\uDCB8 Мой баланс": "cd_employee_get_balance",
+    "❓ FAQ": "cd_employee_faq",
+    "\uD83D\uDC65 Перейти в аккаунт Заказчика": "cd_customer",
+    "\uD83D\uDCBB Тех. поддержка": "cd_technical_help"
+  },
+  "employee_balance_buttons": {
+    "\uD83E\uDD11 Вывести деньги": "cd_get_money",
+    "\uD83C\uDFE6 Перевести на баланс заказчика": "cd_transfer_money_to_customer",
+    "\uD83D\uDCD6 История транзакций": "cd_transaction_history",
+    "↩️ Назад": "cd_employee"
+  },
+  "employee_faq_buttons": {
+    "↩️ Назад": "cd_employee"
+  },
+  "customer_profile_buttons": {
+    "\uD83D\uDCCB Мои задания": "cd_customer_my_tasks",
+    "\uD83D\uDCDD Создать задание": "cd_create_task",
+    "\uD83D\uDCB8 Мой баланс": "cd_customer_get_balance",
+    "❓ FAQ": "cd_customer_faq",
+    "\uD83D\uDC65 Перейти в аккаунт Исполнителя": "cd_employee",
+    "\uD83D\uDCBB Тех. поддержка": "cd_technical_help"
+  },
+  "customer_balance_buttons": {
+    "\uD83D\uDCB8 Пополнить баланс": "cd_donate",
+    "\uD83D\uDCD6 История транзакций": "cd_transaction_history",
+    "↩️ Назад": "cd_customer"
+  },
+  "common_balance_buttons": {
+    "\uD83E\uDD11 Вывести": "cd_get_money",
+    "\uD83D\uDCB8 Пополнить баланс": "cd_donate",
+    "\uD83D\uDCD6 История транзакций": "cd_transaction_history"
+  },
+  "customer_faq_buttons": {
+    "↩️ Назад": "cd_customer"
+  },
+  "back_to_profile": {
+    "↩️ Назад": "cd_profile"
+  },
+  "main_buttons": [
+    "\uD83C\uDFE0 Домой",
+    "\uD83D\uDC64 Мой профиль",
+    "\uD83D\uDCB4 Мой баланс",
+    "\uD83D\uDC65 Сменить роль"
+  ]
+}
