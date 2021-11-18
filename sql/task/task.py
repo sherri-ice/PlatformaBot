@@ -31,13 +31,13 @@ class Task(db.Model):
         pass
 
     def get_tasks_by_customer_id(self, customer_id):
-        return self.query.filter_by(customer_id = customer_id)
+        return self.query.filter_by(customer_id = customer_id).all()
 
     def get_tasks_by_employee_id(self, employee_id):
-        return self.query.filter_by(employee_id = employee_id)
+        return self.query.filter_by(employee_id = employee_id).all()
 
     def get_new_tasks(self):
-        return self.query.filter_by(free = True)
+        return self.query.filter_by(free = True).all()
 
     def set_employee_id_for_task(self, task_id, employee_id):
         task = self.query.filter_by(id = task_id).first()
