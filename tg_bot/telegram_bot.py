@@ -440,9 +440,6 @@ def choose_platform(call):
     apply_db_changes()
 
     # TODO: remove when implement customer
-    task = task_table.get_tasks_by_customer_id(customer.id)
-    task.registered = True
-    apply_db_changes()
     tg_bot.delete_message(chat_id = call.from_user.id, message_id = call.message.message_id)
     tg_bot.send_message(chat_id = call.from_user.id, text = "Ok!")
 
