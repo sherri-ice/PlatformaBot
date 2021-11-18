@@ -36,8 +36,11 @@ class Task(db.Model):
     def get_tasks_by_employee_id(self, employee_id):
         return self.query.filter_by(employee_id = employee_id).all()
 
-    def get_new_tasks(self):
-        return self.query.filter_by(free = True).all()
+    def get_new_tasks(self, platforma_filter):
+        return self.query.filter(
+            self.free.like(True),
+            self.platform.like(platforma_filter)
+        ).all()
 
     def set_employee_id_for_task(self, task_id, employee_id):
         task = self.query.filter_by(id = task_id).first()
