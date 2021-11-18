@@ -330,7 +330,12 @@ def get_employee_profile_info(user_id):
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_employee_get_new_task")
 def employee_get_new_task(call):
-    tg_bot.send_message(call.message.chat.id, "Pressed task")
+    new_tasks = task_table.get_new_tasks()
+    if new_tasks is None:
+        message_text = "Нет заданий :("
+    else:
+        message_text = "Ура!"
+    tg_bot.send_message(call.message.chat.id, message_text)
 
 
 def get_customer_profile_info(user_id):
