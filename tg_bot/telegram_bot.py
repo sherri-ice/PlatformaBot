@@ -427,6 +427,17 @@ def customer_create_new_task(call):
                         reply_markup = create_inline_keyboard(buttons["choose_platform_buttons"]))
 
 
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_choose_vk_task" or
+                                                   call.data == "cd_choose_telegram_task")
+def choose_platform(call):
+    if call.data == "cd_choose_vk_task":
+        platform = "vk"
+    else:
+        platform = "telegram"
+    task_table.add_new_task(call.from_user.id, platform = platform)
+    apply_db_changes()
+
+
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_customer_get_balance")
 def callback_get_customer_balance(call):
     user = user_table.get_user_by_tg_id(call.from_user.id)

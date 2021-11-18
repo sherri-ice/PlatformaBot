@@ -8,6 +8,7 @@ class Task(db.Model):
     # check if url is valid
     ref = db.Column(db.String(255))
     completed = db.Column(db.Boolean, default = False)
+    registered = db.Column(db.Boolean, default = False)
     guarantee = db.Column(db.Integer)
     on_guarantee = db.Column(db.Boolean, default = False)
     free = db.Column(db.Boolean, default = True)
