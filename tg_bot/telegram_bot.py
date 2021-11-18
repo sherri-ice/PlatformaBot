@@ -4,6 +4,7 @@ from telebot import types
 from vk.vk_auth import request_vk_auth_code
 from sql.database import apply_db_changes
 from sql.user.user import user_table, employee_table, customer_table
+from sql.task.task import task_table
 
 from meta.loader import TELEGRAM_TOKEN
 from meta.loader import load_messages, load_buttons, load_photos

@@ -11,3 +11,6 @@ class Task(db.Model):
     guarantee = db.Column(db.Integer)
     creation_date = db.Column(db.Date, default = datetime.now())
     platform = db.Column(db.String(255))
+
+
+task_table = Task()
