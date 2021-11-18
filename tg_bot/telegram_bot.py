@@ -434,7 +434,8 @@ def choose_platform(call):
         platform = "vk"
     else:
         platform = "telegram"
-    customer = customer_table.get_customer_by_id(user_table.get_user_by_tg_id(call.from_user.id))
+    user = user_table.get_user_by_tg_id(call.from_user.id)
+    customer = customer_table.get_customer_by_id(user.id)
     task_table.add_new_task(customer.id, ref = None, guarantee = None, platform = platform)
     apply_db_changes()
 
