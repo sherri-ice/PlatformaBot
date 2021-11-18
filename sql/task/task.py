@@ -17,7 +17,7 @@ class Task(db.Model):
     platform = db.Column(db.String(255))
     # for target
     age = db.Column(db.Integer)
-    city = db.Column(db.String)
+    city = db.Column(db.String(255))
     salary = db.Column(db.String)
     #
     employee = db.relationship("Employee", backref = db.backref("employee_id", uselist = False))
