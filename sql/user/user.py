@@ -39,11 +39,7 @@ class UserTable(db.Model):
     def get_user_by_id(self, id):
         return self.query.filter_by(id = id).first()
 
-    def add_new_user(self, tg_id, age = None, salary = None, city = None):
-        '''
-        Ads new user to database.
-        Note: you need to do apply_bd_commit()
-        '''
+    def add_new_user(self, tg_id, age = None, salary = None):
         db.session.add(UserTable(tg_id = tg_id, age = age, salary = salary))
         return self.get_user_by_tg_id(tg_id)
 
