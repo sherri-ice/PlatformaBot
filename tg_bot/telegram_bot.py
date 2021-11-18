@@ -439,6 +439,13 @@ def choose_platform(call):
     task_table.add_new_task(customer.id, ref = None, guarantee = None, platform = platform)
     apply_db_changes()
 
+    # TODO: remove when implement customer
+    task = task_table.get_tasks_by_customer_id(customer.id)
+    task.registered = True
+    apply_db_changes()
+    tg_bot.delete_message(chat_id = call.from_user.id, message_id = call.message.message_id)
+    tg_bot.send_message(chat_id = call.from_user.id, text = "Ok!")
+
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_customer_get_balance")
 def callback_get_customer_balance(call):
