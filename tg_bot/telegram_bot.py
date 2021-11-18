@@ -420,6 +420,13 @@ def callback_switch_to_customer(call):
     tg_bot.send_photo(call.message.chat.id, photo = images["customer"], caption = message, reply_markup = keyboard)
 
 
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_create_task")
+def customer_create_new_task(call):
+    tg_bot.delete_message(chat_id = call.from_user.id, message_id = call.message.message_id)
+    tg_bot.send_message(call.message.chat.id, messages_templates["tasks"]["create_new_task"],
+                        reply_markup = create_inline_keyboard(buttons["choose_platform_buttons"]))
+
+
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_customer_get_balance")
 def callback_get_customer_balance(call):
     user = user_table.get_user_by_tg_id(call.from_user.id)
