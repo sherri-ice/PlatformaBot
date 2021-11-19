@@ -42,8 +42,8 @@ class Task(db.Model):
     def get_new_tasks(self, platform, task_type, filters):
         return self.query.filter(
             self.free == True,
-            self.platform == platform,
-            self.task_type == task_type
+            self.platform == platform
+            # self.task_type == task_type
         ).all()
 
     def set_employee_id_for_task(self, task_id, employee_id):
