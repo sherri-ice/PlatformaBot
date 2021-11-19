@@ -330,12 +330,44 @@ def get_employee_profile_info(user_id):
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_employee_get_new_task")
 def employee_get_new_task(call):
-    new_tasks = task_table.get_new_tasks(platforma_filter = "vk")
-    if len(new_tasks) == 0:
-        message_text = "Нет заданий :("
-    else:
-        message_text = "Ура!"
-    tg_bot.send_message(call.message.chat.id, message_text)
+    tg_bot.delete_message(chat_id = call.from_user.id, message_id = call.message.message_id)
+    tg_bot.send_message(call.from_user.id, messages_templates["employee"]["choose_platform"],
+                        reply_markup = create_inline_keyboard(buttons["employee_choose_platform_buttons"]))
+    tg_bot.set_state(call.from_user.id, "employee_get_platform")
+
+
+@tg_bot.callback_query_handler(
+    func = lambda call: call.data == "employee_cd_choose_telegram_task" or call.data == "employee_cd_choose_vk_task")
+def callback_employee_choose_platform(call):
+    with tg_bot.retrieve_data(call.from_user.id) as data:
+        if call.data == "employee_cd_choose_telegram_task":
+            data["platform"] = "telegram"
+            reply_markup = create_inline_keyboard(buttons["choose_type_of_task_telegram"])
+        elif call.data == "employee_cd_choose_vk_task":
+            data["platform"] = "vk"
+            reply_markup = create_inline_keyboard(buttons["choose_type_of_task_vk"])
+    tg_bot.delete_message(chat_id = call.from_user.id, message_id = call.message.message_id)
+    tg_bot.send_message(call.from_user.id, messages_templates["employee"]["choose_type_of_task"],
+                        reply_markup = reply_markup)
+
+
+@tg_bot.callback_query_handler(func = lambda call: True)
+def callback_employee_choose_task_type(call):
+    with tg_bot.retrieve_data(call.from_user.id) as data:
+        if call.data == "cd_vk_subscribers" or call.data == "cd_telegram_subscribers":
+            data["task_type"] = "subscribers"
+        elif call.data == "cd_vk_likes":
+            data["task_type"] = "likes"
+        elif call.data == "cd_vK_reposts":
+            data["task_type"] = "reposts"
+
+
+@tg_bot.message_handler(state = "get_messages_by_filter")
+def get_messages_by_filter(message):
+    chat_id = message.chat.id
+    tg_bot.delete_message(chat_id, message_id = message.message_id)
+    with tg_bot.retrieve_data(chat_id) as data:
+        tg_bot.send_message(chat_id, "{} {}".format(data["platform"], data["task_type"]))
 
 
 def get_customer_profile_info(user_id):
@@ -424,11 +456,11 @@ def callback_switch_to_customer(call):
 def customer_create_new_task(call):
     tg_bot.delete_message(chat_id = call.from_user.id, message_id = call.message.message_id)
     tg_bot.send_message(call.message.chat.id, messages_templates["tasks"]["create_new_task"],
-                        reply_markup = create_inline_keyboard(buttons["choose_platform_buttons"]))
+                        reply_markup = create_inline_keyboard(buttons["customer_choose_platform_buttons"]))
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_choose_vk_task" or
-                                                   call.data == "cd_choose_telegram_task")
+@tg_bot.callback_query_handler(func = lambda call: call.data == "customer_cd_choose_vk_task" or
+                                                   call.data == "customer_cd_choose_telegram_task")
 def choose_platform(call):
     if call.data == "cd_choose_vk_task":
         platform = "vk"

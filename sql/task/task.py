@@ -15,6 +15,7 @@ class Task(db.Model):
     customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'))
     creation_date = db.Column(db.Date, default = datetime.now())
     platform = db.Column(db.String(255))
+    task_type = db.Column(db.String(255))
     # for target
     age = db.Column(db.Integer)
     city = db.Column(db.String(255))
@@ -40,7 +41,7 @@ class Task(db.Model):
         return self.query.filter(
             self.free.like(True),
             self.platform.like(platforma_filter)
-        ).all()
+        )
 
     def set_employee_id_for_task(self, task_id, employee_id):
         task = self.query.filter_by(id = task_id).first()

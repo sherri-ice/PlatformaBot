@@ -98,10 +98,25 @@
   "back_to_profile": {
     "↩️ Назад": "cd_profile"
   },
-  "choose_platform_buttons": {
-    "Телеграм": "cd_choose_telegram_task",
-    "ВК": "cd_choose_vk_task",
+  "customer_choose_platform_buttons": {
+    "Телеграм": "customer_cd_choose_telegram_task",
+    "ВК": "customer_cd_choose_vk_task",
     "Назад": "cd_create_task"
+  },
+  "employee_choose_platform_buttons": {
+    "Телеграм": "employee_cd_choose_telegram_task",
+    "ВК": "employee_cd_choose_vk_task",
+    "Назад": "cd_employee_get_new_task"
+  },
+  "choose_type_of_task_vk": {
+    "Подписки": "cd_vk_subscribers",
+    "Лайки": "cd_vk_likes",
+    "Репосты": "cd_vK_reposts",
+    "Назад": "cd_employee_get_new_task"
+  },
+  "choose_type_of_task_telegram": {
+    "Подписки": "cd_telegram_subscribers",
+    "Назад": "cd_employee_get_new_task"
   },
   "main_buttons": [
     "\uD83C\uDFE0 Домой",
