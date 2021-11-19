@@ -330,6 +330,7 @@ def get_employee_profile_info(user_id):
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_employee_get_new_task")
 def employee_get_new_task(call):
+    tg_bot.set_state(call.from_user.id, "get_new_task")
     tg_bot.delete_message(chat_id = call.from_user.id, message_id = call.message.message_id)
     tg_bot.send_message(call.from_user.id, messages_templates["employee"]["choose_platform"],
                         reply_markup = create_inline_keyboard(buttons["employee_choose_platform_buttons"]))
