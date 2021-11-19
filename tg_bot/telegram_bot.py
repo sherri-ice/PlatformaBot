@@ -365,6 +365,7 @@ def callback_employee_choose_task_type(call):
     elif call.data == "cd_vK_reposts":
         with tg_bot.retrieve_data(call.from_user.id) as data:
             data["task_type"] = "reposts"
+    tg_bot.set_state(call.from_user.id, "get_messages_by_filter")
 
 
 @tg_bot.message_handler(state = "get_messages_by_filter")
