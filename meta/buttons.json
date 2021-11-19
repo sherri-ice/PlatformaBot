@@ -106,7 +106,7 @@
   "employee_choose_platform_buttons": {
     "Телеграм": "employee_cd_choose_telegram_task",
     "ВК": "employee_cd_choose_vk_task",
-    "Назад": "cd_employee_get_new_task"
+    "Назад": "cd_employee"
   },
   "choose_type_of_task_vk": {
     "Подписки": "cd_vk_subscribers",
