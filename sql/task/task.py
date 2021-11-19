@@ -40,11 +40,12 @@ class Task(db.Model):
 
     # TODO: get targeted task
     def get_new_tasks(self, platform, task_type, filters):
-        return self.query.filter(
-           self.tags.any(self.free == 1)
-            # self.platform == platform
-            # self.task_type == task_type
-        ).all()
+        # return self.query.filter(
+        #     self.free == 1
+        #     # self.platform == platform
+        #     # self.task_type == task_type
+        # ).all()
+        return self.query.filter_by(free = 1).all()
 
     def set_employee_id_for_task(self, task_id, employee_id):
         task = self.query.filter_by(id = task_id).first()
