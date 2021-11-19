@@ -14,4 +14,6 @@ def create_app():
     with application.app_context():
         db.create_all()
     application.register_blueprint(bot_handler)
+    application.config['SQLALCHEMY_POOL_RECYCLE'] = 299
+    application.config['SQLALCHEMY_POOL_TIMEOUT'] = 20
     return application
