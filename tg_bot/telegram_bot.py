@@ -345,6 +345,11 @@ def callback_employee_choose_platform(call):
             data["platform"] = "telegram"
             reply_markup = create_inline_keyboard(buttons["choose_type_of_task_telegram"])
         elif call.data == "employee_cd_choose_vk_task":
+            user = user_table.get_user_by_tg_id(call.from_user.id)
+            if user.vk_access_token is None:
+                tg_bot.send_message(call.from_user.id, "Vk not authorized", reply_markup = gen_markup_for_vk_auth(
+                    call.from_user.id))
+                return
             data["platform"] = "vk"
             reply_markup = create_inline_keyboard(buttons["choose_type_of_task_vk"])
     tg_bot.delete_message(chat_id = call.from_user.id, message_id = call.message.message_id)
@@ -357,7 +362,6 @@ def callback_employee_choose_platform(call):
                                                    call.data == "cd_vK_reposts" or
                                                    call.data == "cd_telegram_subscribers")
 def callback_employee_choose_task_type(call):
-
     if call.data == "cd_vk_subscribers" or call.data == "cd_telegram_subscribers":
         with tg_bot.retrieve_data(call.from_user.id) as data:
             data["task_type"] = "subscribers"
