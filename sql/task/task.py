@@ -16,6 +16,7 @@ class Task(db.Model):
     creation_date = db.Column(db.Date, default = datetime.now())
     platform = db.Column(db.String(255))
     task_type = db.Column(db.String(255))
+    price = db.Column(db.Integer)
     # for target
     age = db.Column(db.Integer)
     city = db.Column(db.String(255))
@@ -37,10 +38,12 @@ class Task(db.Model):
     def get_tasks_by_employee_id(self, employee_id):
         return self.query.filter_by(employee_id = employee_id).all()
 
-    def get_new_tasks(self, platforma_filter):
+    # TODO: get targeted task
+    def get_new_tasks(self, platform, task_type, filters):
         return self.query.filter(
-            self.free.like(True),
-            self.platform.like(platforma_filter)
+            self.free == True,
+            self.platform == platform,
+            self.task_type == task_type
         )
 
     def set_employee_id_for_task(self, task_id, employee_id):

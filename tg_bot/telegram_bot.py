@@ -372,7 +372,11 @@ def get_messages_by_filter(message):
     chat_id = message.chat.id
     tg_bot.delete_message(chat_id, message_id = message.message_id)
     with tg_bot.retrieve_data(chat_id) as data:
-        tg_bot.send_message(chat_id, "{} {}".format(data["platform"], data["task_type"]))
+        tasks = task_table.get_new_tasks(data["platform"], data["task_type"])
+        if len(tasks) == 0:
+            tg_bot.send_message(chat_id, "Sorry, no tasks")
+        else:
+            tg_bot.send_message(chat_id, "First task: {}".format(tasks[0].id))
 
 
 def get_customer_profile_info(user_id):
