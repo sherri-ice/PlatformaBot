@@ -357,6 +357,7 @@ def callback_employee_choose_platform(call):
                                                    call.data == "cd_vK_reposts" or
                                                    call.data == "cd_telegram_subscribers")
 def callback_employee_choose_task_type(call):
+
     if call.data == "cd_vk_subscribers" or call.data == "cd_telegram_subscribers":
         with tg_bot.retrieve_data(call.from_user.id) as data:
             data["task_type"] = "subscribers"
@@ -371,9 +372,9 @@ def callback_employee_choose_task_type(call):
 
 def get_messages_by_filter(message):
     chat_id = message.chat.id
-    tg_bot.delete_message(chat_id, message_id = message.message_id)
     with tg_bot.retrieve_data(chat_id) as data:
         tasks = task_table.get_new_tasks(platform = data["platform"], task_type = data["task_type"], filters = None)
+        tg_bot.delete_message(chat_id, message_id = message.message_id)
         if len(tasks) == 0:
             tg_bot.send_message(chat_id, "Sorry, no tasks")
         else:
