@@ -347,6 +347,7 @@ def callback_employee_choose_platform(call):
         elif call.data == "employee_cd_choose_vk_task":
             user = user_table.get_user_by_tg_id(call.from_user.id)
             if user.vk_access_token is None:
+                tg_bot.delete_message(chat_id = call.from_user.id, message_id = call.message.message_id)
                 tg_bot.send_message(call.from_user.id, "Vk not authorized", reply_markup = gen_markup_for_vk_auth(
                     call.from_user.id))
                 return
