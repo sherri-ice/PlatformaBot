@@ -41,7 +41,7 @@ class Task(db.Model):
     # TODO: get targeted task
     def get_new_tasks(self, platform, task_type, filters):
         return self.query.filter(
-            self.free == 1
+           self.tags.any(self.free == 1)
             # self.platform == platform
             # self.task_type == task_type
         ).all()
