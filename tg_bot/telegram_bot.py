@@ -351,7 +351,10 @@ def callback_employee_choose_platform(call):
                         reply_markup = reply_markup)
 
 
-@tg_bot.callback_query_handler(func = lambda call: True)
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_vk_subscribers" or
+                                                   call.data == "cd_vk_likes" or
+                                                   call.data == "cd_vK_reposts" or
+                                                   call.data == "cd_telegram_subscribers")
 def callback_employee_choose_task_type(call):
     if call.data == "cd_vk_subscribers" or call.data == "cd_telegram_subscribers":
         with tg_bot.retrieve_data(call.from_user.id) as data:
