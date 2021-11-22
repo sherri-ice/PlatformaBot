@@ -508,7 +508,28 @@ def customer_get_task_url(message):
         tg_bot.send_message(chat_id, messages_templates["tasks"]["telegram_channel_found"].format(name))
         with tg_bot.retrieve_data(chat_id) as data:
             data["ref"] = message.text
-    tg_bot.delete_state(chat_id = chat_id)
+    customer_send_prices(message)
+
+
+def customer_send_prices(message):
+    tg_bot.send_message(message.chat.id, messages_templates["tasks"]["current_prices"])
+    tg_bot.set_state(message.chat.id, "get_money_for_tasks")
+
+
+@tg_bot.message_handler(state = "get_money_for_tasks", is_digit = True)
+def customer_get_money_for_task(message):
+    price = int(message.text)
+    customer = customer_table.get_customer_by_id(user_table.get_user_by_tg_id(message.chat.id))
+    if price < customer.balance:
+        tg_bot.send_message(message.chat.id, messages_templates["tasks"]["not_enough_money"])
+        return
+    tg_bot.send_message(message.chat.id, "Действия дальше...")
+    tg_bot.delete_state(message.chat.id)
+
+
+@tg_bot.message_handler(state = "get_money_for_tasks", is_digit = False)
+def customer_get_money_for_task(message):
+    tg_bot.send_message(message.chat.id, messages_templates["tasks"]["wrong_price_input"])
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_customer_get_balance")
@@ -586,3 +607,4 @@ def get_telegram_bot():
 
 
 tg_bot.add_custom_filter(custom_filters.StateFilter(tg_bot))
+bot.add_custom_filter(custom_filters.IsDigitFilter())
