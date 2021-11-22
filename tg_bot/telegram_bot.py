@@ -519,7 +519,7 @@ def customer_send_prices(message):
 @tg_bot.message_handler(state = "get_money_for_tasks", is_digit = True)
 def customer_get_money_for_task(message):
     price = int(message.text)
-    customer = customer_table.get_customer_by_id(user_table.get_user_by_tg_id(message.chat.id))
+    customer = customer_table.get_customer_by_id(user_table.get_user_by_tg_id(message.chat.id).id)
     if price < customer.balance:
         tg_bot.send_message(message.chat.id, messages_templates["tasks"]["not_enough_money"])
         return
