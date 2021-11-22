@@ -55,7 +55,8 @@
   },
   "tasks": {
     "create_new_task": "\uD83D\uDCB4 Ваш баланс: {} PTF\nВыберите нужную платформу и тип задания:",
-    "choose_task_type": "Выберите тип задания:"
+    "choose_task_type": "Выберите тип задания:",
+    "request_for_telegram_channel_link": "Пожалуйста, укажите нужный Теlegram-канал (ссылка):"
   },
   "is_user_ready": "✅ Ты готов совершать подвиги? \nОтправь /choose_role, выбирай роль и вперёд!"
 }

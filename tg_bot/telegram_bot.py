@@ -492,6 +492,7 @@ def choose_platform(call):
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_ct_telegram_subscribers")
 def task_telegram_subscribers(call):
+    tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["request_for_telegram_channel_link"])
     tg_bot.set_state(call.from_user.id, "get_task_url")
 
 
