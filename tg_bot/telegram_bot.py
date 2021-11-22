@@ -508,7 +508,7 @@ def customer_get_task_url(message):
         tg_bot.send_message(chat_id, messages_templates["tasks"]["telegram_channel_found"].format(name))
         with tg_bot.retrieve_data(chat_id) as data:
             data["ref"] = message.text
-    customer_send_prices(message)
+        customer_send_prices(message)
 
 
 def customer_send_prices(message):
