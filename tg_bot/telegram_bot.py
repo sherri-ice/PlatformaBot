@@ -11,6 +11,7 @@ from meta.loader import load_messages, load_buttons, load_photos
 
 from telebot import custom_filters
 from geocode.geo_patcher import get_address_from_coordinates
+from url_checker.url_checker import telegram_channel_check
 
 messages_templates = load_messages()
 buttons = load_buttons()
@@ -487,6 +488,20 @@ def choose_platform(call):
     tg_bot.delete_message(chat_id = call.from_user.id, message_id = call.message.message_id)
     tg_bot.send_message(chat_id = call.from_user.id, text = messages_templates["tasks"]["choose_task_type"],
                         reply_markup = keyboard)
+
+
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_ct_telegram_subscribers")
+def task_telegram_subscribers(call):
+    tg_bot.set_state(call.from_user.id, "get_task_url")
+
+
+@tg_bot.message_handler(state = "get_task_url")
+def customer_get_task_url(message):
+    res, name = telegram_channel_check(message.text)
+    if not res:
+        tg_bot.send_message(message.chat.id, "Нет такого канала :(")
+    else:
+        tg_bot.send_message(message.chat.id, f"Ура! Я нашёл канал {name}")
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_customer_get_balance")
