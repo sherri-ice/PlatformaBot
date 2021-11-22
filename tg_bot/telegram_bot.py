@@ -470,8 +470,9 @@ def callback_switch_to_customer(call):
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_create_task")
 def customer_create_new_task(call):
+    customer = customer_table.get_customer_by_id(user_table.get_user_by_tg_id(call.from_user.id).id)
     tg_bot.delete_message(chat_id = call.from_user.id, message_id = call.message.message_id)
-    tg_bot.send_message(call.message.chat.id, messages_templates["tasks"]["create_new_task"],
+    tg_bot.send_message(call.message.chat.id, messages_templates["tasks"]["create_new_task"].format(customer.balance),
                         reply_markup = create_inline_keyboard(buttons["customer_choose_platform_buttons"]))
 
 
