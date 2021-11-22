@@ -485,7 +485,7 @@ def choose_platform(call):
         keyboard = create_inline_keyboard(buttons["customer_choose_type_of_task_telegram"])
 
     tg_bot.delete_message(chat_id = call.from_user.id, message_id = call.message.message_id)
-    tg_bot.send_message(chat_id = call.from_user.id, text = messages_templates["choose_task_type"],
+    tg_bot.send_message(chat_id = call.from_user.id, text = messages_templates["tasks"]["choose_task_type"],
                         reply_markup = keyboard)
 
 
