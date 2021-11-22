@@ -492,6 +492,7 @@ def choose_platform(call):
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_ct_telegram_subscribers")
 def task_telegram_subscribers(call):
+    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
     tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["request_for_telegram_channel_link"])
     tg_bot.set_state(call.from_user.id, "get_task_url")
 
@@ -500,7 +501,6 @@ def task_telegram_subscribers(call):
 def customer_get_task_url(message):
     res, name = telegram_channel_check(message.text)
     chat_id = message.chat.id
-    tg_bot.delete_message(chat_id, message_id = message.message_id)
     if not res:
         tg_bot.send_message(chat_id, messages_templates["tasks"]["telegram_channel_not_found"], reply_markup
         = create_inline_keyboard(buttons["customer_resend_telegram_channel_link"]))
