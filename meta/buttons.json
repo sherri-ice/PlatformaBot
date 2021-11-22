@@ -119,13 +119,13 @@
     "Назад": "cd_employee_get_new_task"
   },
   "customer_choose_type_of_task_telegram": {
-    "\uD83D\uDC6F Подписчики для Telegram-канала": "cd_telegram_subscribers",
+    "\uD83D\uDC6F Подписчики для Telegram-канала": "cd_ct_telegram_subscribers",
     "↩️ Назад": "cd_create_task"
   },
   "customer_choose_type_of_task_vk": {
-    "\uD83D\uDC6F Подписчики": "cd_vk_subscribers",
-    "\uD83D\uDC4D Лайки": "cd_vk_likes",
-    "\uD83D\uDCE2 Репосты": "cd_vk_reposts",
+    "\uD83D\uDC6F Подписчики": "cd_ct_vk_subscribers",
+    "\uD83D\uDC4D Лайки": "cd_ct_vk_likes",
+    "\uD83D\uDCE2 Репосты": "cd_ct_vk_reposts",
     "↩️ Назад": "cd_create_task"
   },
   "main_buttons": [
