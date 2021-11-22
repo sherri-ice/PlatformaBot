@@ -480,17 +480,13 @@ def customer_create_new_task(call):
                                                    call.data == "customer_cd_choose_telegram_task")
 def choose_platform(call):
     if call.data == "cd_choose_vk_task":
-        platform = "vk"
+        keyboard = create_inline_keyboard(buttons["customer_choose_type_of_task_vk"])
     else:
-        platform = "telegram"
-    user = user_table.get_user_by_tg_id(call.from_user.id)
-    customer = customer_table.get_customer_by_id(user.id)
-    task_table.add_new_task(customer.id, ref = None, guarantee = None, platform = platform)
-    apply_db_changes()
+        keyboard = create_inline_keyboard(buttons["customer_choose_type_of_task_telegram"])
 
-    # TODO: remove when implement customer
     tg_bot.delete_message(chat_id = call.from_user.id, message_id = call.message.message_id)
-    tg_bot.send_message(chat_id = call.from_user.id, text = "Ok!")
+    tg_bot.send_message(chat_id = call.from_user.id, text = messages_templates["choose_task_type"],
+                        reply_markup = keyboard)
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_customer_get_balance")
