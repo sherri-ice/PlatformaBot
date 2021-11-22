@@ -607,4 +607,4 @@ def get_telegram_bot():
 
 
 tg_bot.add_custom_filter(custom_filters.StateFilter(tg_bot))
-bot.add_custom_filter(custom_filters.IsDigitFilter())
+tg_bot.add_custom_filter(custom_filters.IsDigitFilter())
