@@ -499,10 +499,16 @@ def task_telegram_subscribers(call):
 @tg_bot.message_handler(state = "get_task_url")
 def customer_get_task_url(message):
     res, name = telegram_channel_check(message.text)
+    chat_id = message.chat.id
+    tg_bot.delete_message(chat_id, message_id = message.message_id)
     if not res:
-        tg_bot.send_message(message.chat.id, "Нет такого канала :(")
+        tg_bot.send_message(chat_id, messages_templates["tasks"]["telegram_channel_not_found"], reply_markup
+        = create_inline_keyboard(buttons["customer_resend_telegram_channel_link"]))
     else:
-        tg_bot.send_message(message.chat.id, f"Ура! Я нашёл канал {name}")
+        tg_bot.send_message(chat_id, messages_templates["tasks"]["telegram_channel_found"].format(name))
+        with tg_bot.retrieve_data(chat_id) as data:
+            data["ref"] = message.text
+    tg_bot.delete_state(chat_id = chat_id)
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_customer_get_balance")

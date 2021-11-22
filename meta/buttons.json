@@ -128,6 +128,9 @@
     "\uD83D\uDCE2 Репосты": "cd_ct_vk_reposts",
     "↩️ Назад": "cd_create_task"
   },
+  "customer_resend_telegram_channel_link": {
+    "↩️ Попробовать ещё раз": "cd_ct_telegram_subscribers"
+  },
   "main_buttons": [
     "\uD83C\uDFE0 Домой",
     "\uD83D\uDC64 Мой профиль",
