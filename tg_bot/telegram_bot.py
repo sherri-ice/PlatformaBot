@@ -525,6 +525,8 @@ def customer_get_money_for_task(message):
         tg_bot.send_message(message.chat.id, messages_templates["tasks"]["not_enough_money"],
                             reply_markup = create_inline_keyboard(buttons["customer_not_enough_money_buttons"]))
         return
+    with tg_bot.retrieve_data(message.chat.id) as data:
+        data["price"] = price
     tg_bot.send_message(message.chat.id, "Действия дальше...")
     tg_bot.delete_state(message.chat.id)
 
