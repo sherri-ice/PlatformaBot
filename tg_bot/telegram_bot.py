@@ -529,7 +529,7 @@ def customer_get_money_for_task(message):
     with tg_bot.retrieve_data(message.chat.id) as data:
         data["money"] = money
     available_subscribers = count_available_subscribers(data["money"])
-    message = messages_templates["tasks"]["choose_telegram_task_variants"].format(data["money"],
+    message_to_user = messages_templates["tasks"]["choose_telegram_task_variants"].format(data["money"],
                                                                                   prices["telegram_prices"][
                                                                                       "guarantee_3_days"],
                                                                                   available_subscribers[0],
@@ -542,7 +542,7 @@ def customer_get_money_for_task(message):
                                                                                   prices["telegram_prices"][
                                                                                       "no_guarantee"],
                                                                                   available_subscribers[3])
-    tg_bot.send_message(message.chat.id, message,
+    tg_bot.send_message(message.chat.id, message_to_user,
                         reply_markup = create_inline_keyboard(buttons["customer_choose_task_cost_variants"]))
     # TODO: delete this
     tg_bot.set_state(message.chat.id, "3")
