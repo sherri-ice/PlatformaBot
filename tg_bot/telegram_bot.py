@@ -548,19 +548,7 @@ def customer_back_to_choose_task_cost(call):
     tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
     with tg_bot.retrieve_data(call.from_user.id) as data:
         available_subscribers = count_available_subscribers(data["money"])
-        message = messages_templates["tasks"]["choose_telegram_task_variants"].format(data["money"],
-                                                                                      prices["telegram_prices"][
-                                                                                          "guarantee_3_days"],
-                                                                                      available_subscribers[0],
-                                                                                      prices["telegram_prices"][
-                                                                                          "guarantee_14_days"],
-                                                                                      available_subscribers[1],
-                                                                                      prices["telegram_prices"][
-                                                                                          "guarantee_limitless"],
-                                                                                      available_subscribers[2],
-                                                                                      prices["telegram_prices"][
-                                                                                          "no_guarantee"],
-                                                                                      available_subscribers[3])
+        message = messages_templates["tasks"]["choose_telegram_task_variants"].format(0, 0, 0, 0, 0, 0, 0, 0, 0)
     tg_bot.send_message(call.from_user.id, message,
                         reply_markup = create_inline_keyboard(buttons["customer_choose_task_cost_variants"]))
 
