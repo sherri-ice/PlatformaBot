@@ -17,6 +17,7 @@ def telegram_channel_check(url: str):
     res = re.search(r"t\.me\/.+$", url)
     if res is None:
         return False, ""
+    # Cut the channel name
     channel_name = res.string[::-1][:res.string[::-1].find('/')][::-1]
     request_url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage?chat_id" \
                   f"=@{channel_name}&text=123"
