@@ -588,7 +588,8 @@ def customer_choose_task_cost(call):
         money = data["money"]
     tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
     if call.data == "cd_own_variant":
-        pass
+        tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["custom_task"],
+                            reply_markup = create_inline_keyboard(buttons["customer_custom_task_select_guarantee"]))
     else:
         available_subscribers = count_available_subscribers(money)
         message = messages_templates["tasks"]["chosen_task"]
@@ -610,6 +611,42 @@ def customer_choose_task_cost(call):
             data["price"] = prices["telegram_prices"]["no_guarantee"]
         tg_bot.send_message(call.from_user.id, message,
                             reply_markup = create_inline_keyboard(buttons["customer_save_task_button"]))
+
+
+@tg_bot.callback_query_handler(func = lambda call: call.data in buttons[
+    "customer_custom_task_select_guarantee"].values())
+def customer_custom_task_guarantee(call):
+    with tg_bot.retrieve_data(call.from_user) as data:
+        if call.data == "cd_3_days_guarantee":
+            data["guarantee"] = "3"
+            message = messages_templates["tasks"]["custom_task_set_guarantee"]["3_days"]
+        elif call.data == "cd_14_days_guarantee":
+            data["guarantee"] = "14"
+            message = messages_templates["tasks"]["custom_task_set_guarantee"]["14_days"]
+        elif call.data == "cd_limitless_guarantee":
+            data["guarantee"] = "lim"
+            message = messages_templates["tasks"]["custom_task_set_guarantee"]["lim"]
+        elif call.data == "cd_no_guarantee":
+            data["guarantee"] = "no"
+            message = messages_templates["tasks"]["custom_task_set_guarantee"]["no"]
+    tg_bot.send_message(call.from_user.id, message)
+    tg_bot.set_state(call.from_user.id, "get_price_for_custom_task")
+
+
+@tg_bot.message_handler(state = "get_price_for_custom_task", is_digit = True)
+def customer_get_price_for_custom_task(message):
+    # TODO: determine speed of the task
+    with tg_bot.retrieve_data(message.chat.id) as data:
+        data["price"] = message.text
+        tg_bot.send_message(message.chat.id,
+                            messages_templates["tasks"]["custom_task_accept_message"].format(data["price"],
+                                                                                             1049309094),
+                            reply_markup = create_inline_keyboard(buttons["customer_save_task_button"]))
+
+
+@tg_bot.message_handler(state = "get_price_for_custom_task", is_digit = False)
+def customer_get_price_for_custom_task(message):
+    tg_bot.send_message(message.chat.id, messages_templates["tasks"]["wrong_price_input"])
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_save_task")

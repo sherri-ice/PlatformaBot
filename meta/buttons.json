@@ -148,6 +148,17 @@
     "✏ Создать задание": "cd_save_task",
     "Назад": "cd_back_to_choose_task_cost"
   },
+  "customer_save_custom_task_button": {
+    "✏ Создать задание": "cd_save_task",
+    "Назад": "cd_back_to_choose_custom_task_cost"
+  },
+  "customer_custom_task_select_guarantee":{
+    "На 3 дня": "cd_3_days_guarantee",
+    "На 14 дней": "cd_14_days_guarantee",
+    "Навсегда": "cd_limitless_guarantee",
+    "Без гарантии": "cd_no_guarantee",
+    "Что такое гарантия?": "cd_guarantee_faq"
+  },
   "main_buttons": [
     "\uD83C\uDFE0 Домой",
     "\uD83D\uDC64 Мой профиль",
