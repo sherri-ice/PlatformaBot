@@ -617,7 +617,8 @@ def customer_save_task(call):
     with tg_bot.retrieve_data(call.from_user.id) as data:
         user = user_table.get_user_by_tg_id(call.from_user.id)
         customer = customer_table.get_customer_by_id(user.id)
-        task_table.add_new_task(customer.id, data["platform"], data["task_type"], data["ref"], data["guarantee"])
+        task_table.add_new_task(customer.id, data["platform"], data["task_type"], data["ref"], data["guarantee"],
+                                data["price"])
         tg_bot.send_message(call.from_user.id, "Ok!")
 
 
