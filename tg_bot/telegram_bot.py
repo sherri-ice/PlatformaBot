@@ -497,7 +497,8 @@ def task_telegram_subscribers(call):
     tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["request_for_telegram_channel_link"])
     tg_bot.set_state(call.from_user.id, "get_task_url")
     with tg_bot.retrieve_data(call.from_user.id) as data:
-        data["task_type"] = "tg_sub"
+        data["task_type"] = "sub"
+        data["platform"] = "tg"
 
 
 @tg_bot.message_handler(state = "get_task_url")
