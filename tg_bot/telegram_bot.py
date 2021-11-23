@@ -530,7 +530,8 @@ def customer_get_money_for_task(message):
         data["money"] = money
     tg_bot.send_message(message.chat.id, messages_templates["tasks"]["choose_telegram_task_variants"],
                         reply_markup = create_inline_keyboard(buttons["customer_choose_task_cost_variants"]))
-    tg_bot.delete_state(message.chat.id)
+    # TODO: delete this
+    tg_bot.set_state(message.chat.id, "3")
 
 
 @tg_bot.message_handler(state = "get_money_for_tasks", is_digit = False)
