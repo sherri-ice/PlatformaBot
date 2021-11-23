@@ -144,6 +144,10 @@
     "Вариант 4": "cd_variant_4",
     "Свой вариант": "cd_own_variant"
   },
+  "customer_save_task_button": {
+    "✏ Создать задание": "cd_save_task",
+    "Назад": "cd_back_to_choose_task_cost"
+  },
   "main_buttons": [
     "\uD83C\uDFE0 Домой",
     "\uD83D\uDC64 Мой профиль",

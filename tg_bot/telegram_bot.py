@@ -496,6 +496,8 @@ def task_telegram_subscribers(call):
     tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
     tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["request_for_telegram_channel_link"])
     tg_bot.set_state(call.from_user.id, "get_task_url")
+    with tg_bot.retrieve_data(call.from_user.id) as data:
+        data["task_type"] = "tg_sub"
 
 
 @tg_bot.message_handler(state = "get_task_url")
@@ -530,18 +532,18 @@ def customer_get_money_for_task(message):
         data["money"] = money
     available_subscribers = count_available_subscribers(data["money"])
     message_to_user = messages_templates["tasks"]["choose_telegram_task_variants"].format(data["money"],
-                                                                                  prices["telegram_prices"][
-                                                                                      "guarantee_3_days"],
-                                                                                  available_subscribers[0],
-                                                                                  prices["telegram_prices"][
-                                                                                      "guarantee_14_days"],
-                                                                                  available_subscribers[1],
-                                                                                  prices["telegram_prices"][
-                                                                                      "guarantee_limitless"],
-                                                                                  available_subscribers[2],
-                                                                                  prices["telegram_prices"][
-                                                                                      "no_guarantee"],
-                                                                                  available_subscribers[3])
+                                                                                          prices["telegram_prices"][
+                                                                                              "guarantee_3_days"],
+                                                                                          available_subscribers[0],
+                                                                                          prices["telegram_prices"][
+                                                                                              "guarantee_14_days"],
+                                                                                          available_subscribers[1],
+                                                                                          prices["telegram_prices"][
+                                                                                              "guarantee_limitless"],
+                                                                                          available_subscribers[2],
+                                                                                          prices["telegram_prices"][
+                                                                                              "no_guarantee"],
+                                                                                          available_subscribers[3])
     tg_bot.send_message(message.chat.id, message_to_user,
                         reply_markup = create_inline_keyboard(buttons["customer_choose_task_cost_variants"]))
     # TODO: delete this
@@ -591,13 +593,27 @@ def customer_choose_task_cost(call):
         message = messages_templates["tasks"]["chosen_task"]
         if call.data == "cd_variant_1":
             message = message.format(available_subscribers[0], "3 дня", "")
+            data["guarantee"] = "3"
         elif call.data == "cd_variant_2":
             message = message.format(available_subscribers[1], "14 дней", "")
+            data["guarantee"] = "14"
         elif call.data == "cd_variant_3":
             message = message.format(available_subscribers[2], "навсегда", "")
+            data["guarantee"] = "lim"
         elif call.data == "cd_variant_4":
             message = message.format(available_subscribers[3], "нет", "")
-        tg_bot.send_message(call.from_user.id, message)
+            data["guarantee"] = "no"
+        tg_bot.send_message(call.from_user.id, message,
+                            reply_markup = create_inline_keyboard(buttons["customer_save_task_button"]))
+
+
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_save_task")
+def customer_save_task(call):
+    with tg_bot.retrieve_data(call.from_user.id) as data:
+        user = user_table.get_user_by_tg_id(call.from_user.id)
+        customer = customer_table.get_customer_by_id(user.id)
+        task_table.add_new_task(customer.id, data["platform"], data["task_type"], data["ref"], data["guarantee"])
+        tg_bot.send_message(call.from_user.id, "Ok!")
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_customer_get_balance")
