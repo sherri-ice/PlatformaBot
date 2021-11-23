@@ -595,15 +595,19 @@ def customer_choose_task_cost(call):
         if call.data == "cd_variant_1":
             message = message.format(available_subscribers[0], "3 дня", "")
             data["guarantee"] = "3"
+            data["price"] = prices["telegram_prices"]["guarantee_3_days"]
         elif call.data == "cd_variant_2":
             message = message.format(available_subscribers[1], "14 дней", "")
             data["guarantee"] = "14"
+            data["price"] = prices["telegram_prices"]["guarantee_14_days"]
         elif call.data == "cd_variant_3":
             message = message.format(available_subscribers[2], "навсегда", "")
             data["guarantee"] = "lim"
+            data["price"] = prices["telegram_prices"]["guarantee_limitless"]
         elif call.data == "cd_variant_4":
             message = message.format(available_subscribers[3], "нет", "")
             data["guarantee"] = "no"
+            data["price"] = prices["telegram_prices"]["no_guarantee"]
         tg_bot.send_message(call.from_user.id, message,
                             reply_markup = create_inline_keyboard(buttons["customer_save_task_button"]))
 
