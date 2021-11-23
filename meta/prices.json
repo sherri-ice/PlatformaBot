@@ -1,0 +1,8 @@
+{
+  "telegram_prices": {
+    "guarantee_3_days": 250,
+    "guarantee_14_days": 340,
+    "guarantee_limitless": 620,
+    "no_guarantee": 84
+  }
+}

@@ -43,3 +43,9 @@ def load_photos():
     with open(f'{project_path}/meta/photos.json') as json_file:
         data = json.load(json_file)
         return data
+
+
+def load_prices():
+    with open(f'{project_path}/meta/prices.json') as json_file:
+        data = json.load(json_file)
+        return data

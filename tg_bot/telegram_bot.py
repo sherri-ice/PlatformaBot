@@ -7,7 +7,7 @@ from sql.user.user import user_table, employee_table, customer_table
 from sql.task.task import task_table
 
 from meta.loader import TELEGRAM_TOKEN
-from meta.loader import load_messages, load_buttons, load_photos
+from meta.loader import load_messages, load_buttons, load_photos, load_prices
 
 from telebot import custom_filters
 from geocode.geo_patcher import get_address_from_coordinates
@@ -17,6 +17,7 @@ messages_templates = load_messages()
 buttons = load_buttons()
 keyboard_hider = types.ReplyKeyboardRemove()
 images = load_photos()
+prices = load_prices()
 
 logger = telebot.logger
 telebot.logger.setLevel(logging.INFO)
@@ -519,14 +520,14 @@ def customer_send_prices(message):
 
 @tg_bot.message_handler(state = "get_money_for_tasks", is_digit = True)
 def customer_get_money_for_task(message):
-    price = int(message.text)
+    money = int(message.text)
     customer = customer_table.get_customer_by_id(user_table.get_user_by_tg_id(message.chat.id).id)
-    if price > customer.balance and price > 0:
+    if money > customer.balance and money > 0:
         tg_bot.send_message(message.chat.id, messages_templates["tasks"]["not_enough_money"],
                             reply_markup = create_inline_keyboard(buttons["customer_not_enough_money_buttons"]))
         return
     with tg_bot.retrieve_data(message.chat.id) as data:
-        data["price"] = price
+        data["money"] = money
     tg_bot.send_message(message.chat.id, messages_templates["tasks"]["choose_telegram_task_variants"],
                         reply_markup = create_inline_keyboard(buttons["customer_choose_task_cost_variants"]))
     tg_bot.delete_state(message.chat.id)
@@ -537,11 +538,44 @@ def customer_get_money_for_task(message):
     tg_bot.send_message(message.chat.id, messages_templates["tasks"]["wrong_price_input"])
 
 
+def count_available_subscribers(available_money: int):
+    return [int(available_money/price) for price in prices["telegram_prices"].values()]
+
+
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_back_to_choose_task_cost")
 def customer_back_to_choose_task_cost(call):
     tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
-    tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["choose_telegram_task_variants"],
+    with tg_bot.retrieve_data(call.from_user.id) as data:
+        available_subscribers = count_available_subscribers(data["money"])
+        message = messages_templates["tasks"]["choose_telegram_task_variants"].format(data["money"],
+                                                                                      prices["telegram_prices"][
+                                                                                          "guarantee_3_days"],
+                                                                                      available_subscribers[0],
+                                                                                      prices["telegram_prices"][
+                                                                                          "guarantee_14_days"],
+                                                                                      available_subscribers[1],
+                                                                                      prices["telegram_prices"][
+                                                                                          "guarantee_limitless"],
+                                                                                      available_subscribers[2],
+                                                                                      prices["telegram_prices"][
+                                                                                          "no_guarantee"],
+                                                                                      available_subscribers[3])
+    tg_bot.send_message(call.from_user.id, message,
                         reply_markup = create_inline_keyboard(buttons["customer_choose_task_cost_variants"]))
+
+
+@tg_bot.callback_query_handler(func = lambda call: call.data in buttons["customer_choose_task_cost_variants"].values())
+def customer_choose_task_cost(call):
+    if call.data == "cd_variant_1":
+        pass
+    elif call.data == "cd_variant_2":
+        pass
+    elif call.data == "cd_variant_3":
+        pass
+    elif call.data == "cd_variant_4":
+        pass
+    elif call.data == "cd_own_variant":
+        pass
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_customer_get_balance")
