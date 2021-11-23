@@ -137,6 +137,14 @@
   "customer_not_enough_money_buttons": {
     "\uD83D\uDCB8 Пополнить баланс": "cd_donate"
   },
+  "customer_choose_task_cost_variants": {
+    "Вариант 1": "cd_variant_1",
+    "Вариант 2": "cd_variant_2",
+    "Вариант 3": "cd_variant_3",
+    "Вариант 4": "cd_variant_4",
+    "Свой вариант": "cd_own_variant",
+    "Назад": "cd_back_to_choose_task_cost"
+  },
   "main_buttons": [
     "\uD83C\uDFE0 Домой",
     "\uD83D\uDC64 Мой профиль",

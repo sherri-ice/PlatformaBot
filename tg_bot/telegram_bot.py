@@ -527,13 +527,21 @@ def customer_get_money_for_task(message):
         return
     with tg_bot.retrieve_data(message.chat.id) as data:
         data["price"] = price
-    tg_bot.send_message(message.chat.id, "Действия дальше...")
+    tg_bot.send_message(message.chat.id, messages_templates["tasks"]["choose_telegram_task_variants"],
+                        reply_markup = create_inline_keyboard(buttons["customer_choose_task_cost_variants"]))
     tg_bot.delete_state(message.chat.id)
 
 
 @tg_bot.message_handler(state = "get_money_for_tasks", is_digit = False)
 def customer_get_money_for_task(message):
     tg_bot.send_message(message.chat.id, messages_templates["tasks"]["wrong_price_input"])
+
+
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_back_to_choose_task_cost")
+def customer_back_to_choose_task_cost(call):
+    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["choose_telegram_task_variants"],
+                        reply_markup = create_inline_keyboard(buttons["customer_choose_task_cost_variants"]))
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_customer_get_balance")
