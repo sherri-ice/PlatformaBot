@@ -548,7 +548,7 @@ def customer_back_to_choose_task_cost(call):
     tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
     with tg_bot.retrieve_data(call.from_user.id) as data:
         available_subscribers = count_available_subscribers(data["money"])
-        message = messages_templates["tasks"]["choose_telegram_task_variants"].format(0, 0, 0, 0, 0, 0, 0, 0, 0)
+        message = "hey {}".format(data["money"])
     tg_bot.send_message(call.from_user.id, message,
                         reply_markup = create_inline_keyboard(buttons["customer_choose_task_cost_variants"]))
 
