@@ -522,7 +522,7 @@ def customer_send_prices(message):
 def customer_get_money_for_task(message):
     money = int(message.text)
     customer = customer_table.get_customer_by_id(user_table.get_user_by_tg_id(message.chat.id).id)
-    if money > customer.balance or customer.balance == 0:
+    if money > customer.balance or customer.balance < min(prices["telegram_prices"].values()):
         tg_bot.send_message(message.chat.id, messages_templates["tasks"]["not_enough_money"],
                             reply_markup = create_inline_keyboard(buttons["customer_not_enough_money_buttons"]))
         return
