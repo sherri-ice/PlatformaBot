@@ -576,13 +576,13 @@ def customer_choose_task_cost(call):
         available_subscribers = count_available_subscribers(money)
         message = messages_templates["tasks"]["chosen_task"]
         if call.data == "cd_variant_1":
-            message = message.format(available_subscribers[0], "3 дня")
+            message = message.format(available_subscribers[0], "3 дня", "")
         elif call.data == "cd_variant_2":
-            message = message.format(available_subscribers[1], "14 дней")
+            message = message.format(available_subscribers[1], "14 дней", "")
         elif call.data == "cd_variant_3":
-            message = message.format(available_subscribers[2], "навсегда")
+            message = message.format(available_subscribers[2], "навсегда", "")
         elif call.data == "cd_variant_4":
-            message = message.format(available_subscribers[3], "нет")
+            message = message.format(available_subscribers[3], "нет", "")
         tg_bot.send_message(call.from_user.id, message)
 
 
