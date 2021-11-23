@@ -539,7 +539,7 @@ def customer_get_money_for_task(message):
 
 
 def count_available_subscribers(available_money: int):
-    return [int(available_money/price) for price in prices["telegram_prices"].values()]
+    return [int(available_money / price) for price in prices["telegram_prices"].values()]
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_back_to_choose_task_cost")
@@ -566,16 +566,23 @@ def customer_back_to_choose_task_cost(call):
 
 @tg_bot.callback_query_handler(func = lambda call: call.data in buttons["customer_choose_task_cost_variants"].values())
 def customer_choose_task_cost(call):
-    if call.data == "cd_variant_1":
+    with tg_bot.retrieve_data(call.from_user.id) as data:
+        money = data["money"]
+    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    if call.data == "cd_own_variant":
         pass
-    elif call.data == "cd_variant_2":
-        pass
-    elif call.data == "cd_variant_3":
-        pass
-    elif call.data == "cd_variant_4":
-        pass
-    elif call.data == "cd_own_variant":
-        pass
+    else:
+        available_subscribers = count_available_subscribers(money)
+        message = messages_templates["tasks"]["chosen_task"]
+        if call.data == "cd_variant_1":
+            message = message.format(available_subscribers[0], "3 дня")
+        elif call.data == "cd_variant_2":
+            message = message.format(available_subscribers[1], "14 дней")
+        elif call.data == "cd_variant_3":
+            message = message.format(available_subscribers[2], "навсегда")
+        elif call.data == "cd_variant_4":
+            message = message.format(available_subscribers[3], "нет")
+        tg_bot.send_message(call.from_user.id, message)
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_customer_get_balance")
