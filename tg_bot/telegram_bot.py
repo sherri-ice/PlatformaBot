@@ -512,7 +512,8 @@ def customer_get_task_url(message):
 
 
 def customer_send_prices(message):
-    tg_bot.send_message(message.chat.id, messages_templates["tasks"]["current_prices"])
+    tg_bot.send_message(message.chat.id, messages_templates["tasks"]["current_prices"],
+                        reply_markup = create_inline_keyboard(buttons["customer_back_from_choosing_price"]))
     tg_bot.set_state(message.chat.id, "get_money_for_tasks")
 
 
