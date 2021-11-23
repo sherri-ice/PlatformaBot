@@ -21,7 +21,6 @@ def telegram_channel_check(url: str):
     request_url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage?chat_id" \
                   f"=@{channel_name}&text=123"
     response = requests.get(request_url)
-    print(response.json())
     if response.json()["ok"]:
         return False, ""
     response = response.json()
