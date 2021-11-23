@@ -134,6 +134,9 @@
   "customer_back_from_choosing_price": {
     "↩️ Назад": "cd_create_task"
   },
+  "customer_not_enough_money_buttons": {
+    "\uD83D\uDCB8 Пополнить баланс": "cd_donate"
+  },
   "main_buttons": [
     "\uD83C\uDFE0 Домой",
     "\uD83D\uDC64 Мой профиль",

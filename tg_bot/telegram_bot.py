@@ -522,7 +522,8 @@ def customer_get_money_for_task(message):
     price = int(message.text)
     customer = customer_table.get_customer_by_id(user_table.get_user_by_tg_id(message.chat.id).id)
     if price > customer.balance and price > 0:
-        tg_bot.send_message(message.chat.id, messages_templates["tasks"]["not_enough_money"])
+        tg_bot.send_message(message.chat.id, messages_templates["tasks"]["not_enough_money"],
+                            reply_markup = create_inline_keyboard(buttons["customer_not_enough_money_buttons"]))
         return
     tg_bot.send_message(message.chat.id, "Действия дальше...")
     tg_bot.delete_state(message.chat.id)
