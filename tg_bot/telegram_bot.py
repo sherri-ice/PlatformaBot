@@ -11,7 +11,7 @@ from meta.loader import load_messages, load_buttons, load_photos, load_prices
 
 from telebot import custom_filters
 from geocode.geo_patcher import get_address_from_coordinates
-from url_checker.url_checker import telegram_channel_check
+from url_checker.url_checker import telegram_channel_check, vk_page_check
 
 messages_templates = load_messages()
 buttons = load_buttons()
@@ -522,16 +522,42 @@ def customer_get_tg_task_url(message):
         tg_bot.send_message(chat_id, messages_templates["tasks"]["telegram_channel_found"].format(name))
         with tg_bot.retrieve_data(chat_id) as data:
             data["ref"] = message.text
-        customer_send_prices(message)
+        customer_send_tg_prices(message)
 
 
-def customer_send_prices(message):
-    tg_bot.send_message(message.chat.id, messages_templates["tasks"]["current_prices"],
+@tg_bot.message_handler(state = "get_vk_task_url")
+def customer_get_vk_task_url(message):
+    res, name = vk_page_check(message.text)
+    message_to_user = ""
+    if not res and name == "banned user":
+        message_to_user = messages_templates["tasks"]["vk_user_banned"]
+    elif not res and name == "wrong url" or name == "":
+        message_to_user = messages_templates["tasks"]["vk_page_not_found"]
+    elif not res and name == "closed group":
+        message_to_user = messages_templates["tasks"]["vk_group_closed"]
+    if not res:
+        tg_bot.send_message(message.chat.id, message_to_user,
+                            reply_markup = create_inline_keyboard(buttons["customer_resend_vk_page_link"]))
+    else:
+        tg_bot.send_message(message.chat.id, messages_templates["tasks"]["vk_page_found"].format(name))
+        with tg_bot.retrieve_data(message.chat.id) as data:
+            data["ref"] = message.text
+        customer_send_vk_subscribers_prices(message)
+
+
+def customer_send_tg_prices(message):
+    tg_bot.send_message(message.chat.id, messages_templates["tasks"]["tg_current_prices"],
                         reply_markup = create_inline_keyboard(buttons["customer_back_from_choosing_price"]))
-    tg_bot.set_state(message.chat.id, "get_money_for_tasks")
+    tg_bot.set_state(message.chat.id, "get_money_for_tg_tasks")
 
 
-@tg_bot.message_handler(state = "get_money_for_tasks", is_digit = True)
+def customer_send_vk_subscribers_prices(message):
+    tg_bot.send_message(message.chat.id, messages_templates["tasks"]["vk_current_prices"],
+                        reply_markup = create_inline_keyboard(buttons["customer_back_from_choosing_price"]))
+    tg_bot.set_state(message.chat.id, "get_money_for_vk_subscribers_tasks")
+
+
+@tg_bot.message_handler(state = "get_money_for_tg_tasks", is_digit = True)
 def customer_get_money_for_task(message):
     money = int(message.text)
     customer = customer_table.get_customer_by_id(user_table.get_user_by_tg_id(message.chat.id).id)
@@ -561,7 +587,7 @@ def customer_get_money_for_task(message):
     tg_bot.set_state(message.chat.id, "3")
 
 
-@tg_bot.message_handler(state = "get_money_for_tasks", is_digit = False)
+@tg_bot.message_handler(state = "get_money_for_tg_tasks", is_digit = False)
 def customer_get_money_for_task(message):
     tg_bot.send_message(message.chat.id, messages_templates["tasks"]["wrong_price_input"])
 
