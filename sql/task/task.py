@@ -5,7 +5,6 @@ from sql.database import db, apply_db_changes
 
 class Task(db.Model):
     id = db.Column(db.Integer, primary_key = True, nullable = False, autoincrement = True)
-    # check if url is valid
     ref = db.Column(db.String(255))
     completed = db.Column(db.Boolean, default = False)
     guarantee = db.Column(db.Integer)
@@ -17,6 +16,7 @@ class Task(db.Model):
     platform = db.Column(db.String(255))
     task_type = db.Column(db.String(255))
     price = db.Column(db.Integer)
+
     # for target
     age = db.Column(db.Integer)
     city = db.Column(db.String(255))
