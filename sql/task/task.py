@@ -3,6 +3,12 @@ from datetime import datetime
 from sql.database import db, apply_db_changes
 
 
+class EmployeesOnTask(db.Integer):
+    id = db.Column(db.Integer, primary_key = True, autoincrement = True)
+    employee_id = db.Column(db.Integer, db.ForeignKey("employee.id"))
+    employee = db.relationship("EmployeeForTask", backref = db.backref("employee_id", uselist = False))
+
+
 class Task(db.Model):
     id = db.Column(db.Integer, primary_key = True, nullable = False, autoincrement = True)
     # check if url is valid
@@ -11,7 +17,7 @@ class Task(db.Model):
     guarantee = db.Column(db.Integer)
     on_guarantee = db.Column(db.Boolean, default = False)
     free = db.Column(db.Boolean, default = True)
-    employee_id = db.Column(db.Integer, db.ForeignKey('employee.id'))
+    employees_id = db.Column(EmployeesOnTask)
     customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'))
     creation_date = db.Column(db.Date, default = datetime.now())
     platform = db.Column(db.String(255))
@@ -22,7 +28,6 @@ class Task(db.Model):
     city = db.Column(db.String(255))
     salary = db.Column(db.String(255))
     #
-    employee = db.relationship("Employee", backref = db.backref("employee_id", uselist = False))
     customer = db.relationship("Customer", backref = db.backref("customer_id", uselist = False))
 
     def add_new_task(self, customer_id, platform, task_type, ref, guarantee, price):
@@ -50,6 +55,7 @@ class Task(db.Model):
             return
         task.employee_id = employee_id
         return
+
 
 
 task_table = Task()
