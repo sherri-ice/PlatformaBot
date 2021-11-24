@@ -616,6 +616,7 @@ def customer_choose_task_cost(call):
 @tg_bot.callback_query_handler(func = lambda call: call.data in buttons[
     "customer_custom_task_select_guarantee"].values())
 def customer_custom_task_guarantee(call):
+    tg_bot.delete_message(call.from_user.id, call.message.message_id)
     with tg_bot.retrieve_data(call.from_user.id) as data:
         if call.data == "cd_3_days_guarantee":
             data["guarantee"] = "3"
