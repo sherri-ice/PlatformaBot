@@ -639,7 +639,7 @@ def customer_get_price_for_custom_task(message):
     # TODO: determine speed of the task
     with tg_bot.retrieve_data(message.chat.id) as data:
         data["price"] = message.text
-        available_subscribers = int(data["money"]) / int(data["price"])
+        available_subscribers = int(int(data["money"]) / int(data["price"]))
         tg_bot.send_message(message.chat.id,
                             messages_templates["tasks"]["custom_task_accept_message"].format(data["price"],
                                                                                              available_subscribers),
