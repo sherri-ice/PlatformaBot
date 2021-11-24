@@ -644,6 +644,7 @@ def customer_get_price_for_custom_task(message):
                             messages_templates["tasks"]["custom_task_accept_message"].format(data["price"],
                                                                                              available_subscribers),
                             reply_markup = create_inline_keyboard(buttons["customer_save_task_button"]))
+        tg_bot.set_state(message.chat.id, "")
 
 
 @tg_bot.message_handler(state = "get_price_for_custom_task", is_digit = False)
@@ -745,6 +746,8 @@ def echo_message(message):
 def get_telegram_bot():
     return tg_bot
 
+
+tg_bot.enable_saving_states()
 
 tg_bot.add_custom_filter(custom_filters.StateFilter(tg_bot))
 tg_bot.add_custom_filter(custom_filters.IsDigitFilter())
