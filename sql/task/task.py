@@ -3,15 +3,6 @@ from datetime import datetime
 from sql.database import db, apply_db_changes
 
 
-class EmployeesOnTask(db.Model):
-    __tablename__ = "employees_on_task"
-    id = db.Column(db.Integer, primary_key = True, autoincrement = True)
-    employee_id = db.Column(db.Integer, db.ForeignKey("employee.id"))
-    task_id = db.Column(db.Integer, db.ForeignKey("task.id"))
-    employee = db.relationship("EmployeeForTask", backref = db.backref("employee_id", uselist = False))
-    task = db.relationship("TaskForEmployee", backref = db.backref("task_id", uselist = False))
-
-
 class Task(db.Model):
     id = db.Column(db.Integer, primary_key = True, nullable = False, autoincrement = True)
     # check if url is valid
@@ -51,6 +42,15 @@ class Task(db.Model):
     def get_new_tasks(self, platform, task_type, filters):
         return self.query.filter_by(free = 1).filter_by(platform = platform).filter_by(task_type =
                                                                                        task_type).all()
+
+
+class EmployeesOnTask(db.Model):
+    __tablename__ = "employees_on_task"
+    id = db.Column(db.Integer, primary_key = True, autoincrement = True)
+    employee_id = db.Column(db.Integer, db.ForeignKey("employee.id"))
+    task_id = db.Column(db.Integer, db.ForeignKey("task.id"))
+    employee = db.relationship("EmployeeForTask", backref = db.backref("employee_id", uselist = False))
+    task = db.relationship("TaskForEmployee", backref = db.backref("task_id", uselist = False))
 
 
 task_table = Task()
