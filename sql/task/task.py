@@ -53,5 +53,9 @@ class EmployeesOnTask(db.Model):
     employee = db.relationship("EmployeeForTask", backref = db.backref("employee_id", uselist = False))
     task = db.relationship("TaskForEmployee", backref = db.backref("task_id", uselist = False))
 
+    def add_employee_to_task(self, employee_id: int, task_id: int):
+        db.session.add(EmployeesOnTask(employee_id = employee_id, task_id = task_id))
+        apply_db_changes()
+
 
 task_table = Task()
