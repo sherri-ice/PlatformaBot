@@ -7,7 +7,7 @@ class EmployeesOnTask(db.Integer):
     __tablename__ = "employees_on_task"
     id = db.Column(db.Integer, primary_key = True, autoincrement = True)
     employee_id = db.Column(db.Integer, db.ForeignKey("employee.id"))
-    task_id = db.Column(db.Integer, db.ForeignKey("task_id"))
+    task_id = db.Column(db.Integer, db.ForeignKey("task.id"))
     employee = db.relationship("EmployeeForTask", backref = db.backref("employee_id", uselist = False))
     task = db.relationship("TaskForEmployee", backref = db.backref("task_id", uselist = False))
 
