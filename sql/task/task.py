@@ -20,7 +20,7 @@ class Task(db.Model):
     guarantee = db.Column(db.Integer)
     on_guarantee = db.Column(db.Boolean, default = False)
     free = db.Column(db.Boolean, default = True)
-    employees_id = db.Column(db.Integer, db.ForeignKey('employees_on_task.employee_id'))
+    employees_id = db.Column(db.Integer, db.ForeignKey(EmployeesOnTask.employee_id))
     customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'))
     creation_date = db.Column(db.Date, default = datetime.now())
     platform = db.Column(db.String(255))
