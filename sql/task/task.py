@@ -4,9 +4,12 @@ from sql.database import db, apply_db_changes
 
 
 class EmployeesOnTask(db.Integer):
+    __table__ = "employees_on_task"
     id = db.Column(db.Integer, primary_key = True, autoincrement = True)
     employee_id = db.Column(db.Integer, db.ForeignKey("employee.id"))
+    task_id = db.Column(db.Integer, db.ForeignKey("task_id"))
     employee = db.relationship("EmployeeForTask", backref = db.backref("employee_id", uselist = False))
+    task = db.relationship("TaskForEmployee", backref = db.backref("task_id", uselist = False))
 
 
 class Task(db.Model):
@@ -17,7 +20,7 @@ class Task(db.Model):
     guarantee = db.Column(db.Integer)
     on_guarantee = db.Column(db.Boolean, default = False)
     free = db.Column(db.Boolean, default = True)
-    employees_id = db.Column(EmployeesOnTask)
+    employees_id = db.Column(db.Integer, db.ForeignKey('employees_on_task.employee_id'))
     customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'))
     creation_date = db.Column(db.Date, default = datetime.now())
     platform = db.Column(db.String(255))
@@ -48,14 +51,6 @@ class Task(db.Model):
     def get_new_tasks(self, platform, task_type, filters):
         return self.query.filter_by(free = 1).filter_by(platform = platform).filter_by(task_type =
                                                                                        task_type).all()
-
-    def set_employee_id_for_task(self, task_id, employee_id):
-        task = self.query.filter_by(id = task_id).first()
-        if task is None:
-            return
-        task.employee_id = employee_id
-        return
-
 
 
 task_table = Task()
