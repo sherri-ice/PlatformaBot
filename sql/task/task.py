@@ -11,7 +11,7 @@ class Task(db.Model):
     guarantee = db.Column(db.Integer)
     on_guarantee = db.Column(db.Boolean, default = False)
     free = db.Column(db.Boolean, default = True)
-    employees_id = db.Column(db.Integer, db.ForeignKey("employees_on_task.employee_id"))
+    # employees_id = db.Column(db.Integer, db.ForeignKey("employees_on_task.employee_id"))
     customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'))
     creation_date = db.Column(db.Date, default = datetime.now())
     platform = db.Column(db.String(255))
@@ -47,10 +47,8 @@ class Task(db.Model):
 class EmployeesOnTask(db.Model):
     __tablename__ = "employees_on_task"
     id = db.Column(db.Integer, primary_key = True, autoincrement = True)
-    employee_id = db.Column(db.Integer, db.ForeignKey("employee.id"))
-    task_id = db.Column(db.Integer, db.ForeignKey("task.id"))
-    employee = db.relationship("EmployeeForTask", backref = db.backref("employee_id", uselist = False))
-    task = db.relationship("TaskForEmployee", backref = db.backref("task_id", uselist = False))
+    employee_id = db.Column(db.Integer)
+    task_id = db.Column(db.Integer)
 
 
 task_table = Task()
