@@ -4,7 +4,7 @@ from sql.database import db, apply_db_changes
 
 
 class EmployeesOnTask(db.Integer):
-    __table__ = "employees_on_task"
+    __tablename__ = "employees_on_task"
     id = db.Column(db.Integer, primary_key = True, autoincrement = True)
     employee_id = db.Column(db.Integer, db.ForeignKey("employee.id"))
     task_id = db.Column(db.Integer, db.ForeignKey("task_id"))
