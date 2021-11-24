@@ -20,6 +20,7 @@ INSTA_API_APP_ID = os.getenv("INSTA_API_APP_ID")
 REDIRECT_FROM_INSTA: str = os.getenv("REDIRECT_FROM_INSTA")
 INSTA_CLIENT_SECRET = os.getenv("INSTA_CLIENT_SECRET")
 MAPS_TOKEN: str = os.getenv("MAPS_TOKEN")
+VK_SERVICE_TOKEN: str = os.getenv("VK_SERVICE_TOKEN")
 
 project_path = "/home/sherriice/PlatformaBot"
 

@@ -1,6 +1,6 @@
 import vk_api
 
-from meta.loader import VK_API_APP_ID, REDIRECT_FROM_VK, VK_CLIENT_SECRET
+from meta.loader import VK_API_APP_ID, REDIRECT_FROM_VK, VK_CLIENT_SECRET, VK_SERVICE_TOKEN
 
 vk_session = vk_api.VkApi(app_id = VK_API_APP_ID, client_secret = VK_CLIENT_SECRET)
 
@@ -23,3 +23,7 @@ def authorize_vk_session(vk_code: str, tg_id: int):
     except vk_api.AuthError as error_msg:
         print(error_msg)
         return None
+
+
+def get_service_token_session():
+    return vk_api.VkApi(token = VK_SERVICE_TOKEN).get_api()
