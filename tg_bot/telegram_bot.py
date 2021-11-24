@@ -495,14 +495,24 @@ def choose_platform(call):
 def task_telegram_subscribers(call):
     tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
     tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["request_for_telegram_channel_link"])
-    tg_bot.set_state(call.from_user.id, "get_task_url")
+    tg_bot.set_state(call.from_user.id, "get_tg_task_url")
     with tg_bot.retrieve_data(call.from_user.id) as data:
         data["task_type"] = "sub"
         data["platform"] = "tg"
 
 
-@tg_bot.message_handler(state = "get_task_url")
-def customer_get_task_url(message):
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_ct_vk_subscribers")
+def task_vk_subscribers(call):
+    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["request_for_vk_page_link"])
+    tg_bot.set_state(call.from_user.id, "get_vk_task_url")
+    with tg_bot.retrieve_data(call.from_user.id) as data:
+        data["task_type"] = "sub"
+        data["platform"] = "vk"
+
+
+@tg_bot.message_handler(state = "get_tg_task_url")
+def customer_get_tg_task_url(message):
     res, name = telegram_channel_check(message.text)
     chat_id = message.chat.id
     if not res:
