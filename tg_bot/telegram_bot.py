@@ -654,6 +654,7 @@ def customer_get_price_for_custom_task(message):
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_save_task")
 def customer_save_task(call):
+    tg_bot.delete_message(call.from_user.id, call.message.message_id)
     with tg_bot.retrieve_data(call.from_user.id) as data:
         user = user_table.get_user_by_tg_id(call.from_user.id)
         customer = customer_table.get_customer_by_id(user.id)
