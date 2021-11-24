@@ -157,7 +157,8 @@
     "На 14 дней": "cd_14_days_guarantee",
     "Навсегда": "cd_limitless_guarantee",
     "Без гарантии": "cd_no_guarantee",
-    "Что такое гарантия?": "cd_guarantee_faq"
+    "Что такое гарантия?": "cd_guarantee_faq",
+    "Назад": "cd_back_to_choose_task_cost"
   },
   "saved_task_buttons": {
     "\uD83D\uDCBC Мои задания": "cd_customer_my_tasks"
