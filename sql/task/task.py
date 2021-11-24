@@ -6,10 +6,8 @@ from sql.database import db, apply_db_changes
 class EmployeesOnTask(db.Model):
     __tablename__ = "employees_on_task"
     id = db.Column(db.Integer, primary_key = True, autoincrement = True)
-    employee_id = db.Column(db.Integer, db.ForeignKey("employee.id"))
-    task_id = db.Column(db.Integer, db.ForeignKey("task.id"))
-    employee = db.relationship("EmployeeForTask", backref = db.backref("employee_id", uselist = False))
-    task = db.relationship("TaskForEmployee", backref = db.backref("task_id", uselist = False))
+    employee_id = db.Column(db.Integer)
+    task_id = db.Column(db.Integer)
 
     def add_employee_to_task(self, employee_id: int, task_id: int):
         db.session.add(EmployeesOnTask(employee_id = employee_id, task_id = task_id))
