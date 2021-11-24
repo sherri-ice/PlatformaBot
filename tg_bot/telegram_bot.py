@@ -672,6 +672,14 @@ def callback_get_customer_balance(call):
     tg_bot.send_message(call.from_user.id, message_to_user, reply_markup = keyboard)
 
 
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_customer_my_tasks")
+def customer_get_tasks(call):
+    user = user_table.get_user_by_tg_id(call.from_user.id)
+    customer = customer_table.get_customer_by_id(user.id)
+    tasks = task_table.get_tasks_by_customer_id(customer.id)
+    tg_bot.send_message(call.from_user.id, "".join(str(i) for i in tasks))
+
+
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_customer_faq")
 def callback_get_customer_faq(call):
     message_to_user = messages_templates["customer"]["faq"]
