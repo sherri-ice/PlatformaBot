@@ -3,6 +3,19 @@ from datetime import datetime
 from sql.database import db, apply_db_changes
 
 
+class EmployeesOnTask(db.Model):
+    __tablename__ = "employees_on_task"
+    id = db.Column(db.Integer, primary_key = True, autoincrement = True)
+    employee_id = db.Column(db.Integer, db.ForeignKey("employee.id"))
+    task_id = db.Column(db.Integer, db.ForeignKey("task.id"))
+    employee = db.relationship("EmployeeForTask", backref = db.backref("employee_id", uselist = False))
+    task = db.relationship("TaskForEmployee", backref = db.backref("task_id", uselist = False))
+
+    def add_employee_to_task(self, employee_id: int, task_id: int):
+        db.session.add(EmployeesOnTask(employee_id = employee_id, task_id = task_id))
+        apply_db_changes()
+
+
 class Task(db.Model):
     id = db.Column(db.Integer, primary_key = True, nullable = False, autoincrement = True)
     ref = db.Column(db.String(255))
@@ -43,19 +56,6 @@ class Task(db.Model):
     def get_new_tasks(self, platform, task_type, filters):
         return self.query.filter_by(free = 1).filter_by(platform = platform).filter_by(task_type =
                                                                                        task_type).all()
-
-
-class EmployeesOnTask(db.Model):
-    __tablename__ = "employees_on_task"
-    id = db.Column(db.Integer, primary_key = True, autoincrement = True)
-    employee_id = db.Column(db.Integer, db.ForeignKey("employee.id"))
-    task_id = db.Column(db.Integer, db.ForeignKey("task.id"))
-    employee = db.relationship("EmployeeForTask", backref = db.backref("employee_id", uselist = False))
-    task = db.relationship("TaskForEmployee", backref = db.backref("task_id", uselist = False))
-
-    def add_employee_to_task(self, employee_id: int, task_id: int):
-        db.session.add(EmployeesOnTask(employee_id = employee_id, task_id = task_id))
-        apply_db_changes()
 
 
 task_table = Task()
