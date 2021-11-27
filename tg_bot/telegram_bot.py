@@ -645,7 +645,7 @@ def customer_choose_task_cost(call):
             message = message.format(available_subscribers[3], "нет", "")
             data["guarantee"] = "no"
             data["price"] = prices["telegram_prices"]["no_guarantee"]
-        tg_bot.send_message(call.from_user.id, message,
+        tg_bot.send_message(call.from_user.id, message + data["guarantee"],
                             reply_markup = create_inline_keyboard(buttons["customer_save_task_button"]))
 
 
