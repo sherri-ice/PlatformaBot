@@ -628,6 +628,8 @@ def customer_choose_task_cost(call):
     else:
         available_subscribers = count_available_subscribers(money)
         message = messages_templates["tasks"]["chosen_task"]
+        data["guarantee"] = ""
+        data["price"] = ""
         if call.data == "cd_variant_1":
             message = message.format(available_subscribers[0], "3 дня", "")
             data["guarantee"] = "3"
