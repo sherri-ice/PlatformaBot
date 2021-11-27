@@ -626,7 +626,6 @@ def customer_choose_task_cost(call):
         tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["custom_task"],
                             reply_markup = create_inline_keyboard(buttons["customer_custom_task_select_guarantee"]))
     else:
-        tg_bot.answer_callback_query(call.from_user.id, text = "Here")
         available_subscribers = count_available_subscribers(money)
         message = messages_templates["tasks"]["chosen_task"]
         if call.data == "cd_variant_1":
