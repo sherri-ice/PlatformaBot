@@ -626,13 +626,13 @@ def customer_choose_task_cost(call):
         tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["custom_task"],
                             reply_markup = create_inline_keyboard(buttons["customer_custom_task_select_guarantee"]))
     else:
+        tg_bot.answer_callback_query(call.from_user.id, "Here")
         available_subscribers = count_available_subscribers(money)
         message = messages_templates["tasks"]["chosen_task"]
         if call.data == "cd_variant_1":
             message = message.format(available_subscribers[0], "3 дня", "")
             data["guarantee"] = "3"
             data["price"] = prices["telegram_prices"]["guarantee_3_days"]
-            print(f"Got 1 variant and guarantee is {data['guarantee']}")
         elif call.data == "cd_variant_2":
             message = message.format(available_subscribers[1], "14 дней", "")
             data["guarantee"] = "14"
