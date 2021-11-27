@@ -11,7 +11,7 @@ from meta.loader import load_messages, load_buttons, load_photos, load_prices
 
 from telebot import custom_filters
 from geocode.geo_patcher import get_address_from_coordinates
-from url_checker.url_checker import telegram_channel_check, vk_page_check
+from url_checker.url_checker import telegram_channel_check, vk_page_check, vk_post_check
 
 messages_templates = load_messages()
 buttons = load_buttons()
@@ -516,7 +516,7 @@ def task_vk_subscribers(call):
 def task_vk_subscribers(call):
     tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
     tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["request_for_vk_page_link"])
-    tg_bot.set_state(call.from_user.id, "get_vk_subs_task_url")
+    tg_bot.set_state(call.from_user.id, "get_vk_likes_and_repost_task_url")
     with tg_bot.retrieve_data(call.from_user.id) as data:
         data["task_type"] = "likes"
         data["platform"] = "vk"
@@ -556,6 +556,24 @@ def customer_get_vk_task_url(message):
         customer_send_vk_subscribers_prices(message)
 
 
+@tg_bot.message_handler(state = "get_vk_likes_and_repost_task_url")
+def customer_get_vk_task_url(message):
+    res, url = vk_post_check(message.text)
+    message_to_user = ""
+    if not res and url == "post doesn't exist or can't be seen":
+        message_to_user = messages_templates["tasks"]["vk_hidden_post"]
+    elif not res and url == "wrong url":
+        message_to_user = messages_templates["tasks"]["vk_post_not_found"]
+    if not res:
+        tg_bot.send_message(message.chat.id, message_to_user,
+                            reply_markup = create_inline_keyboard(buttons["customer_resend_vk_page_link"]))
+    else:
+        tg_bot.send_message(message.chat.id, messages_templates["tasks"]["vk_post_found"].format(url))
+        with tg_bot.retrieve_data(message.chat.id) as data:
+            data["ref"] = message.text
+        customer_send_vk_likes_prices(message)
+
+
 def customer_send_tg_prices(message):
     tg_bot.send_message(message.chat.id, messages_templates["tasks"]["tg_current_prices"],
                         reply_markup = create_inline_keyboard(buttons["customer_back_from_choosing_price"]))
@@ -563,6 +581,12 @@ def customer_send_tg_prices(message):
 
 
 def customer_send_vk_subscribers_prices(message):
+    tg_bot.send_message(message.chat.id, messages_templates["tasks"]["vk_current_prices"],
+                        reply_markup = create_inline_keyboard(buttons["customer_back_from_choosing_price"]))
+    tg_bot.set_state(message.chat.id, "get_money_for_tasks")
+
+
+def customer_send_vk_likes_prices(message):
     tg_bot.send_message(message.chat.id, messages_templates["tasks"]["vk_current_prices"],
                         reply_markup = create_inline_keyboard(buttons["customer_back_from_choosing_price"]))
     tg_bot.set_state(message.chat.id, "get_money_for_tasks")

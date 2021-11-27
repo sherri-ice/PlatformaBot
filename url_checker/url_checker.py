@@ -56,5 +56,23 @@ def vk_page_check(url: str):
     return False, ""
 
 
+def vk_post_check(url):
+    # if not base_url_check(url):
+    #     return False, "wrong url"
+    vk_api = get_service_token_session()
+    res = re.search(r"vk\.com\/.+$", url)
+    if res is None:
+        return False, "wrong url"
+    if res.string.find('l') == -1:
+        return False, "wrong url"
+    post_id = res.string[::-1][:res.string[::-1].find('l')][::-1]
+    print(post_id)
+    # VK API can't answer to this query if post is in hidden profile
+    result = vk_api.wall.get_by_id(posts = [post_id])
+    if len(result) == 0:
+        return False, "post doesn't exist or can't be seen"
+    return True, url
+
+
 if __name__ == '__main__':
-    print(vk_page_check("https://vk.com/syronfuse"))
+    print(vk_post_check("https://vk.com/id1?w=wall1_2442097"))
