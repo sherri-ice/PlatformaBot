@@ -36,9 +36,10 @@ def vk_page_check(url: str):
         return False, "wrong url"
     vk_api = get_service_token_session()
     res = re.search(r"vk\.com\/.+$", url)
+    if res is None:
+        return False, "wrong url"
     vk_screen_name = res.string[::-1][:res.string[::-1].find('/')][::-1]
     result = vk_api.utils.resolveScreenName(screen_name = vk_screen_name)
-    print(result)
     if len(result) == 0:
         return False, "wrong url"
     if result['type'] == 'user':
