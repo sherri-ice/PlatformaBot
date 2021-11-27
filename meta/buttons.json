@@ -148,6 +148,9 @@
     "✏ Создать задание": "cd_save_task",
     "Назад": "cd_back_to_choose_task_cost"
   },
+  "customer_get_back_to_choose_task_cost": {
+    "Назад": "cd_back_to_choose_task_cost"
+  },
   "customer_save_custom_task_button": {
     "✏ Создать задание": "cd_save_task",
     "Назад": "cd_back_to_choose_custom_task_cost"

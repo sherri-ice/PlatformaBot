@@ -680,7 +680,7 @@ def customer_choose_task_cost(call):
                 data["guarantee"] = "no"
                 data["price"] = prices["telegram_prices"]["no_guarantee"]
             tg_bot.send_message(call.from_user.id, message,
-                            reply_markup = create_inline_keyboard(buttons["customer_save_task_button"]))
+                                reply_markup = create_inline_keyboard(buttons["customer_save_task_button"]))
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data in buttons[
@@ -738,10 +738,15 @@ def customer_save_task(call):
         task_table.add_new_task(customer.id, data["platform"], data["task_type"], data["ref"], data["guarantee"],
                                 data["price"])
         available_subscribers = int(int(data["money"]) / int(data["price"]))
-        customer.balance -= int(data["price"]) * available_subscribers
-        apply_db_changes()
-        tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["task_accept_message"],
-                            reply_markup = create_inline_keyboard(buttons["saved_task_buttons"]))
+        if available_subscribers == 0:
+            tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["custom_task_zero_subs"],
+                                reply_markup = create_inline_keyboard(buttons["customer_get_back_to_choose_task_cost"]))
+            return
+        else:
+            customer.balance -= int(data["price"]) * available_subscribers
+            apply_db_changes()
+            tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["task_accept_message"],
+                                reply_markup = create_inline_keyboard(buttons["saved_task_buttons"]))
     tg_bot.delete_state(call.from_user.id)
 
 
