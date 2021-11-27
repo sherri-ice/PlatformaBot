@@ -644,7 +644,7 @@ def customer_choose_task_cost(call):
             message = message.format(available_subscribers[3], "нет", "")
             data["guarantee"] = "no"
             data["price"] = prices["telegram_prices"]["no_guarantee"]
-        tg_bot.send_message(call.from_user.id, message + data["guarantee"],
+        tg_bot.send_message(call.from_user.id, message,
                             reply_markup = create_inline_keyboard(buttons["customer_save_task_button"]))
 
 
@@ -693,7 +693,7 @@ def customer_save_task(call):
     with tg_bot.retrieve_data(call.from_user.id) as data:
         user = user_table.get_user_by_tg_id(call.from_user.id)
         customer = customer_table.get_customer_by_id(user.id)
-        task_table.add_new_task(customer.id, data["platform"], data["task_type"], data["ref"], data["guarantee"],
+        task_table.add_new_task(customer.id, data["platform"], data["task_type"], data["ref"],
                                 data["price"])
         available_subscribers = int(int(data["money"]) / int(data["price"]))
         customer.balance -= int(data["price"]) * available_subscribers
