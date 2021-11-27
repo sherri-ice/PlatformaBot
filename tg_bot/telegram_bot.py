@@ -737,14 +737,14 @@ def customer_save_task(call):
     with tg_bot.retrieve_data(call.from_user.id) as data:
         user = user_table.get_user_by_tg_id(call.from_user.id)
         customer = customer_table.get_customer_by_id(user.id)
-        task_table.add_new_task(customer.id, data["platform"], data["task_type"], data["ref"], data["guarantee"],
-                                data["price"])
         available_subscribers = int(int(data["money"]) / int(data["price"]))
         if available_subscribers == 0:
             tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["custom_task_zero_subs"],
                                 reply_markup = create_inline_keyboard(buttons["customer_get_back_to_choose_task_cost"]))
             return
         else:
+            task_table.add_new_task(customer.id, data["platform"], data["task_type"], data["ref"], data["guarantee"],
+                                    data["price"], available_subscribers)
             customer.balance -= int(data["price"]) * available_subscribers
             apply_db_changes()
             tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["task_accept_message"],
@@ -774,7 +774,20 @@ def customer_get_tasks(call):
         message = messages_templates["tasks"]["customer_my_tasks"].format(len(tasks))
         keyboard = create_inline_keyboard(buttons["customer_tasks_menu"])
         for task in tasks:
-            message += f"\n\n ° Задание - {tasks.index(task) + 1}\nПлатформа:\nПрогресс:"
+            platform = task.platform
+            if task.platform == "vk":
+                platform = "VK"
+            elif task.platform == "tg":
+                platform = "Telegram"
+            task_type = task.task_type
+            if task.task_type == "sub":
+                task_type = "Подписчики"
+            elif task.task_type == "likes":
+                task_type = "Лайки"
+            elif task.task_type == "reposts":
+                task_type = "Репосты"
+            message += f"\n\n ° Задание - {tasks.index(task) + 1}\nПлатформа: {platform}\nТип: " \
+                       f"{task_type}\nПрогресс: {task.current_count_of_employees}/{task.needed_count_of_employees}"
     tg_bot.send_message(call.from_user.id, message, reply_markup = keyboard)
 
 

@@ -36,9 +36,9 @@ class Task(db.Model):
     #
     customer = db.relationship("Customer", backref = db.backref("customer_id", uselist = False))
 
-    def add_new_task(self, customer_id, platform, task_type, ref, guarantee, price):
+    def add_new_task(self, customer_id, platform, task_type, ref, guarantee, price, needed_users):
         db.session.add(Task(customer_id = customer_id, platform = platform, task_type = task_type, ref = ref,
-                            guarantee = guarantee, price = price))
+                            guarantee = guarantee, price = price, needed_count_of_employees = needed_users))
         apply_db_changes()
 
     def add_new_target_task(self):
