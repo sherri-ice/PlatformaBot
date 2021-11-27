@@ -548,16 +548,16 @@ def customer_get_vk_task_url(message):
 def customer_send_tg_prices(message):
     tg_bot.send_message(message.chat.id, messages_templates["tasks"]["tg_current_prices"],
                         reply_markup = create_inline_keyboard(buttons["customer_back_from_choosing_price"]))
-    tg_bot.set_state(message.chat.id, "get_money_for_tg_tasks")
+    tg_bot.set_state(message.chat.id, "get_money_for_tasks")
 
 
 def customer_send_vk_subscribers_prices(message):
     tg_bot.send_message(message.chat.id, messages_templates["tasks"]["vk_current_prices"],
                         reply_markup = create_inline_keyboard(buttons["customer_back_from_choosing_price"]))
-    tg_bot.set_state(message.chat.id, "get_money_for_vk_subscribers_tasks")
+    tg_bot.set_state(message.chat.id, "get_money_for_tasks")
 
 
-@tg_bot.message_handler(state = "get_money_for_tg_tasks", is_digit = True)
+@tg_bot.message_handler(state = "get_money_for_tasks", is_digit = True)
 def customer_get_money_for_task(message):
     money = int(message.text)
     customer = customer_table.get_customer_by_id(user_table.get_user_by_tg_id(message.chat.id).id)
@@ -568,7 +568,7 @@ def customer_get_money_for_task(message):
     with tg_bot.retrieve_data(message.chat.id) as data:
         data["money"] = money
     available_subscribers = count_available_subscribers(data["money"])
-    message_to_user = messages_templates["tasks"]["choose_telegram_task_variants"].format(data["money"],
+    message_to_user = messages_templates["tasks"]["choose_task_variants"].format(data["money"],
                                                                                           prices["telegram_prices"][
                                                                                               "guarantee_3_days"],
                                                                                           available_subscribers[0],
@@ -583,11 +583,9 @@ def customer_get_money_for_task(message):
                                                                                           available_subscribers[3])
     tg_bot.send_message(message.chat.id, message_to_user,
                         reply_markup = create_inline_keyboard(buttons["customer_choose_task_cost_variants"]))
-    # TODO: delete this
-    tg_bot.set_state(message.chat.id, "3")
 
 
-@tg_bot.message_handler(state = "get_money_for_tg_tasks", is_digit = False)
+@tg_bot.message_handler(state = "get_money_for_tasks", is_digit = False)
 def customer_get_money_for_task(message):
     tg_bot.send_message(message.chat.id, messages_templates["tasks"]["wrong_price_input"])
 
