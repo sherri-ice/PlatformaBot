@@ -619,33 +619,31 @@ def customer_back_to_choose_task_cost(call):
 
 @tg_bot.callback_query_handler(func = lambda call: call.data in buttons["customer_choose_task_cost_variants"].values())
 def customer_choose_task_cost(call):
+    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
     with tg_bot.retrieve_data(call.from_user.id) as data:
         money = data["money"]
-    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
-    if call.data == "cd_own_variant":
-        tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["custom_task"],
-                            reply_markup = create_inline_keyboard(buttons["customer_custom_task_select_guarantee"]))
-    else:
-        available_subscribers = count_available_subscribers(money)
-        message = messages_templates["tasks"]["chosen_task"]
-        data["guarantee"] = ""
-        data["price"] = ""
-        if call.data == "cd_variant_1":
-            message = message.format(available_subscribers[0], "3 дня", "")
-            data["guarantee"] = "3"
-            data["price"] = prices["telegram_prices"]["guarantee_3_days"]
-        elif call.data == "cd_variant_2":
-            message = message.format(available_subscribers[1], "14 дней", "")
-            data["guarantee"] = "14"
-            data["price"] = prices["telegram_prices"]["guarantee_14_days"]
-        elif call.data == "cd_variant_3":
-            message = message.format(available_subscribers[2], "навсегда", "")
-            data["guarantee"] = "lim"
-            data["price"] = prices["telegram_prices"]["guarantee_limitless"]
-        elif call.data == "cd_variant_4":
-            message = message.format(available_subscribers[3], "нет", "")
-            data["guarantee"] = "no"
-            data["price"] = prices["telegram_prices"]["no_guarantee"]
+        if call.data == "cd_own_variant":
+            tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["custom_task"],
+                                reply_markup = create_inline_keyboard(buttons["customer_custom_task_select_guarantee"]))
+        else:
+            available_subscribers = count_available_subscribers(money)
+            message = messages_templates["tasks"]["chosen_task"]
+            if call.data == "cd_variant_1":
+                message = message.format(available_subscribers[0], "3 дня", "")
+                data["guarantee"] = "3"
+                data["price"] = prices["telegram_prices"]["guarantee_3_days"]
+            elif call.data == "cd_variant_2":
+                message = message.format(available_subscribers[1], "14 дней", "")
+                data["guarantee"] = "14"
+                data["price"] = prices["telegram_prices"]["guarantee_14_days"]
+            elif call.data == "cd_variant_3":
+                message = message.format(available_subscribers[2], "навсегда", "")
+                data["guarantee"] = "lim"
+                data["price"] = prices["telegram_prices"]["guarantee_limitless"]
+            elif call.data == "cd_variant_4":
+                message = message.format(available_subscribers[3], "нет", "")
+                data["guarantee"] = "no"
+                data["price"] = prices["telegram_prices"]["no_guarantee"]
         tg_bot.send_message(call.from_user.id, message,
                             reply_markup = create_inline_keyboard(buttons["customer_save_task_button"]))
 
@@ -691,11 +689,11 @@ def customer_get_price_for_custom_task(message):
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_save_task")
 def customer_save_task(call):
-    tg_bot.delete_message(call.from_user.id, call.message.message_id)
+    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
     with tg_bot.retrieve_data(call.from_user.id) as data:
         user = user_table.get_user_by_tg_id(call.from_user.id)
         customer = customer_table.get_customer_by_id(user.id)
-        task_table.add_new_task(customer.id, data["platform"], data["task_type"], data["ref"], "no",
+        task_table.add_new_task(customer.id, data["platform"], data["task_type"], data["ref"], data["guarantee"],
                                 data["price"])
         available_subscribers = int(int(data["money"]) / int(data["price"]))
         customer.balance -= int(data["price"]) * available_subscribers

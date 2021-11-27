@@ -57,4 +57,4 @@ telegram_bot.remove_webhook()
 time.sleep(0.1)
 
 # Set webhook
-telegram_bot.set_webhook(url = WEBHOOK_URL_BASE + WEBHOOK_URL_PATH)
+telegram_bot.set_webhook(drop_pending_updates = True, url = WEBHOOK_URL_BASE + WEBHOOK_URL_PATH)

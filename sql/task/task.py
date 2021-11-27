@@ -18,7 +18,7 @@ class Task(db.Model):
     id = db.Column(db.Integer, primary_key = True, nullable = False, autoincrement = True)
     ref = db.Column(db.String(255))
     completed = db.Column(db.Boolean, default = False)
-    guarantee = db.Column(db.Integer)
+    guarantee = db.Column(db.String(255))
     on_guarantee = db.Column(db.Boolean, default = False)
     free = db.Column(db.Boolean, default = True)
     customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'))

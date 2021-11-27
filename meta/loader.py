@@ -22,10 +22,10 @@ INSTA_CLIENT_SECRET = os.getenv("INSTA_CLIENT_SECRET")
 MAPS_TOKEN: str = os.getenv("MAPS_TOKEN")
 VK_SERVICE_TOKEN: str = os.getenv("VK_SERVICE_TOKEN")
 
-project_path = "/home/sherriice/PlatformaBot"
+# project_path = "/home/sherriice/PlatformaBot"
 
 
-# project_path = os.getcwd()
+project_path = "/home/sherri.ice/Documents/bot/project"
 
 
 def load_messages():
