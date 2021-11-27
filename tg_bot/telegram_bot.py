@@ -481,9 +481,10 @@ def customer_create_new_task(call):
 @tg_bot.callback_query_handler(func = lambda call: call.data == "customer_cd_choose_vk_task" or
                                                    call.data == "customer_cd_choose_telegram_task")
 def choose_platform(call):
-    if call.data == "cd_choose_vk_task":
+    keyboard = ""
+    if call.data == "customer_cd_choose_vk_task":
         keyboard = create_inline_keyboard(buttons["customer_choose_type_of_task_vk"])
-    else:
+    elif call.data == "customer_cd_choose_telegram_task":
         keyboard = create_inline_keyboard(buttons["customer_choose_type_of_task_telegram"])
 
     tg_bot.delete_message(chat_id = call.from_user.id, message_id = call.message.message_id)
