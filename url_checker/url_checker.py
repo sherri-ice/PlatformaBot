@@ -55,5 +55,6 @@ def vk_page_check(url: str):
             return True, vk_group_info[0]['name']
     return False, ""
 
+
 if __name__ == '__main__':
     print(vk_page_check("https://vk.com/syronfuse"))

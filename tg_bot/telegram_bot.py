@@ -506,9 +506,19 @@ def task_telegram_subscribers(call):
 def task_vk_subscribers(call):
     tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
     tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["request_for_vk_page_link"])
-    tg_bot.set_state(call.from_user.id, "get_vk_task_url")
+    tg_bot.set_state(call.from_user.id, "get_vk_subs_task_url")
     with tg_bot.retrieve_data(call.from_user.id) as data:
         data["task_type"] = "sub"
+        data["platform"] = "vk"
+
+
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_ct_vk_likes")
+def task_vk_subscribers(call):
+    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["request_for_vk_page_link"])
+    tg_bot.set_state(call.from_user.id, "get_vk_subs_task_url")
+    with tg_bot.retrieve_data(call.from_user.id) as data:
+        data["task_type"] = "likes"
         data["platform"] = "vk"
 
 
@@ -526,7 +536,7 @@ def customer_get_tg_task_url(message):
         customer_send_tg_prices(message)
 
 
-@tg_bot.message_handler(state = "get_vk_task_url")
+@tg_bot.message_handler(state = "get_vk_subs_task_url")
 def customer_get_vk_task_url(message):
     res, name = vk_page_check(message.text)
     message_to_user = ""
@@ -727,7 +737,7 @@ def customer_get_tasks(call):
     user = user_table.get_user_by_tg_id(call.from_user.id)
     customer = customer_table.get_customer_by_id(user.id)
     tasks = task_table.get_tasks_by_customer_id(customer.id)
-    if len(tasks) == 0 :
+    if len(tasks) == 0:
         message = messages_templates["tasks"]["customer_no_active_tasks"]
         keyboard = create_inline_keyboard(buttons["customer_no_tasks"])
     else:
