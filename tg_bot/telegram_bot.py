@@ -524,6 +524,16 @@ def task_vk_subscribers(call):
         data["platform"] = "vk"
 
 
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_ct_vk_reposts")
+def task_vk_subscribers(call):
+    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["request_for_vk_page_reposts_link"])
+    tg_bot.set_state(call.from_user.id, "get_vk_likes_and_repost_task_url")
+    with tg_bot.retrieve_data(call.from_user.id) as data:
+        data["task_type"] = "reposts"
+        data["platform"] = "vk"
+
+
 @tg_bot.message_handler(state = "get_tg_task_url")
 def customer_get_tg_task_url(message):
     res, name = telegram_channel_check(message.text)
@@ -573,7 +583,10 @@ def customer_get_vk_task_url(message):
         tg_bot.send_message(message.chat.id, messages_templates["tasks"]["vk_post_found"].format(url))
         with tg_bot.retrieve_data(message.chat.id) as data:
             data["ref"] = message.text
-        customer_send_vk_likes_prices(message)
+            if data["task_type"] == "likes":
+                customer_send_vk_likes_prices(message)
+            elif data["task_type"] == "reposts":
+                customer_send_vk_reposts_prices(message)
 
 
 def customer_send_tg_prices(message):
@@ -583,15 +596,81 @@ def customer_send_tg_prices(message):
 
 
 def customer_send_vk_subscribers_prices(message):
-    tg_bot.send_message(message.chat.id, messages_templates["tasks"]["vk_current_prices"],
+    tg_bot.send_message(message.chat.id, messages_templates["tasks"]["vk_subs_current_prices"],
                         reply_markup = create_inline_keyboard(buttons["customer_back_from_choosing_price"]))
     tg_bot.set_state(message.chat.id, "get_money_for_tasks")
 
 
 def customer_send_vk_likes_prices(message):
-    tg_bot.send_message(message.chat.id, messages_templates["tasks"]["vk_current_prices"],
+    tg_bot.send_message(message.chat.id, messages_templates["tasks"]["vk_likes_current_prices"],
                         reply_markup = create_inline_keyboard(buttons["customer_back_from_choosing_price"]))
     tg_bot.set_state(message.chat.id, "get_money_for_tasks")
+
+
+def customer_send_vk_reposts_prices(message):
+    tg_bot.send_message(message.chat.id, messages_templates["tasks"]["vk_reposts_current_prices"],
+                        reply_markup = create_inline_keyboard(buttons["customer_back_from_choosing_price"]))
+    tg_bot.set_state(message.chat.id, "get_money_for_tasks")
+
+
+def form_telegram_subs_tasks_variants(money: int):
+    available_subscribers = count_available_employees(money, "telegram_prices", "subscribers")
+    message = messages_templates["tasks"]["choose_task_variants"].format(money,
+                                                                         prices["telegram_prices"][
+                                                                             "guarantee_3_days"],
+                                                                         available_subscribers[0],
+                                                                         prices["telegram_prices"][
+                                                                             "guarantee_14_days"],
+                                                                         available_subscribers[1],
+                                                                         prices["telegram_prices"][
+                                                                             "guarantee_limitless"],
+                                                                         available_subscribers[2],
+                                                                         prices["telegram_prices"][
+                                                                             "no_guarantee"],
+                                                                         available_subscribers[3])
+    return message
+
+
+def form_vk_subs_tasks_variants(money: int):
+    available_subscribers = count_available_employees(money, "vk_prices", "subscribers")
+    message = messages_templates["tasks"]["choose_subs_task_variants"].format(money,
+                                                                              prices["vk_prices"]["subscribers"][
+                                                                                  "guarantee_3_days"],
+                                                                              available_subscribers[0],
+                                                                              prices["vk_prices"]["subscribers"][
+                                                                                  "guarantee_14_days"],
+                                                                              available_subscribers[1],
+                                                                              prices["vk_prices"]["subscribers"][
+                                                                                  "guarantee_limitless"],
+                                                                              available_subscribers[2],
+                                                                              prices["vk_prices"]["subscribers"][
+                                                                                  "no_guarantee"],
+                                                                              available_subscribers[3])
+    return message
+
+
+def form_vk_likes_tasks_variants(money: int):
+    available_likers = count_available_employees(money, "vk_prices", "likes")
+    message = messages_templates["tasks"]["choose_likes_task_variants"].format(money,
+                                                                               prices["vk_prices"]["subscribers"][
+                                                                                   "guarantee_limitless"],
+                                                                               available_likers[0],
+                                                                               prices["vk_prices"]["subscribers"][
+                                                                                   "no_guarantee"],
+                                                                               available_likers[1])
+    return message
+
+
+def form_vk_reposts_tasks_variants(money: int):
+    available_reposters = count_available_employees(money, "vk_prices", "reposts")
+    message = messages_templates["tasks"]["choose_reposts_task_variants"].format(money,
+                                                                                 prices["vk_prices"]["subscribers"][
+                                                                                     "guarantee_limitless"],
+                                                                                 available_reposters[0],
+                                                                                 prices["vk_prices"]["subscribers"][
+                                                                                     "no_guarantee"],
+                                                                                 available_reposters[1])
+    return message
 
 
 @tg_bot.message_handler(state = "get_money_for_tasks", is_digit = True)
@@ -604,22 +683,22 @@ def customer_get_money_for_task(message):
         return
     with tg_bot.retrieve_data(message.chat.id) as data:
         data["money"] = money
-    available_subscribers = count_available_subscribers(data["money"])
-    message_to_user = messages_templates["tasks"]["choose_task_variants"].format(data["money"],
-                                                                                 prices["telegram_prices"][
-                                                                                     "guarantee_3_days"],
-                                                                                 available_subscribers[0],
-                                                                                 prices["telegram_prices"][
-                                                                                     "guarantee_14_days"],
-                                                                                 available_subscribers[1],
-                                                                                 prices["telegram_prices"][
-                                                                                     "guarantee_limitless"],
-                                                                                 available_subscribers[2],
-                                                                                 prices["telegram_prices"][
-                                                                                     "no_guarantee"],
-                                                                                 available_subscribers[3])
-    tg_bot.send_message(message.chat.id, message_to_user,
-                        reply_markup = create_inline_keyboard(buttons["customer_choose_task_cost_variants"]))
+        if data["task_type"] == "sub":
+            if data["platform"] == "vk":
+                message_to_user = form_vk_subs_tasks_variants(money)
+            else:
+                message_to_user = form_telegram_subs_tasks_variants(money)
+            tg_bot.send_message(message.chat.id, message_to_user,
+                                reply_markup = create_inline_keyboard(
+                                    buttons["customer_choose_subs_task_cost_variants"]))
+        elif data["task_type"] == "likes":
+            tg_bot.send_message(message.chat.id, form_vk_likes_tasks_variants(money),
+                                reply_markup = create_inline_keyboard(
+                                    buttons["customer_choose_other_task_cost_variants"]))
+        elif data["task_type"] == "reposts":
+            tg_bot.send_message(message.chat.id, form_vk_reposts_tasks_variants(money),
+                                reply_markup = create_inline_keyboard(
+                                    buttons["customer_choose_other_task_cost_variants"]))
 
 
 @tg_bot.message_handler(state = "get_money_for_tasks", is_digit = False)
@@ -628,65 +707,75 @@ def customer_get_money_for_task(message):
                         reply_markup = create_inline_keyboard(buttons["customer_reject_reenter_price"]))
 
 
-def count_available_subscribers(available_money: int):
-    return [int(available_money / price) for price in prices["telegram_prices"].values()]
+def count_available_employees(available_money: int, prices_place: str, task_type: str):
+    return [int(available_money / price) for price in prices[prices_place][task_type].values()]
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_back_to_choose_task_cost")
 def customer_back_to_choose_task_cost(call):
     tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
     with tg_bot.retrieve_data(call.from_user.id) as data:
-        available_subscribers = count_available_subscribers(data["money"])
-        message = messages_templates["tasks"]["choose_task_variants"].format(data["money"],
-                                                                             prices["telegram_prices"][
-                                                                                 "guarantee_3_days"],
-                                                                             available_subscribers[0],
-                                                                             prices["telegram_prices"][
-                                                                                 "guarantee_14_days"],
-                                                                             available_subscribers[1],
-                                                                             prices["telegram_prices"][
-                                                                                 "guarantee_limitless"],
-                                                                             available_subscribers[2],
-                                                                             prices["telegram_prices"][
-                                                                                 "no_guarantee"],
-                                                                             available_subscribers[3])
-    tg_bot.send_message(call.from_user.id, message,
-                        reply_markup = create_inline_keyboard(buttons["customer_choose_task_cost_variants"]))
+        if data["task_type"] == "sub":
+            if data["platform"] == "vk":
+                message_to_user = form_vk_subs_tasks_variants(data["money"])
+            else:
+                message_to_user = form_telegram_subs_tasks_variants(data["money"])
+            tg_bot.send_message(call.from_user.id, message_to_user,
+                                reply_markup = create_inline_keyboard(
+                                    buttons["customer_choose_subs_task_cost_variants"]))
+        elif data["task_type"] == "likes":
+            tg_bot.send_message(call.from_user.id, form_vk_likes_tasks_variants(data["money"]),
+                                reply_markup = create_inline_keyboard(
+                                    buttons["customer_choose_other_task_cost_variants"]))
+        elif data["task_type"] == "reposts":
+            tg_bot.send_message(call.from_user.id, form_vk_reposts_tasks_variants(data["money"]),
+                                reply_markup = create_inline_keyboard(
+                                    buttons["customer_choose_other_task_cost_variants"]))
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data in buttons["customer_choose_task_cost_variants"].values())
+@tg_bot.callback_query_handler(func = lambda call: call.data in buttons[
+    "customer_choose_subs_task_cost_variants"].values())
 def customer_choose_task_cost(call):
     tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
     with tg_bot.retrieve_data(call.from_user.id) as data:
         money = data["money"]
         if call.data == "cd_own_variant":
-            tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["custom_task"],
-                                reply_markup = create_inline_keyboard(buttons["customer_custom_task_select_guarantee"]))
+            if data["task_type"] == "sub":
+                tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["custom_task"],
+                                    reply_markup = create_inline_keyboard(buttons[
+                                                                              "customer_custom_subs_task_select_guarantee"]))
+            else:
+                tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["custom_task"],
+                                    reply_markup = create_inline_keyboard(buttons[
+                                                                              "customer_custom_other_task_select_guarantee"]))
         else:
-            available_subscribers = count_available_subscribers(money)
+            if data["platform"] == "vk":
+                available_subscribers = count_available_employees(money, "vk_prices", "subscribers")
+            else:
+                available_subscribers = count_available_employees(money, "telegram_prices", "subscribers")
             message = messages_templates["tasks"]["chosen_task"]
             if call.data == "cd_variant_1":
                 message = message.format(available_subscribers[0], "3 дня", "")
                 data["guarantee"] = "3"
-                data["price"] = prices["telegram_prices"]["guarantee_3_days"]
+                data["price"] = prices["telegram_prices"]["subscribers"]["guarantee_3_days"]
             elif call.data == "cd_variant_2":
                 message = message.format(available_subscribers[1], "14 дней", "")
                 data["guarantee"] = "14"
-                data["price"] = prices["telegram_prices"]["guarantee_14_days"]
+                data["price"] = prices["telegram_prices"]["subscribers"]["guarantee_14_days"]
             elif call.data == "cd_variant_3":
                 message = message.format(available_subscribers[2], "навсегда", "")
                 data["guarantee"] = "lim"
-                data["price"] = prices["telegram_prices"]["guarantee_limitless"]
+                data["price"] = prices["telegram_prices"]["subscribers"]["guarantee_limitless"]
             elif call.data == "cd_variant_4":
                 message = message.format(available_subscribers[3], "нет", "")
                 data["guarantee"] = "no"
-                data["price"] = prices["telegram_prices"]["no_guarantee"]
+                data["price"] = prices["telegram_prices"]["subscribers"]["no_guarantee"]
             tg_bot.send_message(call.from_user.id, message,
                                 reply_markup = create_inline_keyboard(buttons["customer_save_task_button"]))
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data in buttons[
-    "customer_custom_task_select_guarantee"].values())
+    "customer_custom_subs_task_select_guarantee"].values())
 def customer_custom_task_guarantee(call):
     tg_bot.delete_message(call.from_user.id, call.message.message_id)
     with tg_bot.retrieve_data(call.from_user.id) as data:

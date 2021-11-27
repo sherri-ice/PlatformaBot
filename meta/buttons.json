@@ -137,11 +137,16 @@
   "customer_not_enough_money_buttons": {
     "\uD83D\uDCB8 Пополнить баланс": "cd_donate"
   },
-  "customer_choose_task_cost_variants": {
+  "customer_choose_subs_task_cost_variants": {
     "Вариант 1": "cd_variant_1",
     "Вариант 2": "cd_variant_2",
     "Вариант 3": "cd_variant_3",
     "Вариант 4": "cd_variant_4",
+    "Свой вариант": "cd_own_variant"
+  },
+  "customer_choose_other_task_cost_variants": {
+    "Вариант 1": "cd_variant_1",
+    "Вариант 2": "cd_variant_2",
     "Свой вариант": "cd_own_variant"
   },
   "customer_save_task_button": {
@@ -155,9 +160,15 @@
     "✏ Создать задание": "cd_save_task",
     "Назад": "cd_back_to_choose_custom_task_cost"
   },
-  "customer_custom_task_select_guarantee":{
+  "customer_custom_subs_task_select_guarantee":{
     "На 3 дня": "cd_3_days_guarantee",
     "На 14 дней": "cd_14_days_guarantee",
+    "Навсегда": "cd_limitless_guarantee",
+    "Без гарантии": "cd_no_guarantee",
+    "Что такое гарантия?": "cd_guarantee_faq",
+    "Назад": "cd_back_to_choose_task_cost"
+  },
+  "customer_custom_other_task_select_guarantee":{
     "Навсегда": "cd_limitless_guarantee",
     "Без гарантии": "cd_no_guarantee",
     "Что такое гарантия?": "cd_guarantee_faq",
