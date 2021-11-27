@@ -759,7 +759,6 @@ def callback_get_customer_balance(call):
     customer = customer_table.get_customer_by_id(user.id)
     message_to_user = messages_templates["customer"]["balance"].format(customer.balance)
     keyboard = create_inline_keyboard(buttons["customer_balance_buttons"])
-    tg_bot.delete_message(chat_id = call.from_user.id, message_id = call.message.message_id)
     tg_bot.send_message(call.from_user.id, message_to_user, reply_markup = keyboard)
 
 
