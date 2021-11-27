@@ -588,7 +588,8 @@ def customer_get_money_for_task(message):
 
 @tg_bot.message_handler(state = "get_money_for_tasks", is_digit = False)
 def customer_get_money_for_task(message):
-    tg_bot.send_message(message.chat.id, messages_templates["tasks"]["wrong_price_input"])
+    tg_bot.send_message(message.chat.id, messages_templates["tasks"]["wrong_price_input"],
+                        reply_markup = create_inline_keyboard(buttons["customer_reject_reenter_price"]))
 
 
 def count_available_subscribers(available_money: int):
@@ -684,7 +685,14 @@ def customer_get_price_for_custom_task(message):
 
 @tg_bot.message_handler(state = "get_price_for_custom_task", is_digit = False)
 def customer_get_price_for_custom_task(message):
-    tg_bot.send_message(message.chat.id, messages_templates["tasks"]["wrong_price_input"])
+    tg_bot.send_message(message.chat.id, messages_templates["tasks"]["wrong_price_input"],
+                        reply_markup = create_inline_keyboard(buttons["customer_reject_reenter_price"]))
+
+
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_customer_reject_reenter_price")
+def customer_reject_reentering_price(call):
+    tg_bot.delete_state(call.from_user.id)
+    callback_profile(call)
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_save_task")

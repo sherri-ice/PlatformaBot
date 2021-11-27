@@ -166,6 +166,9 @@
   "customer_resend_vk_page_link": {
     "↩️ Попробовать ещё раз": "cd_ct_vk_subscribers"
   },
+  "customer_reject_reenter_price": {
+    "Отменить": "cd_customer_reject_reenter_price"
+  },
   "main_buttons": [
     "\uD83C\uDFE0 Домой",
     "\uD83D\uDC64 Мой профиль",
