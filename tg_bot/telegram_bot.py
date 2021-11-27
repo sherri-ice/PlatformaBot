@@ -698,6 +698,7 @@ def customer_save_task(call):
         customer.balance -= int(data["price"]) * available_subscribers
         tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["task_accept_message"],
                             reply_markup = create_inline_keyboard(buttons["saved_task_buttons"]))
+        tg_bot.delete_state(call.from_user.id)
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_customer_get_balance")
