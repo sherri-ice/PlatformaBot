@@ -17,6 +17,8 @@ class EmployeesOnTask(db.Model):
 class Task(db.Model):
     id = db.Column(db.Integer, primary_key = True, nullable = False, autoincrement = True)
     ref = db.Column(db.String(255))
+    needed_count_of_employees = db.Column(db.Integer, default = 0)
+    current_count_of_employees = db.Column(db.Integer, default = 0)
     completed = db.Column(db.Boolean, default = False)
     guarantee = db.Column(db.String(255))
     on_guarantee = db.Column(db.Boolean, default = False)
