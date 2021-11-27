@@ -569,18 +569,18 @@ def customer_get_money_for_task(message):
         data["money"] = money
     available_subscribers = count_available_subscribers(data["money"])
     message_to_user = messages_templates["tasks"]["choose_task_variants"].format(data["money"],
-                                                                                          prices["telegram_prices"][
-                                                                                              "guarantee_3_days"],
-                                                                                          available_subscribers[0],
-                                                                                          prices["telegram_prices"][
-                                                                                              "guarantee_14_days"],
-                                                                                          available_subscribers[1],
-                                                                                          prices["telegram_prices"][
-                                                                                              "guarantee_limitless"],
-                                                                                          available_subscribers[2],
-                                                                                          prices["telegram_prices"][
-                                                                                              "no_guarantee"],
-                                                                                          available_subscribers[3])
+                                                                                 prices["telegram_prices"][
+                                                                                     "guarantee_3_days"],
+                                                                                 available_subscribers[0],
+                                                                                 prices["telegram_prices"][
+                                                                                     "guarantee_14_days"],
+                                                                                 available_subscribers[1],
+                                                                                 prices["telegram_prices"][
+                                                                                     "guarantee_limitless"],
+                                                                                 available_subscribers[2],
+                                                                                 prices["telegram_prices"][
+                                                                                     "no_guarantee"],
+                                                                                 available_subscribers[3])
     tg_bot.send_message(message.chat.id, message_to_user,
                         reply_markup = create_inline_keyboard(buttons["customer_choose_task_cost_variants"]))
 
@@ -600,18 +600,18 @@ def customer_back_to_choose_task_cost(call):
     with tg_bot.retrieve_data(call.from_user.id) as data:
         available_subscribers = count_available_subscribers(data["money"])
         message = messages_templates["tasks"]["choose_task_variants"].format(data["money"],
-                                                                                      prices["telegram_prices"][
-                                                                                          "guarantee_3_days"],
-                                                                                      available_subscribers[0],
-                                                                                      prices["telegram_prices"][
-                                                                                          "guarantee_14_days"],
-                                                                                      available_subscribers[1],
-                                                                                      prices["telegram_prices"][
-                                                                                          "guarantee_limitless"],
-                                                                                      available_subscribers[2],
-                                                                                      prices["telegram_prices"][
-                                                                                          "no_guarantee"],
-                                                                                      available_subscribers[3])
+                                                                             prices["telegram_prices"][
+                                                                                 "guarantee_3_days"],
+                                                                             available_subscribers[0],
+                                                                             prices["telegram_prices"][
+                                                                                 "guarantee_14_days"],
+                                                                             available_subscribers[1],
+                                                                             prices["telegram_prices"][
+                                                                                 "guarantee_limitless"],
+                                                                             available_subscribers[2],
+                                                                             prices["telegram_prices"][
+                                                                                 "no_guarantee"],
+                                                                             available_subscribers[3])
     tg_bot.send_message(call.from_user.id, message,
                         reply_markup = create_inline_keyboard(buttons["customer_choose_task_cost_variants"]))
 
@@ -696,6 +696,7 @@ def customer_save_task(call):
                                 data["price"])
         available_subscribers = int(int(data["money"]) / int(data["price"]))
         customer.balance -= int(data["price"]) * available_subscribers
+        apply_db_changes()
         tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["task_accept_message"],
                             reply_markup = create_inline_keyboard(buttons["saved_task_buttons"]))
         tg_bot.delete_state(call.from_user.id)
