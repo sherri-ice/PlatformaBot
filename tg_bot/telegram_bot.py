@@ -632,6 +632,7 @@ def customer_choose_task_cost(call):
             message = message.format(available_subscribers[0], "3 дня", "")
             data["guarantee"] = "3"
             data["price"] = prices["telegram_prices"]["guarantee_3_days"]
+            print(f"Got 1 variant and guarantee is {data['guarantee']}")
         elif call.data == "cd_variant_2":
             message = message.format(available_subscribers[1], "14 дней", "")
             data["guarantee"] = "14"
@@ -700,7 +701,7 @@ def customer_save_task(call):
         apply_db_changes()
         tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["task_accept_message"],
                             reply_markup = create_inline_keyboard(buttons["saved_task_buttons"]))
-        tg_bot.delete_state(call.from_user.id)
+    tg_bot.delete_state(call.from_user.id)
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_customer_get_balance")
