@@ -392,7 +392,9 @@ def get_customer_profile_info(user_id):
     customer = customer_table.get_customer_by_id(user_id)
     if customer is None:
         return messages_templates["customer"]["no_profile"]
-    message = messages_templates["customer"]["profile"].format()
+    tasks = task_table.get_tasks_by_customer_id(customer.id)
+    active_tasks = task_table.get_active_tasks_by_customer_id(customer.id)
+    message = messages_templates["customer"]["profile"].format(len(tasks), len(active_tasks))
     return message
 
 
