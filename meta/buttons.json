@@ -145,8 +145,8 @@
     "Свой вариант": "cd_own_variant"
   },
   "customer_choose_other_task_cost_variants": {
-    "Вариант 1": "cd_variant_1",
-    "Вариант 2": "cd_variant_2",
+    "Вариант 1": "cd_variant_3",
+    "Вариант 2": "cd_variant_4",
     "Свой вариант": "cd_own_variant"
   },
   "customer_save_task_button": {
