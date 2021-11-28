@@ -4,7 +4,7 @@ from telebot import types
 from vk.vk_auth import request_vk_auth_code
 from sql.database import apply_db_changes
 from sql.user.user import user_table, employee_table, customer_table
-from sql.task.task import task_table
+from sql.task.task import task_table, employees_on_task_table
 
 from meta.loader import TELEGRAM_TOKEN
 from meta.loader import load_messages, load_buttons, load_photos, load_prices
@@ -332,19 +332,18 @@ def get_employee_profile_info(user_id):
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_employee_get_new_task")
 def employee_get_new_task(call):
-    tg_bot.set_state(call.from_user.id, "get_new_task")
     tg_bot.delete_message(chat_id = call.from_user.id, message_id = call.message.message_id)
     tg_bot.send_message(call.from_user.id, messages_templates["employee"]["choose_platform"],
                         reply_markup = create_inline_keyboard(buttons["employee_choose_platform_buttons"]))
-    tg_bot.set_state(call.from_user.id, "employee_get_platform")
 
 
 @tg_bot.callback_query_handler(
     func = lambda call: call.data == "employee_cd_choose_telegram_task" or call.data == "employee_cd_choose_vk_task")
 def callback_employee_choose_platform(call):
+    tg_bot.set_state(call.from_user.id, "")
     with tg_bot.retrieve_data(call.from_user.id) as data:
         if call.data == "employee_cd_choose_telegram_task":
-            data["platform"] = "telegram"
+            data["platform"] = "tg"
             reply_markup = create_inline_keyboard(buttons["choose_type_of_task_telegram"])
         elif call.data == "employee_cd_choose_vk_task":
             user = user_table.get_user_by_tg_id(call.from_user.id)
@@ -362,12 +361,12 @@ def callback_employee_choose_platform(call):
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_vk_subscribers" or
                                                    call.data == "cd_vk_likes" or
-                                                   call.data == "cd_vK_reposts" or
+                                                   call.data == "cd_vk_reposts" or
                                                    call.data == "cd_telegram_subscribers")
 def callback_employee_choose_task_type(call):
     if call.data == "cd_vk_subscribers" or call.data == "cd_telegram_subscribers":
         with tg_bot.retrieve_data(call.from_user.id) as data:
-            data["task_type"] = "subscribers"
+            data["task_type"] = "sub"
     elif call.data == "cd_vk_likes":
         with tg_bot.retrieve_data(call.from_user.id) as data:
             data["task_type"] = "likes"
@@ -383,9 +382,34 @@ def get_messages_by_filter(message):
         tasks = task_table.get_new_tasks(platform = data["platform"], task_type = data["task_type"], filters = None)
         tg_bot.delete_message(chat_id, message_id = message.message_id)
         if len(tasks) == 0:
-            tg_bot.send_message(chat_id, "Sorry, no tasks")
+            tg_bot.send_message(chat_id, messages_templates["tasks"]["employee_no_tasks"])
         else:
-            tg_bot.send_message(chat_id, "First task: {}".format(tasks[0].id))
+            message_to_user = messages_templates["tasks"]["employee_get_tasks"]
+            for task in sorted(tasks, key = lambda obj: obj.price, reverse = True):
+                message_to_user += "Задание №{} | Награда: {} PTF\n".format(task.id, task.price)
+            tg_bot.send_message(chat_id, message_to_user,
+                                reply_markup = create_inline_keyboard(buttons["employee_back_to_profile"]))
+            tg_bot.set_state(message.chat.id, "get_task_id")
+
+
+@tg_bot.message_handler(state = "get_task_id", is_digit = True)
+def employee_get_task_id(message):
+    task_id = message.text
+    task = task_table.get_task_by_id(task_id)
+    task.free = 0
+    user = user_table.get_user_by_tg_id(message.chat.id)
+    employee = employee_table.get_employee_by_id(user.id)
+    employees_on_task_table.add_employee_to_task(employee.id, task_id)
+    apply_db_changes()
+    message_to_user = messages_templates["tasks"]["employee_got_new_task"]
+    task_type = ""
+    if task.task_type == "sub":
+        task_type = "Подписка на ресурс"
+    elif task.task_type == "likes":
+        task_type = "Поставить лайк"
+    elif task.task_type == "reposts":
+        task_type = "Сделать репост"
+    tg_bot.send_message(message.chat.id, message_to_user.format(task.id, task_type, task.ref, task.guarantee))
 
 
 def get_customer_profile_info(user_id):
@@ -616,18 +640,18 @@ def customer_send_vk_reposts_prices(message):
 def form_telegram_subs_tasks_variants(money: int):
     available_subscribers = count_available_employees(money, "telegram_prices", "subscribers")
     message = messages_templates["tasks"]["choose_subs_task_variants"].format(money,
-                                                                         prices["telegram_prices"]["subscribers"][
-                                                                             "guarantee_3_days"],
-                                                                         available_subscribers[0],
-                                                                         prices["telegram_prices"]["subscribers"][
-                                                                             "guarantee_14_days"],
-                                                                         available_subscribers[1],
-                                                                         prices["telegram_prices"]["subscribers"][
-                                                                             "guarantee_limitless"],
-                                                                         available_subscribers[2],
-                                                                         prices["telegram_prices"]["subscribers"][
-                                                                             "no_guarantee"],
-                                                                         available_subscribers[3])
+                                                                              prices["telegram_prices"]["subscribers"][
+                                                                                  "guarantee_3_days"],
+                                                                              available_subscribers[0],
+                                                                              prices["telegram_prices"]["subscribers"][
+                                                                                  "guarantee_14_days"],
+                                                                              available_subscribers[1],
+                                                                              prices["telegram_prices"]["subscribers"][
+                                                                                  "guarantee_limitless"],
+                                                                              available_subscribers[2],
+                                                                              prices["telegram_prices"]["subscribers"][
+                                                                                  "no_guarantee"],
+                                                                              available_subscribers[3])
     return message
 
 
@@ -878,6 +902,7 @@ def callback_get_customer_balance(call):
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_customer_my_tasks")
 def customer_get_tasks(call):
+    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
     user = user_table.get_user_by_tg_id(call.from_user.id)
     customer = customer_table.get_customer_by_id(user.id)
     tasks = task_table.get_tasks_by_customer_id(customer.id)

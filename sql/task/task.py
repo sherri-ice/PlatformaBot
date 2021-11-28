@@ -47,6 +47,9 @@ class Task(db.Model):
     def get_tasks_by_customer_id(self, customer_id):
         return self.query.filter_by(customer_id = customer_id).all()
 
+    def get_task_by_id(self, task_id):
+        return self.query.filter_by(id = task_id).first()
+
     def get_active_tasks_by_customer_id(self, customer_id):
         return self.query.filter_by(customer_id = customer_id).filter_by(completed = 0).all()
 
@@ -60,3 +63,4 @@ class Task(db.Model):
 
 
 task_table = Task()
+employees_on_task_table = EmployeesOnTask()

@@ -103,6 +103,9 @@
     "\uD83D\uDD39 ВК": "customer_cd_choose_vk_task",
     "↩️ Назад": "cd_customer"
   },
+  "employee_back_to_profile": {
+    "Назад": "cd_employee"
+  },
   "employee_choose_platform_buttons": {
     "Телеграм": "employee_cd_choose_telegram_task",
     "ВК": "employee_cd_choose_vk_task",
@@ -160,7 +163,7 @@
     "✏ Создать задание": "cd_save_task",
     "Назад": "cd_back_to_choose_custom_task_cost"
   },
-  "customer_custom_subs_task_select_guarantee":{
+  "customer_custom_subs_task_select_guarantee": {
     "На 3 дня": "cd_3_days_guarantee",
     "На 14 дней": "cd_14_days_guarantee",
     "Навсегда": "cd_limitless_guarantee",
@@ -168,7 +171,7 @@
     "Что такое гарантия?": "cd_guarantee_faq",
     "Назад": "cd_back_to_choose_task_cost"
   },
-  "customer_custom_other_task_select_guarantee":{
+  "customer_custom_other_task_select_guarantee": {
     "Навсегда": "cd_limitless_guarantee",
     "Без гарантии": "cd_no_guarantee",
     "Что такое гарантия?": "cd_guarantee_faq",
