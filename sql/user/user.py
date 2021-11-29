@@ -67,7 +67,7 @@ class UserTable(db.Model):
 class Employee(db.Model):
     __tablename__ = 'employee'
 
-    id = db.Column(db.Integer, primary_key = True)
+    id = db.Column(db.Integer, primary_key = True, autoincrement = True)
     balance = db.Column(db.Integer, default = 0)
     appeals = db.Column(db.Integer, default = 0)
 
@@ -75,8 +75,9 @@ class Employee(db.Model):
         '''
         Add new user to employee database.
         '''
-        db.session.add(Employee(id = user_id))
-        user_table.get_user_by_id(user_id).employee_id = user_id
+        employee = Employee()
+        db.session.add(employee)
+        user_table.get_user_by_id(user_id).employee = employee
         apply_db_changes()
 
     def get_employee_by_id(self, user_id):
@@ -85,13 +86,14 @@ class Employee(db.Model):
 
 class Customer(db.Model):
     __tablename__ = 'customer'
-    id = db.Column(db.Integer, primary_key = True)
+    id = db.Column(db.Integer, primary_key = True, autoincrement = True)
     balance = db.Column(db.Integer, default = 0)
     appeals = db.Column(db.Integer, default = 0)
 
     def add_customer(self, user_id):
-        db.session.add(Customer(id = user_id))
-        user_table.get_user_by_id(user_id).customer_id = user_id
+        customer = Customer()
+        db.session.add(customer)
+        user_table.get_user_by_id(user_id).customer = customer
         apply_db_changes()
 
     def get_customer_by_id(self, user_id):

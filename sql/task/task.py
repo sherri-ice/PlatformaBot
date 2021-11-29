@@ -38,7 +38,8 @@ class Task(db.Model):
 
     def add_new_task(self, customer_id, platform, task_type, ref, guarantee, price, needed_users):
         db.session.add(Task(customer_id = customer_id, platform = platform, task_type = task_type, ref = ref,
-                            guarantee = guarantee, price = price, needed_count_of_employees = needed_users))
+                            guarantee = guarantee, on_guarantee = True if guarantee != "no" else False, price = price, \
+                            needed_count_of_employees = needed_users))
         apply_db_changes()
 
     def add_new_target_task(self):
@@ -55,6 +56,9 @@ class Task(db.Model):
 
     def get_tasks_by_employee_id(self, employee_id):
         return self.query.filter_by(employee_id = employee_id).all()
+
+    def get_tasks_on_guarantee(self):
+        return self.query.filter_by(free = False).filter_by(on_guarantee = True).all()
 
     # TODO: get targeted task
     def get_new_tasks(self, platform, task_type, filters):
