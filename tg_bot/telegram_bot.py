@@ -13,6 +13,8 @@ from telebot import custom_filters
 from geocode.geo_patcher import get_address_from_coordinates
 from url_checker.url_checker import telegram_channel_check, vk_page_check, vk_post_check
 
+from guarantee_checker.guarantee_checker import check_vk_subscription_task, check_vk_like_task, check_vk_repost_task
+
 messages_templates = load_messages()
 buttons = load_buttons()
 keyboard_hider = types.ReplyKeyboardRemove()
@@ -379,7 +381,9 @@ def callback_employee_choose_task_type(call):
 def get_messages_by_filter(message):
     chat_id = message.chat.id
     with tg_bot.retrieve_data(chat_id) as data:
-        tasks = task_table.get_new_tasks(platform = data["platform"], task_type = data["task_type"], filters = None)
+        user = user_table.get_user_by_tg_id(chat_id)
+        tasks = task_table.get_new_tasks(platform = data["platform"], task_type = data["task_type"],
+                                         employee_id = user.employee.id)
         tg_bot.delete_message(chat_id, message_id = message.message_id)
         if len(tasks) == 0:
             tg_bot.send_message(chat_id, messages_templates["tasks"]["employee_no_tasks"])
@@ -395,21 +399,66 @@ def get_messages_by_filter(message):
 @tg_bot.message_handler(state = "get_task_id", is_digit = True)
 def employee_get_task_id(message):
     task_id = message.text
+    # todo: out of range
+    with tg_bot.retrieve_data(message.chat.id) as data:
+        data['task_id'] = message.text
     task = task_table.get_task_by_id(task_id)
-    task.free = 0
+    message_to_user = messages_templates["tasks"]["employee_got_new_task"]
+    task_text = ""
+    if task.task_type == "sub":
+        task_text = "Подписка на ресурс"
+    elif task.task_type == "likes":
+        task_text = "Поставить лайк"
+    elif task.task_type == "reposts":
+        task_text = "Сделать репост"
+    tg_bot.send_message(message.chat.id, message_to_user.format(task.id, task_text, task.ref, task.guarantee),
+                        reply_markup = create_inline_keyboard(buttons["employee_got_new_task_buttons"]))
+
+
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_done_task")
+def employee_done_task(call):
+    with tg_bot.retrieve_data(call.from_user.id) as data:
+        task_id = data['task_id']
+        task = task_table.get_task_by_id(task_id = task_id)
+        user = user_table.get_user_by_tg_id(call.from_user.id)
+        employee = user.employee
+        result = True
+        if task.platform == "vk":
+            if task.task_type == "sub":
+                result = check_vk_subscription_task(employee_id = employee.id, page_link = task.ref)
+            elif task.task_type == "likes":
+                result = check_vk_like_task(employee_id = employee.id, post_link = task.ref)
+            elif task.task_type == "reposts":
+                result = check_vk_repost_task(employee_id = employee.id, post_link = task.ref)
+        if not result:
+            done_task_doubt(call.message)
+        else:
+            done_task(call.message)
+
+
+def done_task(message):
+    with tg_bot.retrieve_data(message.chat.id) as data:
+        task_id = data['task_id']
+        task = task_table.get_task_by_id(task_id = task_id)
+        message_to_user = messages_templates["tasks"]["employee_done_task"].format(task.price)
+        tg_bot.delete_message(message.chat.id, message_id = message.message_id)
+        tg_bot.send_message(message.chat.id, message_to_user,
+                            reply_markup = create_inline_keyboard(buttons["employee_done_task_buttons"]))
+
+        task.current_count_of_employees += 1
+        if task.current_count_of_employees >= task.needed_count_of_employees:
+            task.free = 0
+
     user = user_table.get_user_by_tg_id(message.chat.id)
-    employee = employee_table.get_employee_by_id(user.id)
+    employee = user.employee
     employees_on_task_table.add_employee_to_task(employee.id, task_id)
     apply_db_changes()
-    message_to_user = messages_templates["tasks"]["employee_got_new_task"]
-    task_type = ""
-    if task.task_type == "sub":
-        task_type = "Подписка на ресурс"
-    elif task.task_type == "likes":
-        task_type = "Поставить лайк"
-    elif task.task_type == "reposts":
-        task_type = "Сделать репост"
-    tg_bot.send_message(message.chat.id, message_to_user.format(task.id, task_type, task.ref, task.guarantee))
+
+
+def done_task_doubt(message):
+    tg_bot.delete_message(message.chat.id, message_id = message.message_id)
+    tg_bot.send_message(message.chat.id, messages_templates["tasks"]["employee_done_task_doubt"],
+                        reply_markup = create_inline_keyboard(buttons["employee_done_task_doubt_buttons"]))
 
 
 def get_customer_profile_info(user_id):
