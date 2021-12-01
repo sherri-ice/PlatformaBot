@@ -1,0 +1,134 @@
+import re
+from time import sleep
+import datetime
+
+from vk.vk_auth import get_vk_api
+
+from sqlalchemy.ext.automap import automap_base
+from sqlalchemy.orm import Session
+from sqlalchemy import create_engine
+
+from meta.loader import SQL_PASSWORD, SQL_HOST, SQL_USER, SQL_DATABASE
+
+from meta.loader import TELEGRAM_TOKEN
+from telebot import TeleBot
+
+bot = TeleBot(token = TELEGRAM_TOKEN)
+
+Base = automap_base()
+
+engine = create_engine(f"mysql+mysqlconnector://{SQL_USER}:{SQL_PASSWORD}@{SQL_HOST}" \
+                       f"/{SQL_DATABASE}")
+
+Base.prepare(engine, reflect = True)
+
+Task = Base.classes.task
+EmployeesOnTask = Base.classes.employees_on_task
+User = Base.classes.user
+Employee = Base.classes.employee
+
+session = Session(engine)
+
+
+def get_tasks_on_guarantee():
+    return session.query(Task).filter_by(free = False).filter_by(on_guarantee = True).filter_by(completed =
+                                                                                                False).all()
+
+
+def get_task_by_id(task_id):
+    return session.query(Task).filter_by(id = task_id).first()
+
+
+def get_user_by_employee_id(employee_id):
+    return session.query(User).filter_by(employee_id = employee_id).first()
+
+
+def get_employees_by_task_id(task_id):
+    return session.query(EmployeesOnTask).filter_by(task_id = task_id).all()
+
+
+def delete_employee_from_task(employee_id, task_id):
+    session.query(EmployeesOnTask).filter_by(task_id = task_id).filter_by(employee_id = employee_id).delete()
+
+
+def guarantee_checker():
+    tasks = get_tasks_on_guarantee()
+    for task in tasks:
+        employees_id = get_employees_by_task_id(task.id)
+        for employee in employees_id:
+            result = True
+            if task.platform == "vk":
+                if task.task_type == "sub":
+                    result = check_vk_subscription_task(employee.id, task.ref)
+                elif task.task_type == "likes":
+                    result = check_vk_like_task(employee.id, task.ref)
+                elif task.task_type == "reposts":
+                    result = check_vk_repost_task(employee.id, task.ref)
+            if not result:
+                send_impaired_warranty_message(employee.id, task.id)
+
+
+def check_vk_like_task(employee_id, post_link):
+    vk_api = get_vk_api(get_user_by_employee_id(employee_id).vk_access_token)
+    vk_id = vk_api.users.get()[0]['id']
+    res = re.search(r"vk\.com\/.+$", post_link)
+    post_id = res.string[::-1][:res.string[::-1].find('l')][::-1]
+    result = vk_api.wall.get_by_id(posts = [post_id])
+    result = vk_api.likes.is_liked(user_id = vk_id, type = 'post', owner_id = result[0]['owner_id'],
+                                   item_id = result[0]['id'])
+    return result['liked']
+
+
+def check_vk_repost_task(employee_id, post_link):
+    vk_api = get_vk_api(get_user_by_employee_id(employee_id).vk_access_token)
+    vk_id = vk_api.users.get()[0]['id']
+    res = re.search(r"vk\.com\/.+$", post_link)
+    post_id = res.string[::-1][:res.string[::-1].find('l')][::-1]
+    result = vk_api.wall.get_by_id(posts = [post_id])
+    result = vk_api.likes.is_liked(user_id = vk_id, type = 'post', owner_id = result[0]['owner_id'],
+                                   item_id = result[0]['id'])
+    return result['copied']
+
+
+def check_vk_subscription_task(employee_id, page_link):
+    vk_api = get_vk_api(get_user_by_employee_id(employee_id).vk_access_token)
+    vk_id = vk_api.users.get()[0]['id']
+    res = re.search(r"vk\.com\/.+$", page_link)
+    page_id = res.string[::-1][:res.string[::-1].find('/')][::-1]
+    result = vk_api.utils.resolveScreenName(screen_name = page_id)
+    if result['type'] == 'user':
+        subs = vk_api.users.get_followers(user_id = result['object_id'])
+        return vk_id in subs['items']
+    elif result['type'] == 'group':
+        return vk_api.groups.is_member(group_id = page_id, user_id = vk_id)
+
+
+def send_impaired_warranty_message(employee_id, task_id):
+    user = get_user_by_employee_id(employee_id)
+    user.employee.appeals += 1
+    task = get_task_by_id(task_id)
+    message_to_user = f"Ты нарушил гарантию!\n\n" \
+                      f"Задача №{task_id}\n"
+    if task.task_type == "sub":
+        message_to_user += f"Подписка: {task.ref}"
+    elif task.task_type == "likes":
+        message_to_user += f"Лайки: {task.ref}"
+    elif task.task_type == "reposts":
+        message_to_user += f"Репосты: {task.ref}"
+    message_to_user += "\n\nТеперь тебе начислен штраф :с"
+    bot.send_message(user.tg_id, message_to_user)
+    delete_employee_from_task(employee_id, task_id)
+    session.commit()
+
+
+def guarantee_loop():
+    # Waits time to be "rounded", e.g. "12:00"
+    # sleep(60 * (60 - datetime.datetime.now().minute))
+    while True:
+        # Sleep for one hour
+        guarantee_checker()
+        sleep(60 * 60)
+
+
+if __name__ == '__main__':
+    guarantee_loop()
