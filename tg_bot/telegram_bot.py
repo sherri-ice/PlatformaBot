@@ -313,9 +313,11 @@ def get_profile_info(user_id):
         customer_data = messages_templates["customer"]["no_profile"]
     else:
         customer_data = str(customer.balance) + " PTF"
+    active_tasks = len(task_table.get_active_tasks_by_customer_id(user.customer.id))
     common_data = messages_templates["registered_user"]["profile_common_data"].format(user.id, user.age,
                                                                                       user.city_name,
                                                                                       user.registered_date,
+                                                                                      active_tasks,
                                                                                       employee_data,
                                                                                       customer_data, vk_data)
     return common_data
