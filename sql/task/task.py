@@ -61,9 +61,16 @@ class Task(db.Model):
         return self.query.filter_by(free = False).filter_by(on_guarantee = True).all()
 
     # TODO: get targeted task
-    def get_new_tasks(self, platform, task_type, filters):
-        return self.query.filter_by(free = 1).filter_by(platform = platform).filter_by(task_type =
-                                                                                       task_type).all()
+    def get_new_tasks(self, platform, task_type, employee_id):
+        if EmployeesOnTask.query.count() == 0:
+            return self.query. \
+                filter_by(platform = platform). \
+                filter_by(task_type = task_type).all()
+        return self.query. \
+            filter_by(platform = platform). \
+            filter_by(task_type = task_type). \
+            join(EmployeesOnTask, EmployeesOnTask.task_id == Task.id). \
+            filter(EmployeesOnTask.employee_id != employee_id).all()
 
 
 task_table = Task()
