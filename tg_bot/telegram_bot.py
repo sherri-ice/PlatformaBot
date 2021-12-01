@@ -453,6 +453,7 @@ def done_task(message):
         task.current_count_of_employees += 1
         if task.current_count_of_employees >= task.needed_count_of_employees:
             task.free = 0
+            task.completed = 1
 
     user = user_table.get_user_by_tg_id(message.chat.id)
     employee = user.employee

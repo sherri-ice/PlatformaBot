@@ -65,15 +65,15 @@ class Task(db.Model):
 
     # TODO: get targeted task
     def get_new_tasks(self, platform, task_type, employee_id):
-        if EmployeesOnTask.query.count() == 0:
-            return self.query. \
-                filter_by(platform = platform). \
-                filter_by(task_type = task_type).all()
-        return self.query. \
+        tasks = self.query. \
+            filter_by(free = 1). \
             filter_by(platform = platform). \
-            filter_by(task_type = task_type). \
-            join(EmployeesOnTask, EmployeesOnTask.task_id == Task.id). \
-            filter(EmployeesOnTask.employee_id != employee_id).all()
+            filter_by(task_type = task_type).all()
+        result = []
+        for task in tasks:
+            if len(EmployeesOnTask.query.filter_by(task_id = task.id).filter_by(employee_id = employee_id).all()) == 0:
+                result.append(task)
+        return result
 
 
 task_table = Task()
