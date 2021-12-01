@@ -455,10 +455,11 @@ def done_task(message):
             task.free = 0
             task.completed = 1
 
-    user = user_table.get_user_by_tg_id(message.chat.id)
-    employee = user.employee
-    employees_on_task_table.add_employee_to_task(employee.id, task_id)
-    apply_db_changes()
+        user = user_table.get_user_by_tg_id(message.chat.id)
+        employee = user.employee
+        employees_on_task_table.add_employee_to_task(employee.id, task_id)
+        employee.balance += task.price
+        apply_db_changes()
 
 
 def done_task_doubt(message):

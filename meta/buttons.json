@@ -201,7 +201,7 @@
   },
   "employee_got_new_task_buttons": {
     "✅ Выполнил": "cd_done_task",
-    "❌ Отменить": "cd_refuse_task",
+    "❌ Отменить": "cd_employee_get_new_task",
     "❓ Что такое гарантия?": "cd_guarantee_faq"
   },
   "employee_done_task_buttons": {
