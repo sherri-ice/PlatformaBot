@@ -199,6 +199,20 @@
     "⌚ История заданий": "cd_task_history",
     "\uD83D\uDD19 Назад": "cd_customer"
   },
+  "employee_got_new_task_buttons": {
+    "✅ Выполнил": "cd_done_task",
+    "❌ Отменить": "cd_refuse_task",
+    "❓ Что такое гарантия?": "cd_guarantee_faq"
+  },
+  "employee_done_task_buttons": {
+    "\uD83D\uDCDD Выполнить ещё": "cd_employee_get_new_task",
+    "\uD83C\uDFE0 Профиль исполнителя": "cd_employee"
+  },
+  "employee_done_task_doubt_buttons": {
+    "\uD83D\uDD04 Обновить": "cd_refresh_task",
+    "\uD83D\uDCDD К заданиям": "cd_employee_get_new_task"
+  },
+
   "main_buttons": [
     "\uD83C\uDFE0 Домой",
     "\uD83D\uDC64 Мой профиль",
