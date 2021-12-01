@@ -390,7 +390,8 @@ def get_messages_by_filter(message):
                                          employee_id = user.employee.id)
         tg_bot.delete_message(chat_id, message_id = message.message_id)
         if len(tasks) == 0:
-            tg_bot.send_message(chat_id, messages_templates["tasks"]["employee_no_tasks"])
+            tg_bot.send_message(chat_id, messages_templates["tasks"]["employee_no_tasks"],
+                                reply_markup = create_inline_keyboard(buttons["employee_return_to_tasks_buttons"]))
         else:
             message_to_user = messages_templates["tasks"]["employee_get_tasks"]
             for task in sorted(tasks, key = lambda obj: obj.price, reverse = True):

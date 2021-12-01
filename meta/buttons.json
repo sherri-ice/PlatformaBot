@@ -212,7 +212,9 @@
     "\uD83D\uDD04 Обновить": "cd_refresh_task",
     "\uD83D\uDCDD К заданиям": "cd_employee_get_new_task"
   },
-
+  "employee_return_to_tasks_buttons": {
+    "↩️ Вернуться к заданиям": "cd_employee_get_new_task"
+  },
   "main_buttons": [
     "\uD83C\uDFE0 Домой",
     "\uD83D\uDC64 Мой профиль",
