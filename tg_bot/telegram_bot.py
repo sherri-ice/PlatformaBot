@@ -325,12 +325,13 @@ def get_profile_info(user_id):
 
 def get_employee_profile_info(user_id):
     user = user_table.get_user_by_id(user_id)
-    employee = employee_table.get_employee_by_id(user_id)
+    employee = user.employee
     keyboard = create_inline_keyboard(buttons["employee_profile_buttons"])
     if employee is None:
         return messages_templates["employee"]["no_profile"], keyboard
 
-    message = messages_templates["employee"]["profile"].format(employee.appeals)
+    message = messages_templates["employee"]["profile"].format(task_table.get_active_tasks_by_employee_id(
+        employee.id), employee.appeals)
     return message, keyboard
 
 
