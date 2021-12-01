@@ -215,6 +215,9 @@
   "employee_return_to_tasks_buttons": {
     "↩️ Вернуться к заданиям": "cd_employee_get_new_task"
   },
+  "employee_reenter_task_number_button": {
+    "Попробовать ещё раз!": "cd_reenter_task_number"
+  },
   "main_buttons": [
     "\uD83C\uDFE0 Домой",
     "\uD83D\uDC64 Мой профиль",

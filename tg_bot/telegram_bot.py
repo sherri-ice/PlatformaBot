@@ -379,10 +379,10 @@ def callback_employee_choose_task_type(call):
     elif call.data == "cd_vk_reposts":
         with tg_bot.retrieve_data(call.from_user.id) as data:
             data["task_type"] = "reposts"
-    get_messages_by_filter(call.message)
+    get_tasks_by_filter(call.message)
 
 
-def get_messages_by_filter(message):
+def get_tasks_by_filter(message):
     chat_id = message.chat.id
     with tg_bot.retrieve_data(chat_id) as data:
         user = user_table.get_user_by_tg_id(chat_id)
@@ -401,13 +401,27 @@ def get_messages_by_filter(message):
             tg_bot.set_state(message.chat.id, "get_task_id")
 
 
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_reenter_task_number")
+def employee_reenter_task_number(call):
+    get_tasks_by_filter(call.message)
+
+
+@tg_bot.message_handler(state = "get_task_id", is_digit = False)
+def employee_get_wrong_task_id(message):
+    tg_bot.send_message(message.chat.id, messages_templates["tasks"]["employee_wrong_task_number"],
+                        reply_markup = create_inline_keyboard(buttons["employee_reenter_task_number_button"]))
+
+
 @tg_bot.message_handler(state = "get_task_id", is_digit = True)
 def employee_get_task_id(message):
     task_id = message.text
-    # todo: out of range
     with tg_bot.retrieve_data(message.chat.id) as data:
         data['task_id'] = message.text
-    task = task_table.get_task_by_id(task_id)
+        print(data)
+        task = task_table.get_task_by_id(task_id)
+        if task is None or task.task_type != data['task_type'] or task.platform != data['platform']:
+            employee_get_wrong_task_id(message)
+            return
     message_to_user = messages_templates["tasks"]["employee_got_new_task"]
     task_text = ""
     if task.task_type == "sub":
@@ -416,6 +430,7 @@ def employee_get_task_id(message):
         task_text = "Поставить лайк"
     elif task.task_type == "reposts":
         task_text = "Сделать репост"
+    tg_bot.set_state(message.chat.id, "")
     tg_bot.send_message(message.chat.id, message_to_user.format(task.id, task_text, task.ref, task.guarantee),
                         reply_markup = create_inline_keyboard(buttons["employee_got_new_task_buttons"]))
 
@@ -439,6 +454,7 @@ def employee_done_task(call):
             done_task_doubt(call.message)
         else:
             done_task(call.message)
+    tg_bot.delete_state(call.from_user.id)
 
 
 def done_task(message):
