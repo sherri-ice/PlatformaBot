@@ -114,7 +114,7 @@
   "choose_type_of_task_vk": {
     "\uD83D\uDC6F Подписки": "cd_vk_subscribers",
     "\uD83D\uDC6F Лайки": "cd_vk_likes",
-    "\uD83D\uDCE2 Репосты": "cd_vK_reposts",
+    "\uD83D\uDCE2 Репосты": "cd_vk_reposts",
     "↩️ Назад": "cd_employee_get_new_task"
   },
   "choose_type_of_task_telegram": {

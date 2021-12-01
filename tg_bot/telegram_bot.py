@@ -376,7 +376,7 @@ def callback_employee_choose_task_type(call):
     elif call.data == "cd_vk_likes":
         with tg_bot.retrieve_data(call.from_user.id) as data:
             data["task_type"] = "likes"
-    elif call.data == "cd_vK_reposts":
+    elif call.data == "cd_vk_reposts":
         with tg_bot.retrieve_data(call.from_user.id) as data:
             data["task_type"] = "reposts"
     get_messages_by_filter(call.message)
