@@ -496,6 +496,7 @@ def get_customer_profile_info(user_id):
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_employee")
 def switch_to_employee(call):
+    tg_bot.delete_state(call.from_user.id)
     user = user_table.get_user_by_tg_id(user_id = call.from_user.id)
     employee = employee_table.get_employee_by_id(user.id)
     if employee is None:
