@@ -89,6 +89,7 @@
   },
   "common_balance_buttons": {
     "\uD83E\uDD11 Вывести": "cd_get_money",
+    "\uD83D\uDCB3 Перевести на баланс Заказчика": "cd_transfer_money_to_customer",
     "\uD83D\uDCB8 Пополнить баланс": "cd_donate",
     "\uD83D\uDCD6 История транзакций": "cd_transaction_history"
   },
@@ -217,6 +218,10 @@
   },
   "employee_reenter_task_number_button": {
     "Попробовать ещё раз!": "cd_reenter_task_number"
+  },
+  "transfer_money_finished_buttons": {
+    "\uD83D\uDC65 Перейти в Заказчика": "cd_customer",
+    "\uD83C\uDFE0 Мой профиль": "cd_profile"
   },
   "main_buttons": [
     "\uD83C\uDFE0 Домой",

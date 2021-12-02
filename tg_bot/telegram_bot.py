@@ -496,7 +496,10 @@ def get_customer_profile_info(user_id):
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_employee")
 def switch_to_employee(call):
-    tg_bot.delete_state(call.from_user.id)
+    try:
+        tg_bot.delete_state(call.from_user.id)
+    except KeyError as error:
+        pass
     user = user_table.get_user_by_tg_id(user_id = call.from_user.id)
     employee = employee_table.get_employee_by_id(user.id)
     if employee is None:
@@ -1035,6 +1038,42 @@ def get_user_balance(user_id):
     else:
         customer_balance = str(customer.balance) + " PTF"
     return messages_templates["registered_user"]["common_balance"].format(customer_balance, employee_balance)
+
+
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_transfer_money_to_customer")
+def transfer_money_to_customer(call):
+    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    tg_bot.send_message(call.from_user.id, messages_templates["registered_user"]["transfer_money_to_customer"])
+    tg_bot.set_state(call.from_user.id, "get_money_to_transfer")
+
+
+@tg_bot.message_handler(state = "get_money_to_transfer", is_digit = False)
+def get_wrong_sum_for_transfer_to_customer(message):
+    tg_bot.send_message(message.chat.id,
+                        messages_templates["registered_user"]["transfer_money_to_customer_not_integer"])
+
+
+@tg_bot.message_handler(state = "get_money_to_transfer", is_digit = True)
+def get_money_amount_for_transfer_to_customer(message):
+    money_amount = message.text
+    user = user_table.get_user_by_tg_id(message.chat.id)
+    if user.employee.balance < int(money_amount):
+        tg_bot.send_message(message.chat.id,
+                            messages_templates["registered_user"]["transfer_money_to_customer_wrong_amount_of_money"])
+        return
+    user.employee.balance -= int(message.text)
+    user.customer.balance += int(message.text)
+    apply_db_changes()
+    tg_bot.send_message(message.chat.id,
+                        messages_templates["registered_user"][
+                            "transfer_money_to_customer_correct_amount_of_money"].format(message.text),
+                        reply_markup = create_inline_keyboard(buttons["transfer_money_finished_buttons"]))
+    tg_bot.delete_state(message.chat.id)
+
+
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_technical_help")
+def technical_help(call):
+    tg_bot.send_message(call.from_user.id, messages_templates["technical_help"])
 
 
 @tg_bot.message_handler(func = lambda message: message.text == "💴 Мой баланс")
