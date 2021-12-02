@@ -13,6 +13,7 @@ class UserTable(db.Model):
     finished_reg = db.Column(db.Boolean, default = False)
     # For target
     age = db.Column(db.String(255))
+    sex = db.Column(db.String(1))
     salary = db.Column(db.String(255))
     city_longitude = db.Column(db.Float)
     city_latitude = db.Column(db.Float)

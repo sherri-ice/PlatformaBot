@@ -109,7 +109,19 @@ def callback_age_handler(call):
     user.age = list(buttons["age_reg_buttons"].keys())[list(buttons["age_reg_buttons"].values()).index(call.data)]
     apply_db_changes()
     tg_bot.delete_message(chat_id = call.from_user.id, message_id = call.message.message_id)
+    tg_bot.send_message(call.from_user.id, messages_templates["unregistered_user"]["sex_reg_step"],
+                        reply_markup = create_inline_keyboard(buttons["sex_reg_buttons"]))
 
+
+@tg_bot.callback_query_handler(func = lambda call: call.data in buttons["sex_reg_buttons"].values())
+def callback_sex_handler(call):
+    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    user = user_table.get_user_by_tg_id(call.from_user.id)
+    if call.data == "cd_male":
+        user.sex = "M"
+    else:
+        user.sex = "F"
+    apply_db_changes()
     tg_bot.send_photo(call.from_user.id, photo = images["geo_send_help"], caption = messages_templates[
         "unregistered_user"]["city_reg_step"])
     tg_bot.set_state(call.from_user.id, "get_city")
@@ -250,10 +262,12 @@ def callback_accept_vk_account(call):
 def finish_registration(message):
     user = user_table.get_user_by_tg_id(message.chat.id)
     if user.finished_reg:
+        sex = "Женщина" if user.sex == 'F' else "Мужчина"
         message_for_user = messages_templates["registered_user"]["re_register_finish"] + messages_templates[
             "registered_user"]["registration_common_data"].format(
             user.id,
             user.age,
+            sex,
             user.city_name,
             user.registered_date)
         tg_bot.edit_message_text(chat_id = message.chat.id, message_id = message.message_id,
@@ -262,14 +276,14 @@ def finish_registration(message):
     user.finished_reg = True
     apply_db_changes()
     tg_bot.delete_message(chat_id = message.chat.id, message_id = message.message_id)
+    sex = "Женщина" if user.sex == 'F' else "Мужчина"
     message = tg_bot.send_message(message.chat.id,
                                   messages_templates["registered_user"]["registration_common_data"].format(
                                       user.id,
                                       user.age,
+                                      sex,
                                       user.city_name,
                                       user.registered_date))
-    # tg_bot.edit_message_reply_markup(chat_id = message.chat.id, message_id = message.message_id, reply_markup =
-    # create_reply_keyboard(buttons["main_buttons"]))
     show_faq_after_req(message)
 
 
@@ -312,8 +326,10 @@ def get_profile_info(user_id):
         customer_data = messages_templates["customer"]["no_profile"]
     else:
         customer_data = str(customer.balance) + " PTF"
-    active_tasks = len(task_table.get_active_tasks_by_customer_id(user.customer.id))
+    active_tasks = 0 if user.customer is None else len(task_table.get_active_tasks_by_customer_id(user.customer.id))
+    sex = "Женщина" if user.sex == 'F' else "Мужчина"
     common_data = messages_templates["registered_user"]["profile_common_data"].format(user.id, user.age,
+                                                                                      sex,
                                                                                       user.city_name,
                                                                                       user.registered_date,
                                                                                       active_tasks,

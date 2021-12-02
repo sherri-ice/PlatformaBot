@@ -8,6 +8,10 @@
     "24-30": "cd_upper_midle",
     "30+": "cd_old"
   },
+  "sex_reg_buttons": {
+    "Мужчина": "cd_male",
+    "Женщина": "cd_female"
+  },
   "city_error_button": {
     "↩️ Попробовать ещё раз": "cd_city_back"
   },
