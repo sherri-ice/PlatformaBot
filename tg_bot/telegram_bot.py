@@ -864,28 +864,32 @@ def customer_choose_task_cost(call):
                                 reply_markup = create_inline_keyboard(buttons_to_send))
         else:
             if data["platform"] == "vk":
-                available_subscribers = count_available_employees(money, "vk_prices", "subscribers")
+                available_employees = count_available_employees(money, "vk_prices", "subscribers")
                 prices_path = "vk_prices"
             else:
-                available_subscribers = count_available_employees(money, "telegram_prices", "subscribers")
+                available_employees = count_available_employees(money, "telegram_prices", "subscribers")
                 prices_path = "telegram_prices"
             message = messages_templates["tasks"]["chosen_task"]
             if call.data == "cd_variant_1":
-                message = message.format(available_subscribers[0], "3 дня", "")
-                data["guarantee"] = "3"
                 data["price"] = prices[prices_path]["subscribers"]["guarantee_3_days"]
+                summa = available_employees[0] * data["price"]
+                message = message.format(available_employees[0], "3 дня", summa)
+                data["guarantee"] = "3"
             elif call.data == "cd_variant_2":
-                message = message.format(available_subscribers[1], "14 дней", "")
-                data["guarantee"] = "14"
                 data["price"] = prices[prices_path]["subscribers"]["guarantee_14_days"]
+                summa = available_employees[1] * data["price"]
+                message = message.format(available_employees[1], "14 дней", summa)
+                data["guarantee"] = "14"
             elif call.data == "cd_variant_3":
-                message = message.format(available_subscribers[2], "навсегда", "")
-                data["guarantee"] = "lim"
                 data["price"] = prices[prices_path]["subscribers"]["guarantee_limitless"]
+                summa = available_employees[2] * data["price"]
+                message = message.format(available_employees[2], "навсегда", summa)
+                data["guarantee"] = "lim"
             elif call.data == "cd_variant_4":
-                message = message.format(available_subscribers[3], "нет", "")
-                data["guarantee"] = "no"
                 data["price"] = prices[prices_path]["subscribers"]["no_guarantee"]
+                summa = available_employees[3] * data["price"]
+                message = message.format(available_employees[3], "нет", summa)
+                data["guarantee"] = "no"
             tg_bot.send_message(call.from_user.id, message,
                                 reply_markup = create_inline_keyboard(buttons["customer_save_task_button"]))
 
