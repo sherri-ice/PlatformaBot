@@ -410,7 +410,7 @@ def get_tasks_by_filter(message):
                                 reply_markup = create_inline_keyboard(buttons["employee_return_to_tasks_buttons"]))
         else:
             message_to_user = messages_templates["tasks"]["employee_get_tasks"].format(len(tasks))
-            for task in sorted(tasks, key = lambda obj: obj.price, reverse = True):
+            for task in tasks:
                 message_to_user += "Задание №{} | Награда: {} PTF\n".format(task.id, task.price)
             tg_bot.send_message(chat_id, message_to_user,
                                 reply_markup = create_inline_keyboard(buttons["employee_back_to_profile"]))
@@ -433,7 +433,6 @@ def employee_get_task_id(message):
     task_id = message.text
     with tg_bot.retrieve_data(message.chat.id) as data:
         data['task_id'] = message.text
-        print(data)
         task = task_table.get_task_by_id(task_id)
         if task is None or task.task_type != data['task_type'] or task.platform != data['platform']:
             employee_get_wrong_task_id(message)
@@ -911,7 +910,7 @@ def customer_custom_task_guarantee(call):
                 message = messages_templates["tasks"]["custom_subs_task_set_guarantee"]["lim"]
             elif call.data == "cd_no_guarantee":
                 data["guarantee"] = "no"
-                message = messages_templates["tasks"]["custom_suds_task_set_guarantee"]["no"]
+                message = messages_templates["tasks"]["custom_subs_task_set_guarantee"]["no"]
         elif data["task_type"] == "likes":
             if call.data == "cd_limitless_guarantee":
                 data["guarantee"] = "lim"
@@ -1022,6 +1021,55 @@ def customer_get_tasks(call):
             message += f"\n\n ° Задание - {tasks.index(task) + 1}\nПлатформа: {platform}\nТип: " \
                        f"{task_type}\nПрогресс: {task.current_count_of_employees}/{task.needed_count_of_employees}"
     tg_bot.send_message(call.from_user.id, message, reply_markup = keyboard)
+
+
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_select_top_task")
+def customer_get_task_top(call):
+    user = user_table.get_user_by_tg_id(call.from_user.id)
+    tasks = task_table.get_active_tasks_by_customer_id(user.customer.id)
+    message_to_user = messages_templates["tasks"]["choose_top_task"].format(len(tasks))
+    if len(tasks) == 0:
+        message_to_user += messages_templates["tasks"]["customer_no_active_tasks"]
+        keyboard = create_inline_keyboard(buttons["customer_no_tasks"])
+        tg_bot.send_message(call.from_user.id, message_to_user, reply_markup = keyboard)
+    else:
+        for task in tasks:
+            message_to_user += f"\n° Задание - {tasks.index(task) + 1}"
+        tg_bot.send_message(call.from_user.id, message_to_user)
+        tg_bot.set_state(call.from_user.id, "get_task_id_for_top")
+
+
+@tg_bot.message_handler(state = "get_task_id_for_top", is_digit = True)
+def get_task_if_for_top(message):
+    task_id = message.text
+    task = task_table.get_task_by_id(task_id)
+    if task is None:
+        tg_bot.send_message(message.chat.id, messages_templates["tasks"]["employee_wrong_task_number"])
+        return
+    with tg_bot.retrieve_data(message.chat.id) as data:
+        data['task_id'] = task_id
+    tg_bot.send_message(message.chat.id,
+                        messages_templates["tasks"]["set_to_top"].format(task_id, prices["set_to_top_price"]),
+                        reply_markup = create_inline_keyboard(buttons["set_to_top_buttons"]))
+
+
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_set_task_to_top")
+def set_task_to_top(call):
+    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    user = user_table.get_user_by_tg_id(call.from_user.id)
+    if user.customer.balance < prices["set_to_top_price"]:
+        lacked_sum = prices["set_to_top_price"] - user.customer.balance
+        tg_bot.send_message(call.from_user.id,
+                            messages_templates["tasks"]["not_enough_money_for_top"].format(lacked_sum),
+                            reply_markup = create_inline_keyboard(buttons["not_ok_set_top_task_buttons"]))
+    else:
+        user.customer.balance -= prices["set_to_top_price"]
+        apply_db_changes()
+        with tg_bot.retrieve_data(call.from_user.id) as data:
+            task_id = data['task_id']
+            task_table.raise_task_in_top(task_id)
+            tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["ok_set_to_top"],
+                                reply_markup = create_inline_keyboard(buttons["ok_set_top_task_buttons"]))
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_customer_faq")

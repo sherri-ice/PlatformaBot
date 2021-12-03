@@ -197,7 +197,7 @@
   "customer_tasks_menu": {
     "✏ Создать задание": "cd_create_task",
     "\uD83D\uDC51 Создать таргетированное задание": "cd_create_target_task",
-    "\uD83C\uDFCB Поднять задание": "cd_set_top_task",
+    "\uD83C\uDFCB Поднять задание": "cd_select_top_task",
     "\uD83D\uDCCC Закрепить задание": "cd_pin_task",
     "\uD83D\uDE45 Отменить задание": "cd_decline_task",
     "\uD83D\uDDE1 Проверить гарантию": "cd_check_guarantee",
@@ -226,6 +226,18 @@
   "transfer_money_finished_buttons": {
     "\uD83D\uDC65 Перейти в Заказчика": "cd_customer",
     "\uD83C\uDFE0 Мой профиль": "cd_profile"
+  },
+  "set_to_top_buttons": {
+    "\uD83C\uDD99 Поднять задание": "cd_set_task_to_top",
+    "\uD83D\uDD19 Вернуться назад": "cd_select_top_task"
+  },
+  "ok_set_top_task_buttons": {
+    "\uD83C\uDFE0 Профиль заказчика": "cd_customer",
+    "\uD83D\uDCBC Мои задания": "cd_customer_my_tasks"
+  },
+  "not_ok_set_top_task_buttons": {
+    "\uD83C\uDFE0 Профиль заказчика": "cd_customer",
+    "\uD83D\uDCB8 Пополнить баланс": "cd_donate"
   },
   "main_buttons": [
     "\uD83C\uDFE0 Домой",

@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from sql.database import db, apply_db_changes
+from sqlalchemy import desc, func
 
 
 class EmployeesOnTask(db.Model):
@@ -28,6 +29,11 @@ class Task(db.Model):
     platform = db.Column(db.String(255))
     task_type = db.Column(db.String(255))
     price = db.Column(db.Integer)
+    # Needed in case of importance overflow
+    direct_moving = True
+    top_importance = 0
+    importance = db.Column(db.Integer, default = 0)
+    pinned = db.Column(db.Boolean, default = False)
 
     # for target
     age = db.Column(db.Integer)
@@ -68,12 +74,22 @@ class Task(db.Model):
         tasks = self.query. \
             filter_by(free = 1). \
             filter_by(platform = platform). \
-            filter_by(task_type = task_type).all()
+            filter_by(task_type = task_type). \
+            order_by(desc(Task.price)). \
+            order_by(desc(Task.importance)).all()
         result = []
         for task in tasks:
             if len(EmployeesOnTask.query.filter_by(task_id = task.id).filter_by(employee_id = employee_id).all()) == 0:
                 result.append(task)
         return result
+
+    def raise_task_in_top(self, task_id):
+        task = self.get_task_by_id(task_id)
+        if task is None:
+            raise IndexError(f"Invalid task id: {task_id}")
+        top_importance = self.query.order_by(desc(Task.importance)).first().importance
+        task.importance = top_importance + 1
+        apply_db_changes()
 
 
 task_table = Task()
