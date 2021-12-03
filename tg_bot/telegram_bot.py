@@ -1003,7 +1003,7 @@ def customer_get_tasks(call):
     tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
     user = user_table.get_user_by_tg_id(call.from_user.id)
     customer = customer_table.get_customer_by_id(user.id)
-    tasks = task_table.get_tasks_by_customer_id(customer.id)
+    tasks = task_table.get_active_tasks_by_customer_id(customer.id)
     if len(tasks) == 0:
         message = messages_templates["tasks"]["customer_no_active_tasks"]
         keyboard = create_inline_keyboard(buttons["customer_no_tasks"])
@@ -1025,10 +1025,10 @@ def customer_get_tasks(call):
                 task_type = "Репосты"
             if task.pinned:
                 pin_time_left = (datetime.datetime.strptime(task.pinned_date, "%m/%d/%y %H:%M") + \
-                                 datetime.timedelta(days = 1) - datetime.datetime.now())
+                                 datetime.timedelta(days = 1) - datetime.datetime.utcnow())
                 message += f"\n\n 📌 Задание - {task.id}\nПлатформа: {platform}\nТип: " \
                            f"{task_type}\nПрогресс: {task.current_count_of_employees}/{task.needed_count_of_employees}" \
-                           f"\nОсталось времени до окончания статуса \" Закреплено \":" \
+                           f"\nОсталось времени до окончания статуса \"Закреплено\":" \
                            f" {pin_time_left.seconds // 3600} " \
                            f"часов, {(pin_time_left.seconds // 60) % 60} минут"
             else:

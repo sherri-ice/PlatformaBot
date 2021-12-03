@@ -21,6 +21,7 @@ class Task(db.Model):
     needed_count_of_employees = db.Column(db.Integer, default = 0)
     current_count_of_employees = db.Column(db.Integer, default = 0)
     completed = db.Column(db.Boolean, default = False)
+    declined = db.Column(db.Boolean, default = False)
     guarantee = db.Column(db.String(255))
     on_guarantee = db.Column(db.Boolean, default = False)
     free = db.Column(db.Boolean, default = True)
@@ -59,7 +60,7 @@ class Task(db.Model):
         return self.query.filter_by(id = task_id).first()
 
     def get_active_tasks_by_customer_id(self, customer_id, pinned = True):
-        result = self.query.filter_by(customer_id = customer_id).filter_by(completed = 0)
+        result = self.query.filter_by(customer_id = customer_id).filter_by(completed = 0).filter_by(declined = False)
         if not pinned:
             return result.filter_by(pinned = False).all()
         return result.all()
@@ -76,6 +77,7 @@ class Task(db.Model):
     # TODO: get targeted task
     def get_new_tasks(self, platform, task_type, employee_id):
         tasks = self.query. \
+            filter_by(declined = 0). \
             filter_by(free = 1). \
             filter_by(platform = platform). \
             filter_by(task_type = task_type). \
@@ -107,7 +109,8 @@ class Task(db.Model):
         apply_db_changes()
 
     def delete_task(self, task_id):
-        self.query.filter_by(id = task_id).delete()
+        task = self.get_task_by_id(task_id)
+        task.declined = True
         EmployeesOnTask.query.filter_by(task_id = task_id).delete()
         apply_db_changes()
 
