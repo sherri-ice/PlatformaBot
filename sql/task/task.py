@@ -107,6 +107,5 @@ class Task(db.Model):
         apply_db_changes()
 
 
-
 task_table = Task()
 employees_on_task_table = EmployeesOnTask()

@@ -14,7 +14,7 @@ from telebot import custom_filters
 from geocode.geo_patcher import get_address_from_coordinates
 from url_checker.url_checker import telegram_channel_check, vk_page_check, vk_post_check
 
-from guarantee_checker.guarantee_checker import check_vk_subscription_task, check_vk_like_task, check_vk_repost_task
+from helpers.guarantee_checker.guarantee_checker import check_vk_subscription_task, check_vk_like_task, check_vk_repost_task
 
 messages_templates = load_messages()
 buttons = load_buttons()

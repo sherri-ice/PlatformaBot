@@ -3,52 +3,8 @@ from time import sleep
 import datetime
 
 from vk.vk_auth import get_vk_api
-
-from sqlalchemy.ext.automap import automap_base
-from sqlalchemy.orm import Session
-from sqlalchemy import create_engine
-
-from meta.loader import SQL_PASSWORD, SQL_HOST, SQL_USER, SQL_DATABASE
-
-from meta.loader import TELEGRAM_TOKEN
-from telebot import TeleBot
-
-bot = TeleBot(token = TELEGRAM_TOKEN)
-
-Base = automap_base()
-
-engine = create_engine(f"mysql+mysqlconnector://{SQL_USER}:{SQL_PASSWORD}@{SQL_HOST}" \
-                       f"/{SQL_DATABASE}")
-
-Base.prepare(engine, reflect = True)
-
-Task = Base.classes.task
-EmployeesOnTask = Base.classes.employees_on_task
-User = Base.classes.user
-Employee = Base.classes.employee
-
-session = Session(engine)
-
-
-def get_tasks_on_guarantee():
-    return session.query(Task).filter_by(free = False).filter_by(on_guarantee = True).filter_by(completed =
-                                                                                                False).all()
-
-
-def get_task_by_id(task_id):
-    return session.query(Task).filter_by(id = task_id).first()
-
-
-def get_user_by_employee_id(employee_id):
-    return session.query(User).filter_by(employee_id = employee_id).first()
-
-
-def get_employees_by_task_id(task_id):
-    return session.query(EmployeesOnTask).filter_by(task_id = task_id).all()
-
-
-def delete_employee_from_task(employee_id, task_id):
-    session.query(EmployeesOnTask).filter_by(task_id = task_id).filter_by(employee_id = employee_id).delete()
+from helpers.helpers_factory import get_tasks_on_guarantee, get_employees_by_task_id, get_user_by_employee_id, \
+    session, delete_employee_from_task, bot
 
 
 def guarantee_checker():
@@ -119,16 +75,3 @@ def send_impaired_warranty_message(employee_id, task_id):
     bot.send_message(user.tg_id, message_to_user)
     delete_employee_from_task(employee_id, task_id)
     session.commit()
-
-
-def guarantee_loop():
-    # Waits time to be "rounded", e.g. "12:00"
-    # sleep(60 * (60 - datetime.datetime.now().minute))
-    while True:
-        # Sleep for one hour
-        guarantee_checker()
-        sleep(60 * 60)
-
-
-if __name__ == '__main__':
-    guarantee_loop()
