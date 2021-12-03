@@ -4,7 +4,26 @@ import datetime
 
 from vk.vk_auth import get_vk_api
 from helpers.helpers_factory import get_tasks_on_guarantee, get_employees_by_task_id, get_user_by_employee_id, \
-    session, delete_employee_from_task, bot
+    session, delete_employee_from_task, bot, get_tasks_on_guarantee_by_customer_id, get_task_by_id
+
+
+def guarantee_checker_by_customer_id(customer_id):
+    tasks = get_tasks_on_guarantee_by_customer_id(customer_id)
+    failed_tasks = []
+    for task in tasks:
+        employees_id = get_employees_by_task_id(task.id)
+        for employee in employees_id:
+            result = True
+            if task.platform == "vk":
+                if task.task_type == "sub":
+                    result = check_vk_subscription_task(employee.id, task.ref)
+                elif task.task_type == "likes":
+                    result = check_vk_like_task(employee.id, task.ref)
+                elif task.task_type == "reposts":
+                    result = check_vk_repost_task(employee.id, task.ref)
+            if not result:
+                failed_tasks.append(task.id)
+    return (True, []) if len(failed_tasks) == 0 else (False, failed_tasks)
 
 
 def guarantee_checker():

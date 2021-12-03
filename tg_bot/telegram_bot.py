@@ -15,7 +15,7 @@ from geocode.geo_patcher import get_address_from_coordinates
 from url_checker.url_checker import telegram_channel_check, vk_page_check, vk_post_check
 
 from helpers.guarantee_checker.guarantee_checker import check_vk_subscription_task, check_vk_like_task, \
-    check_vk_repost_task
+    check_vk_repost_task, guarantee_checker_by_customer_id
 
 messages_templates = load_messages()
 buttons = load_buttons()
@@ -1185,6 +1185,47 @@ def customer_decline_task(call):
         task_table.delete_task(task_id)
         tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["decline"]["ok_decline_task"].format(reward),
                             reply_markup = create_inline_keyboard(buttons["decline_buttons"]["ok_declined_buttons"]))
+
+
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_task_history")
+def customer_task_history(call):
+    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    user = user_table.get_user_by_tg_id(call.from_user.id)
+    all_tasks = task_table.get_tasks_by_customer_id(user.customer.id)
+    active_tasks = task_table.get_active_tasks_by_customer_id(user.customer.id)
+    message_to_user = messages_templates["tasks"]["history"].format(len(all_tasks), len(active_tasks))
+    if len(all_tasks) == 0:
+        message_to_user += messages_templates["tasks"]["customer_no_active_tasks"]
+        keyboard = create_inline_keyboard(buttons["customer_no_tasks"])
+        tg_bot.send_message(call.from_user.id, message_to_user, reply_markup = keyboard)
+    else:
+        for task in all_tasks:
+            if task.declined:
+                message_to_user += f"\nЗадание №{task.id} (отменено)"
+            elif not task.completed and not task.declined:
+                message_to_user += f"\nЗадание №{task.id} (в процессе)"
+            else:
+                message_to_user += f"\nЗадание №{task.id} (выполнено)"
+        tg_bot.send_message(call.from_user.id, message_to_user,
+                            reply_markup = create_inline_keyboard(buttons["customer_return_button"]))
+
+
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_check_guarantee")
+def check_guarantee(call):
+    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    user = user_table.get_user_by_tg_id(call.from_user.id)
+    result, tasks_id = guarantee_checker_by_customer_id(user.customer.id)
+    if not result:
+        message_to_user = messages_templates["tasks"]["guarantee"]["guarantee_fall"].format(len(tasks_id))
+        for task_id in tasks_id:
+            task = task_table.get_task_by_id(task_id)
+            message_to_user += f"№{task_id}💲 Вам было компенсировано: {task.price} PTF"
+        tg_bot.send_message(call.from_user.id, message_to_user,
+                            reply_markup = create_inline_keyboard(buttons["customer_guarantee_okay"]))
+    else:
+        message_to_user = messages_templates["tasks"]["guarantee"]["guarantee_ok"]
+        tg_bot.send_message(call.from_user.id, message_to_user,
+                            reply_markup = create_inline_keyboard(buttons["customer_return_button"]))
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_customer_faq")

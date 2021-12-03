@@ -29,6 +29,13 @@ def get_tasks_on_guarantee():
                                                                                                 False).all()
 
 
+def get_tasks_on_guarantee_by_customer_id(customer_id):
+    return session.query(Task).filter_by(customer_id = customer_id).filter_by(free = False).filter_by(on_guarantee =
+                                                                                                      True).filter_by(
+        completed =
+        False).all()
+
+
 def get_task_by_id(task_id):
     return session.query(Task).filter_by(id = task_id).first()
 

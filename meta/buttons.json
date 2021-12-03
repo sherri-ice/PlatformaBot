@@ -266,6 +266,13 @@
       "\uD83D\uDCBC Мои задания": "cd_customer_my_tasks"
     }
   },
+  "customer_return_button": {
+    "↩️ Назад": "cd_customer"
+  },
+  "customer_guarantee_okay": {
+     "\uD83C\uDFE0 Профиль заказчика": "cd_customer",
+      "\uD83D\uDCB8 Пополнить баланс": "cd_donate"
+  },
   "main_buttons": [
     "\uD83C\uDFE0 Домой",
     "\uD83D\uDC64 Мой профиль",
