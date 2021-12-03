@@ -1,3 +1,4 @@
+import datetime
 import logging
 import telebot
 from telebot import types
@@ -411,7 +412,10 @@ def get_tasks_by_filter(message):
         else:
             message_to_user = messages_templates["tasks"]["employee_get_tasks"].format(len(tasks))
             for task in tasks:
-                message_to_user += "Задание №{} | Награда: {} PTF\n".format(task.id, task.price)
+                if task.pinned:
+                    message_to_user += "📌 Задание №{} | Награда: {} PTF\n".format(task.id, task.price)
+                else:
+                    message_to_user += "Задание №{} | Награда: {} PTF\n".format(task.id, task.price)
             tg_bot.send_message(chat_id, message_to_user,
                                 reply_markup = create_inline_keyboard(buttons["employee_back_to_profile"]))
             tg_bot.set_state(message.chat.id, "get_task_id")
@@ -1018,8 +1022,17 @@ def customer_get_tasks(call):
                 task_type = "Лайки"
             elif task.task_type == "reposts":
                 task_type = "Репосты"
-            message += f"\n\n ° Задание - {tasks.index(task) + 1}\nПлатформа: {platform}\nТип: " \
-                       f"{task_type}\nПрогресс: {task.current_count_of_employees}/{task.needed_count_of_employees}"
+            if task.pinned:
+                pin_time_left = (datetime.datetime.strptime(task.pinned_date, "%m/%d/%y %H:%M") + \
+                                 datetime.timedelta(days = 1) - datetime.datetime.now())
+                message += f"\n\n 📌 Задание - {task.id}\nПлатформа: {platform}\nТип: " \
+                           f"{task_type}\nПрогресс: {task.current_count_of_employees}/{task.needed_count_of_employees}" \
+                           f"\nОсталось времени до окончания статуса \" Закреплено \":" \
+                           f" {pin_time_left.seconds // 3600} " \
+                           f"часов, {(pin_time_left.seconds // 60) % 60} минут"
+            else:
+                message += f"\n\n ° Задание - {task.id}\nПлатформа: {platform}\nТип: " \
+                           f"{task_type}\nПрогресс: {task.current_count_of_employees}/{task.needed_count_of_employees}"
     tg_bot.send_message(call.from_user.id, message, reply_markup = keyboard)
 
 
@@ -1034,7 +1047,7 @@ def customer_get_task_top(call):
         tg_bot.send_message(call.from_user.id, message_to_user, reply_markup = keyboard)
     else:
         for task in tasks:
-            message_to_user += f"\n° Задание - {tasks.index(task) + 1}"
+            message_to_user += f"\n° Задание - {task.id}"
         tg_bot.send_message(call.from_user.id, message_to_user)
         tg_bot.set_state(call.from_user.id, "get_task_id_for_top")
 
@@ -1070,6 +1083,55 @@ def set_task_to_top(call):
             task_table.raise_task_in_top(task_id)
             tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["ok_set_to_top"],
                                 reply_markup = create_inline_keyboard(buttons["ok_set_top_task_buttons"]))
+
+
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_select_pin_task")
+def customer_select_task_to_pin(call):
+    user = user_table.get_user_by_tg_id(call.from_user.id)
+    tasks = task_table.get_active_tasks_by_customer_id(user.customer.id, pinned = False)
+    message_to_user = messages_templates["tasks"]["pin"]["select_pin_task"].format(len(tasks))
+    if len(tasks) == 0:
+        message_to_user += messages_templates["tasks"]["customer_no_active_tasks"]
+        keyboard = create_inline_keyboard(buttons["customer_no_tasks"])
+        tg_bot.send_message(call.from_user.id, message_to_user, reply_markup = keyboard)
+    else:
+        for task in tasks:
+            message_to_user += f"\n° Задание - {task.id}"
+        tg_bot.send_message(call.from_user.id, message_to_user)
+        tg_bot.set_state(call.from_user.id, "get_task_id_for_pin")
+
+
+@tg_bot.message_handler(state = "get_task_id_for_pin", is_digit = True)
+def get_task_for_pin(message):
+    task_id = message.text
+    task = task_table.get_task_by_id(task_id)
+    if task is None or task.pinned:
+        tg_bot.send_message(message.chat.id, messages_templates["tasks"]["employee_wrong_task_number"])
+        return
+    with tg_bot.retrieve_data(message.chat.id) as data:
+        data['task_id'] = task_id
+    tg_bot.send_message(message.chat.id,
+                        messages_templates["tasks"]["pin"]["pin_task_approve"].format(task_id, prices["pin_price"]),
+                        reply_markup = create_inline_keyboard(buttons["pin_buttons"]["pin_approve_buttons"]))
+
+
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_pin_task")
+def pin_task(call):
+    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    user = user_table.get_user_by_tg_id(call.from_user.id)
+    if user.customer.balance < prices["pin_price"]:
+        lacked_sum = prices["pin_price"] - user.customer.balance
+        tg_bot.send_message(call.from_user.id,
+                            messages_templates["tasks"]["pin"]["pin_not_enough_money"].format(lacked_sum),
+                            reply_markup = create_inline_keyboard(buttons["pin_buttons"]["not_ok_pin_task_buttons"]))
+    else:
+        user.customer.balance -= prices["pin_price"]
+        apply_db_changes()
+        with tg_bot.retrieve_data(call.from_user.id) as data:
+            task_id = data['task_id']
+            task_table.pin_task(task_id)
+            tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["pin"]["pin_ok"],
+                                reply_markup = create_inline_keyboard(buttons["pin_buttons"]["ok_pin_task_buttons"]))
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_customer_faq")

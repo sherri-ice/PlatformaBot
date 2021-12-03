@@ -34,6 +34,7 @@ class Task(db.Model):
     top_importance = 0
     importance = db.Column(db.Integer, default = 0)
     pinned = db.Column(db.Boolean, default = False)
+    pinned_date = db.Column(db.String(255))
 
     # for target
     age = db.Column(db.Integer)
@@ -57,8 +58,11 @@ class Task(db.Model):
     def get_task_by_id(self, task_id):
         return self.query.filter_by(id = task_id).first()
 
-    def get_active_tasks_by_customer_id(self, customer_id):
-        return self.query.filter_by(customer_id = customer_id).filter_by(completed = 0).all()
+    def get_active_tasks_by_customer_id(self, customer_id, pinned = True):
+        result = self.query.filter_by(customer_id = customer_id).filter_by(completed = 0)
+        if not pinned:
+            return result.filter_by(pinned = False).all()
+        return result.all()
 
     def get_active_tasks_by_employee_id(self, employee_id):
         return EmployeesOnTask.query.filter_by(employee_id = employee_id).count()
@@ -75,6 +79,8 @@ class Task(db.Model):
             filter_by(free = 1). \
             filter_by(platform = platform). \
             filter_by(task_type = task_type). \
+            order_by(desc(Task.pinned)). \
+            order_by(desc(Task.pinned_date)). \
             order_by(desc(Task.price)). \
             order_by(desc(Task.importance)).all()
         result = []
@@ -90,6 +96,16 @@ class Task(db.Model):
         top_importance = self.query.order_by(desc(Task.importance)).first().importance
         task.importance = top_importance + 1
         apply_db_changes()
+
+    def pin_task(self, task_id):
+        task = self.get_task_by_id(task_id)
+        if task is None:
+            raise IndexError(f"Invalid task id: {task_id}")
+        # TODO: write disclaimer
+        task.pinned_date = datetime.utcnow().strftime("%m/%d/%y %H:%M")
+        task.pinned = True
+        apply_db_changes()
+
 
 
 task_table = Task()
