@@ -106,6 +106,11 @@ class Task(db.Model):
         task.pinned = True
         apply_db_changes()
 
+    def delete_task(self, task_id):
+        self.query.filter_by(id = task_id).delete()
+        EmployeesOnTask.query.filter_by(task_id = task_id).delete()
+        apply_db_changes()
+
 
 task_table = Task()
 employees_on_task_table = EmployeesOnTask()

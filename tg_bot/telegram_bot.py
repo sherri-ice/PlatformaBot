@@ -14,7 +14,8 @@ from telebot import custom_filters
 from geocode.geo_patcher import get_address_from_coordinates
 from url_checker.url_checker import telegram_channel_check, vk_page_check, vk_post_check
 
-from helpers.guarantee_checker.guarantee_checker import check_vk_subscription_task, check_vk_like_task, check_vk_repost_task
+from helpers.guarantee_checker.guarantee_checker import check_vk_subscription_task, check_vk_like_task, \
+    check_vk_repost_task
 
 messages_templates = load_messages()
 buttons = load_buttons()
@@ -1048,7 +1049,8 @@ def customer_get_task_top(call):
     else:
         for task in tasks:
             message_to_user += f"\n° Задание - {task.id}"
-        tg_bot.send_message(call.from_user.id, message_to_user)
+        tg_bot.send_message(call.from_user.id, message_to_user,
+                            reply_markup = create_inline_keyboard(buttons["customer_back_to_customer_tasks"]))
         tg_bot.set_state(call.from_user.id, "get_task_id_for_top")
 
 
@@ -1097,7 +1099,8 @@ def customer_select_task_to_pin(call):
     else:
         for task in tasks:
             message_to_user += f"\n° Задание - {task.id}"
-        tg_bot.send_message(call.from_user.id, message_to_user)
+        tg_bot.send_message(call.from_user.id, message_to_user,
+                            reply_markup = create_inline_keyboard(buttons["customer_back_to_customer_tasks"]))
         tg_bot.set_state(call.from_user.id, "get_task_id_for_pin")
 
 
@@ -1132,6 +1135,56 @@ def pin_task(call):
             task_table.pin_task(task_id)
             tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["pin"]["pin_ok"],
                                 reply_markup = create_inline_keyboard(buttons["pin_buttons"]["ok_pin_task_buttons"]))
+
+
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_select_decline_task")
+def customer_decline_task(call):
+    user = user_table.get_user_by_tg_id(call.from_user.id)
+    tasks = task_table.get_active_tasks_by_customer_id(user.customer.id)
+    message_to_user = messages_templates["tasks"]["decline"][
+        "select_task_to_decline"].format(len(tasks))
+    if len(tasks) == 0:
+        message_to_user += messages_templates["tasks"]["customer_no_active_tasks"]
+        keyboard = create_inline_keyboard(buttons["customer_no_tasks"])
+        tg_bot.send_message(call.from_user.id, message_to_user, reply_markup = keyboard)
+    else:
+        for task in tasks:
+            if task.pinned:
+                message_to_user += f"\n📌 Задание №{task.id}"
+            else:
+                message_to_user += f"\n Задание №{task.id}"
+        tg_bot.send_message(call.from_user.id, message_to_user,
+                            reply_markup = create_inline_keyboard(buttons["customer_back_to_customer_tasks"]))
+        tg_bot.set_state(call.from_user.id, "get_task_id_to_decline")
+
+
+@tg_bot.message_handler(state = "get_task_id_to_decline", is_digit = True)
+def get_task_for_pin(message):
+    task_id = message.text
+    task = task_table.get_task_by_id(task_id)
+    if task is None:
+        tg_bot.send_message(message.chat.id, messages_templates["tasks"]["employee_wrong_task_number"])
+        return
+    with tg_bot.retrieve_data(message.chat.id) as data:
+        data['task_id'] = task_id
+    tg_bot.send_message(message.chat.id,
+                        messages_templates["tasks"]["decline"]["decline_task_approve"].format(task_id),
+                        reply_markup = create_inline_keyboard(buttons["decline_buttons"]["ok_decline_buttons"]))
+
+
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_decline_task")
+def customer_decline_task(call):
+    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    with tg_bot.retrieve_data(call.from_user.id) as data:
+        task_id = data['task_id']
+        user = user_table.get_user_by_tg_id(call.from_user.id)
+        task = task_table.get_task_by_id(task_id)
+        reward = (task.needed_count_of_employees - task.current_count_of_employees) * task.price
+        user.customer.balance += reward
+        apply_db_changes()
+        task_table.delete_task(task_id)
+        tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["decline"]["ok_decline_task"].format(reward),
+                            reply_markup = create_inline_keyboard(buttons["decline_buttons"]["ok_declined_buttons"]))
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_customer_faq")
