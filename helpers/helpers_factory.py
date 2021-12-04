@@ -25,15 +25,13 @@ session = Session(engine)
 
 
 def get_tasks_on_guarantee():
-    return session.query(Task).filter_by(free = False).filter_by(on_guarantee = True).filter_by(completed =
-                                                                                                False).all()
+    return session.query(Task).filter_by(on_guarantee = True).filter_by(completed =
+                                                                        False).all()
 
 
 def get_tasks_on_guarantee_by_customer_id(customer_id):
-    return session.query(Task).filter_by(customer_id = customer_id).filter_by(free = False).filter_by(on_guarantee =
-                                                                                                      True).filter_by(
-        completed =
-        False).all()
+    return session.query(Task).filter_by(customer_id = customer_id).filter_by(on_guarantee =
+                                                                              True).filter_by(completed =False).all()
 
 
 def get_task_by_id(task_id):
@@ -50,6 +48,9 @@ def get_employees_by_task_id(task_id):
 
 def delete_employee_from_task(employee_id, task_id):
     session.query(EmployeesOnTask).filter_by(task_id = task_id).filter_by(employee_id = employee_id).delete()
+    task = get_task_by_id(task_id)
+    task.current_count_of_employees -= 1
+    session.commit()
 
 
 def get_pinned_tasks():

@@ -23,6 +23,7 @@ def guarantee_checker_by_customer_id(customer_id):
                     result = check_vk_repost_task(employee.id, task.ref)
             if not result:
                 failed_tasks.append(task.id)
+                send_impaired_warranty_message(employee.id, task.id)
     return (True, []) if len(failed_tasks) == 0 else (False, failed_tasks)
 
 

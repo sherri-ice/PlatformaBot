@@ -1219,13 +1219,13 @@ def check_guarantee(call):
         message_to_user = messages_templates["tasks"]["guarantee"]["guarantee_fall"].format(len(tasks_id))
         for task_id in tasks_id:
             task = task_table.get_task_by_id(task_id)
-            message_to_user += f"№{task_id}💲 Вам было компенсировано: {task.price} PTF"
+            message_to_user += f"\n№{task_id}\n💲 Вам было компенсировано: {task.price} PTF"
         tg_bot.send_message(call.from_user.id, message_to_user,
-                            reply_markup = create_inline_keyboard(buttons["customer_guarantee_okay"]))
+                            reply_markup = create_inline_keyboard(buttons["customer_return_button"]))
     else:
         message_to_user = messages_templates["tasks"]["guarantee"]["guarantee_ok"]
         tg_bot.send_message(call.from_user.id, message_to_user,
-                            reply_markup = create_inline_keyboard(buttons["customer_return_button"]))
+                            reply_markup = create_inline_keyboard(buttons["customer_guarantee_okay"]))
 
 
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_customer_faq")
