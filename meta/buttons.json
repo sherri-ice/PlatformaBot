@@ -196,7 +196,7 @@
   },
   "customer_tasks_menu": {
     "✏ Создать задание": "cd_create_task",
-    "\uD83D\uDC51 Создать таргетированное задание": "cd_create_target_task",
+    "\uD83D\uDC51 Создать таргетированное задание": "cd_target_task_menu",
     "\uD83C\uDFCB Поднять задание": "cd_select_top_task",
     "\uD83D\uDCCC Закрепить задание": "cd_select_pin_task",
     "\uD83D\uDE45 Отменить задание": "cd_select_decline_task",
@@ -270,8 +270,62 @@
     "↩️ Назад": "cd_customer"
   },
   "customer_guarantee_okay": {
-     "\uD83C\uDFE0 Профиль заказчика": "cd_customer",
+    "\uD83C\uDFE0 Профиль заказчика": "cd_customer",
+    "\uD83D\uDCB8 Пополнить баланс": "cd_donate"
+  },
+  "target_buttons": {
+    "start_buttons": {
+      "▫️ Telegram": "cd_target_tg",
+      "\uD83D\uDD39 ВКонтакте": "cd_target_vk",
+      "❔ Что такое таргет-задание?": "cd_target_faq",
+      "\uD83D\uDD19 Вернуться назад": "cd_customer_my_tasks"
+    },
+    "tg_tasks_buttons": {
+      "\uD83D\uDC6F Подписчики для Telegram-канала": "cd_tg_subs_target",
+      "\uD83D\uDD19 Назад": "cd_target_task_menu"
+    },
+    "vk_tasks_buttons": {
+      "\uD83D\uDC6F Подписчики для ВКонтакте": "cd_vk_subs_target",
+      "\uD83D\uDD19 Назад": "cd_target_task_menu"
+    },
+    "age_buttons": {
+      "12-17": "cd_young_target",
+      "18-24": "cd_middle_target",
+      "24-30": "cd_upper_middle_target",
+      "30+": "cd_old_target",
+      "Выбрать всё": "cd_pick_all_target"
+    },
+    "geo_buttons": {
+      "\uD83D\uDD19 Назад": "cd_target_task_menu"
+    },
+    "geo_back_buttons": {
+      "↩️ Попробовать ещё раз": "cd_target_coordinates_back"
+    },
+    "geo_data_buttons": {
+      "✅ Всё верно": "cd_accept_target_coordinates",
+      "↩️ Назад": "cd_target_coordinates_back"
+    },
+    "geo_data_got_radius_buttons": {
+      "✅ Всё верно": "cd_accept_radius",
+      "↩️ Назад": "cd_target_radius_back"
+    },
+    "financial_options_buttons": {
+      "Да": "cd_financial_status_yes",
+      "Нет": "cd_financial_status_no",
+      "Не имеет значения": "cd_financial_status_no_matter"
+    },
+    "create_task_buttons": {
+      "\uD83D\uDE80 Подтвердить": "cd_create_target_task",
+      "✏️ Коррекция бюджета": "cd_correct_budget",
+      "✏ ️Изменить критерии подбора": "cd_correct_criteria"
+    },
+    "created_task_buttons": {
+      "\uD83C\uDFE0 Профиль заказчика": "cd_customer",
+      "\uD83D\uDCBC Мои задания": "cd_customer_my_tasks"
+    },
+    "target_donate_buttons": {
       "\uD83D\uDCB8 Пополнить баланс": "cd_donate"
+    }
   },
   "main_buttons": [
     "\uD83C\uDFE0 Домой",

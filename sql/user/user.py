@@ -1,3 +1,4 @@
+import math
 from datetime import datetime
 
 import vk_api
@@ -64,6 +65,20 @@ class UserTable(db.Model):
         except vk_api.exceptions.ApiError as error:
             return None
 
+    def find_employees_for_target_task_by_criteria(self, criteria):
+        customers = self.query.filter(UserTable.employee is not None).filter_by(age = criteria['age'])
+        if criteria['financial_status'] != 'no_matter':
+            customers = self.query.filter(UserTable.employee is not None).filter_by(salary = criteria['financial_status'])
+        customers = customers.all()
+        radius = criteria['radius']
+        task_longitude, task_latitude = criteria['longitude'], criteria['latitude']
+        result = []
+        for customer in customers:
+            distance = math.hypot(customer.city_longitude - task_longitude, customer.city_latitude - task_latitude)
+        if distance <= radius:
+            result.append(customer)
+        return result
+
 
 class Employee(db.Model):
     __tablename__ = 'employee'
@@ -102,5 +117,7 @@ class Customer(db.Model):
 
 
 user_table = UserTable()
+
 employee_table = Employee()
+
 customer_table = Customer()

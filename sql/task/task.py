@@ -38,9 +38,11 @@ class Task(db.Model):
     pinned_date = db.Column(db.String(255))
 
     # for target
-    age = db.Column(db.Integer)
-    city = db.Column(db.String(255))
+    age = db.Column(db.String(255))
+    city_longitude = db.Column(db.Float)
+    city_latitude = db.Column(db.Float)
     salary = db.Column(db.String(255))
+    radius = db.Column(db.Float)
     #
     customer = db.relationship("Customer", backref = db.backref("customer_id", uselist = False))
 
@@ -112,6 +114,14 @@ class Task(db.Model):
         task = self.get_task_by_id(task_id)
         task.declined = True
         EmployeesOnTask.query.filter_by(task_id = task_id).delete()
+        apply_db_changes()
+
+    def add_target_task(self, customer_id, platform, task_type, ref, price, age,
+                        longitude, latitude, salary, radius):
+        db.session.add(Task(customer_id = customer_id, platform = platform, task_type = task_type, ref = ref,
+                            price = price, age = age,
+                            city_longitude = longitude,
+                            city_latitude = latitude, salary = salary, radius = radius))
         apply_db_changes()
 
 

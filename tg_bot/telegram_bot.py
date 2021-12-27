@@ -74,6 +74,36 @@ def callback_reg(call):
     command_register(call.message)
 
 
+@tg_bot.message_handler(func = lambda message: message.text == "👥 Сменить роль")
+def reply_home(message):
+    try:
+        tg_bot.delete_state(message.chat.id)
+    except KeyError as error:
+        pass
+    choose_role(message)
+
+
+@tg_bot.message_handler(func = lambda message: message.text == "🏠 Домой")
+def reply_home(message):
+    try:
+        tg_bot.delete_state(message.chat.id)
+    except KeyError as error:
+        pass
+    tg_bot.send_photo(message.chat.id, photo = images["buttons_helper"], caption = messages_templates[
+        "registered_user"]["start_message"])
+
+
+@tg_bot.message_handler(func = lambda message: message.text == "👤 Мой профиль")
+def reply_home(message):
+    try:
+        tg_bot.delete_state(message.chat.id)
+    except KeyError as error:
+        pass
+    user = user_table.get_user_by_tg_id(message.chat.id)
+    tg_bot.send_message(message.chat.id, get_profile_info(user.id), reply_markup = create_inline_keyboard(
+        buttons["profile_buttons"]))
+
+
 def send_data_warning(message):
     tg_bot.delete_message(chat_id = message.chat.id, message_id = message.message_id)
     tg_bot.send_photo(chat_id = message.chat.id, photo = images["reg_start"],
@@ -173,7 +203,10 @@ def callback_return_to_age_step(call):
 @tg_bot.callback_query_handler(func = lambda call: call.data in buttons["salary_reg_buttons"].values())
 def callback_salary_step(call):
     user = user_table.get_user_by_tg_id(call.from_user.id)
-    user.salary = call.data
+    if call.data == "cd_work_exists":
+        user.salary = "yes"
+    elif call.data == "cd_no_work":
+        user.salary = "no"
     apply_db_changes()
 
     finish_registration(call.message)
@@ -289,12 +322,14 @@ def finish_registration(message):
     show_faq_after_req(message)
 
 
+# Handle all other messages from unregistered users
+
+
 def show_faq_after_req(message):
     tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["finish_registration"],
                         reply_markup = create_inline_keyboard(buttons["read_faq_after_reg"]))
 
 
-# Handle all other messages from unregistered users
 @tg_bot.message_handler(func = lambda message: is_unregistered_user(message.chat.id))
 def unregistered_user_reply(message):
     tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["request_for_registration"],
@@ -944,7 +979,9 @@ def customer_custom_task_guarantee(call):
 
 @tg_bot.message_handler(state = "get_price_for_custom_task", is_digit = True)
 def customer_get_price_for_custom_task(message):
-    # TODO: determine speed of the task
+    if int(message.text) == 0:
+        tg_bot.send_message(message.chat.id, messages_templates["tasks"]["zero_price_input"])
+        return
     with tg_bot.retrieve_data(message.chat.id) as data:
         data["price"] = message.text
         available_subscribers = int(int(data["money"]) / int(data["price"]))
@@ -1236,19 +1273,6 @@ def callback_get_customer_faq(call):
     tg_bot.send_message(call.from_user.id, message_to_user, reply_markup = keyboard)
 
 
-@tg_bot.message_handler(func = lambda message: message.text == "🏠 Домой")
-def reply_home(message):
-    tg_bot.send_photo(message.chat.id, photo = images["buttons_helper"], caption = messages_templates[
-        "registered_user"]["start_message"])
-
-
-@tg_bot.message_handler(func = lambda message: message.text == "👤 Мой профиль")
-def reply_home(message):
-    user = user_table.get_user_by_tg_id(message.chat.id)
-    tg_bot.send_message(message.chat.id, get_profile_info(user.id), reply_markup = create_inline_keyboard(
-        buttons["profile_buttons"]))
-
-
 def get_user_balance(user_id):
     user = user_table.get_user_by_id(user_id)
     employee = employee_table.get_employee_by_id(user.id)
@@ -1295,6 +1319,221 @@ def get_money_amount_for_transfer_to_customer(message):
     tg_bot.delete_state(message.chat.id)
 
 
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_target_task_menu")
+def target_task_menu(call):
+    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    user = user_table.get_user_by_tg_id(call.from_user.id)
+    tg_bot.send_message(call.from_user.id,
+                        messages_templates["tasks"]["target"]["start_message"].format(user.customer.balance),
+                        reply_markup = create_inline_keyboard(buttons["target_buttons"]["start_buttons"]))
+
+
+@tg_bot.callback_query_handler(func = lambda call: call.data in ["cd_target_tg", "cd_target_vk"])
+def choose_platform_target_task(call):
+    message_to_user = messages_templates["tasks"]["target"]["task_type"]
+    keyboard = []
+    if call.data == "cd_target_tg":
+        keyboard = create_inline_keyboard(buttons["target_buttons"]["tg_tasks_buttons"])
+    elif call.data == "cd_target_vk":
+        keyboard = create_inline_keyboard(buttons["target_buttons"]["vk_tasks_buttons"])
+
+    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    tg_bot.send_message(call.from_user.id, message_to_user, reply_markup = keyboard)
+
+
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_tg_subs_target")
+def tg_target_task(call):
+    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["request_for_telegram_channel_link"])
+    tg_bot.set_state(call.from_user.id, "get_tg_target_task_url")
+    with tg_bot.retrieve_data(call.from_user.id) as data:
+        data["task_type"] = "sub"
+        data["platform"] = "tg"
+
+
+@tg_bot.callback_query_handler(func = lambda call: call.data in buttons["target_buttons"]["age_buttons"].values())
+def get_age_target_task(call):
+    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    with tg_bot.retrieve_data(call.from_user.id) as data:
+        if call.data == "cd_young_target":
+            data["age"] = "12-17"
+        elif call.data == "cd_middle_target":
+            data["age"] = "18-24"
+        elif call.data == "cd_upper_middle_target":
+            data["age"] = "24-30"
+        elif call.data == "cd_old_target":
+            data["age"] = "30+"
+        else:
+            data["age"] = "all"
+    tg_bot.send_photo(call.from_user.id, photo = images["geo_send_help"],
+                      caption = messages_templates["tasks"]["target"]["age_chosen"],
+                      reply_markup = create_inline_keyboard(buttons["target_buttons"]["geo_buttons"]))
+    tg_bot.set_state(call.from_user.id, "get_employee_position")
+
+
+@tg_bot.message_handler(state = "get_employee_position", content_types = ["location"])
+def get_employee_position(message):
+    longitude, latitude = message.location.longitude, message.location.latitude
+    address = get_address_from_coordinates(f"{longitude},{latitude}")
+    if address == "error":
+        tg_bot.send_message(message.chat.id, "Упс! Что-то не так с координатами, проверь их и попробуй ещё раз!",
+                            reply_markup = create_inline_keyboard(buttons["target_buttons"]["geo_back_buttons"]))
+        return
+    with tg_bot.retrieve_data(message.chat.id) as data:
+        data['longitude'] = longitude
+        data['latitude'] = latitude
+        data['address'] = address
+    tg_bot.send_message(message.chat.id, messages_templates["tasks"]["target"]["get_geo_position"].format(address),
+                        reply_markup = create_inline_keyboard(buttons["target_buttons"]["geo_data_buttons"]))
+
+
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_target_coordinates_back")
+def target_coordinates_back(call):
+    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    tg_bot.send_photo(call.from_user.id, photo = images["geo_send_help"],
+                      caption = messages_templates["tasks"]["target"]["age_chosen"],
+                      reply_markup = create_inline_keyboard(buttons["target_buttons"]["geo_buttons"]))
+    tg_bot.set_state(call.from_user.id, "get_employee_position")
+
+
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_accept_target_coordinates")
+def save_target_task_coordinates(call):
+    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    with tg_bot.retrieve_data(call.from_user.id) as data:
+        message_to_user = messages_templates["tasks"]["target"]["geo_show_coordinates"].format(data["address"]) + \
+                          "\n\n" + messages_templates["tasks"]["target"]["get_coordinate_radius"]
+    tg_bot.send_message(call.from_user.id, message_to_user)
+    tg_bot.set_state(call.from_user.id, "get_radius_for_target_task")
+
+
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_target_radius_back")
+def target_radius_back(call):
+    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    with tg_bot.retrieve_data(call.from_user.id) as data:
+        message_to_user = messages_templates["tasks"]["target"]["geo_show_coordinates"].format(data["address"]) + \
+                          "\n\n" + messages_templates["tasks"]["target"]["get_coordinate_radius"]
+    tg_bot.send_message(call.from_user.id, message_to_user)
+    tg_bot.set_state(call.from_user.id, "get_radius_for_target_task")
+
+
+@tg_bot.message_handler(state = "get_radius_for_target_task", is_digit = True)
+def get_radius_for_target_task(message):
+    radius = int(message.text)
+    if radius <= 0:
+        tg_bot.send_message(message.chat.id, messages_templates["tasks"]["target"]["wrong_radius"])
+        return
+    with tg_bot.retrieve_data(message.chat.id) as data:
+        data['radius'] = radius
+    tg_bot.send_message(message.chat.id, messages_templates["tasks"]["target"]["got_radius"].format(radius),
+                        reply_markup = create_inline_keyboard(buttons["target_buttons"]["geo_data_got_radius_buttons"]))
+
+
+@tg_bot.message_handler(state = "get_radius_for_target_task", is_digit = False)
+def wrong_radius_input(message):
+    tg_bot.send_message(message.chat.id, messages_templates["tasks"]["target"]["wrong_radius"])
+
+
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_accept_radius")
+def accept_radius(call):
+    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["target"]["financial_state"],
+                        reply_markup = create_inline_keyboard(buttons["target_buttons"]["financial_options_buttons"]))
+
+
+@tg_bot.callback_query_handler(func = lambda call: call.data in
+                                                   buttons["target_buttons"]["financial_options_buttons"].values())
+def target_financial_state(call):
+    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    with tg_bot.retrieve_data(call.from_user.id) as data:
+        if call.data == "cd_financial_status_yes":
+            data["financial_status"] = "yes"
+        elif call.data == "cd_financial_status_no":
+            data["financial_status"] = "no"
+        elif call.data == "cd_financial_status_no_matter":
+            data["financial_status"] = "no_matter"
+        customers = user_table.find_employees_for_target_task_by_criteria(data)
+        user = user_table.get_user_by_tg_id(call.from_user.id)
+        # TODO: write function to determine task price
+        data['price'] = 12
+        message_to_user = messages_templates["tasks"]["target"]["target_task_data_finish"].format(len(customers), 12,
+                                                                                                  user.customer.balance)
+        tg_bot.send_message(call.from_user.id, message_to_user)
+        tg_bot.set_state(call.from_user.id, "get_target_task_budget")
+
+
+@tg_bot.message_handler(state = "get_target_task_budget", is_digit = False)
+def wrong_budget_target_task(message):
+    tg_bot.send_message(message.chat.id, messages_templates["tasks"]["target"]["wrong_budget"])
+
+
+@tg_bot.message_handler(state = "get_target_task_budget", is_digit = True)
+def get_task_task_budget(message):
+    budget = int(message.text)
+    if budget <= 0:
+        tg_bot.send_message(message.chat.id, messages_templates["tasks"]["target"]["wrong_budget"])
+        return
+    user = user_table.get_user_by_tg_id(message.chat.id)
+    if budget > user.customer.balance:
+        tg_bot.send_message(message.chat.id, messages_templates["tasks"]["target"]["not_enough_money"],
+                            reply_markup = create_inline_keyboard(buttons["target_buttons"]["target_donate_buttons"]))
+        return
+    # TODO: define price
+    tg_bot.send_message(message.chat.id, messages_templates["tasks"]["target"]["got_budget"].format(budget, 0),
+                        reply_markup = create_inline_keyboard(buttons["target_buttons"]["create_task_buttons"]))
+
+
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_correct_budget")
+def correct_budget(call):
+    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    with tg_bot.retrieve_data(call.from_user.id) as data:
+        customers = user_table.find_employees_for_target_task_by_criteria(data)
+        user = user_table.get_user_by_tg_id(call.from_user.id)
+        # TODO: write function to determine task price
+        data['price'] = 12
+        message_to_user = messages_templates["tasks"]["target"]["target_task_data_finish"].format(len(customers), 12,
+                                                                                                  user.customer.balance)
+        tg_bot.send_message(call.from_user.id, message_to_user)
+    tg_bot.set_state(call.from_user.id, "get_target_task_budget")
+
+
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_correct_criteria")
+def correct_criteria(call):
+    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["target"]["target_task_settings"],
+                        reply_markup = create_inline_keyboard(buttons["target_buttons"]["age_buttons"]))
+
+
+@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_create_target_task")
+def save_target_task(call):
+    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    with tg_bot.retrieve_data(call.from_user.id) as data:
+        user = user_table.get_user_by_tg_id(call.from_user.id)
+        # TODO: needed employees and price
+        task_table.add_target_task(user.customer.id, data['platform'], data['task_type'], data['ref'], data['price'],
+                                   data['age'],
+                                   data['longitude'], data['latitude'], data['financial_status'], data['radius'])
+    tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["target"]["created_task"],
+                        reply_markup = create_inline_keyboard(buttons["target_buttons"]["created_task_buttons"]))
+
+
+@tg_bot.message_handler(state = "get_tg_target_task_url")
+def customer_get_tg_target_task_url(message):
+    res, name = telegram_channel_check(message.text)
+    chat_id = message.chat.id
+    if not res:
+        tg_bot.send_message(chat_id, messages_templates["tasks"]["telegram_channel_not_found"],
+                            reply_markup = create_inline_keyboard(buttons["customer_resend_telegram_channel_link"]))
+    else:
+        tg_bot.send_message(chat_id, messages_templates["tasks"]["telegram_channel_found"].format(name))
+        with tg_bot.retrieve_data(chat_id) as data:
+            data["ref"] = message.text
+        tg_bot.send_message(message.chat.id, messages_templates["tasks"]["target"]["target_task_settings"],
+                            reply_markup = create_inline_keyboard(buttons["target_buttons"]["age_buttons"]))
+
+
+# TODO: отображение, что задача таргет, показывать юзерам, которые подходят, определить цену, будет ли гарантия на
+#  эти задачи, будут ли вк лайки и комменты, создать для вк
+
 @tg_bot.callback_query_handler(func = lambda call: call.data == "cd_technical_help")
 def technical_help(call):
     tg_bot.send_message(call.from_user.id, messages_templates["technical_help"])
@@ -1306,11 +1545,6 @@ def reply_home(message):
     message_for_user = get_user_balance(user.id)
     tg_bot.send_message(message.chat.id, message_for_user,
                         reply_markup = create_inline_keyboard(buttons["common_balance_buttons"]))
-
-
-@tg_bot.message_handler(func = lambda message: message.text == "👥 Сменить роль")
-def reply_home(message):
-    choose_role(message)
 
 
 @tg_bot.callback_query_handler(func = lambda call: True)

@@ -27,7 +27,7 @@ def telegram_channel_check(url: str):
         return False, ""
     response = response.json()
     if response["description"] == "Bad Request: chat not found":
-        return False
+        return False, ""
     return True, channel_name
 
 
