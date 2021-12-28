@@ -1,4 +1,4 @@
-import os, cv2
+import os
 from dotenv import load_dotenv
 import json
 
