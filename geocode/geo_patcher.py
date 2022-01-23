@@ -1,14 +1,15 @@
 import requests
 from resourses.loader import MAPS_TOKEN
 
-yandex_maps_url = "https://geocode-maps.yandex.ru/1.x/"
-
 
 def get_address_from_coordinates(coords: str):
     """
+    Warning! This function requires coordinates to be in this order: longitude, latitude.
+    Otherwise, Yandex Map API won't work correctly!
     :param coords:
     :return: address str
     """
+    yandex_maps_url = "https://geocode-maps.yandex.ru/1.x/"
 
     def make_response_and_parse(params):
         r = requests.get(url = yandex_maps_url, params = PARAMS)
@@ -34,8 +35,4 @@ def get_address_from_coordinates(coords: str):
             address = make_response_and_parse(PARAMS)
             return address
         except IndexError as e:
-            return f"Geo patcher error: {coords} can't be recognized."
-
-
-if __name__ == '__main__':
-    print(get_address_from_coordinates("33.44444, 52.4"))
+            raise IndexError(f"Geo patcher error: {coords} can't be recognized.")
