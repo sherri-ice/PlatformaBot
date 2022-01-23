@@ -4,11 +4,11 @@ import telebot
 from telebot import types
 from vk.vk_auth import request_vk_auth_code
 from sql.database import apply_db_changes
-from sql.user.user import user_table, employee_table, customer_table
-from sql.task.task import task_table, employees_on_task_table
+from sql.user import user_table, employee_table, customer_table
+from sql.task import task_table, employees_on_task_table
 
-from resourses.loader import TELEGRAM_TOKEN
-from resourses.loader import load_messages, load_buttons, load_photos, load_prices
+from setup import TELEGRAM_TOKEN
+from setup import load_messages, load_buttons, load_photos, load_prices
 
 from telebot import custom_filters
 from geocode.geo_patcher import get_address_from_coordinates

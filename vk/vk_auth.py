@@ -1,9 +1,8 @@
 import vk_api
-import requests
+from vk_api.exceptions import VkApiError
+from setup import VK_API_APP_ID, REDIRECT_FROM_VK, VK_CLIENT_SECRET, VK_SERVICE_TOKEN
 
-from resourses.loader import VK_API_APP_ID, REDIRECT_FROM_VK, VK_CLIENT_SECRET, VK_SERVICE_TOKEN
-
-vk_session = vk_api.VkApi(app_id = VK_API_APP_ID, client_secret = VK_CLIENT_SECRET)
+vk_session = vk_api.VkApi(app_id=VK_API_APP_ID, client_secret=VK_CLIENT_SECRET)
 
 
 # Returns url for vk auth
@@ -27,8 +26,8 @@ def authorize_vk_session(vk_code: str, tg_id: int):
 
 
 def get_service_token_session():
-    return vk_api.VkApi(token = VK_SERVICE_TOKEN).get_api()
+    return vk_api.VkApi(token=VK_SERVICE_TOKEN).get_api()
 
 
 def get_vk_api(vk_token: str):
-    return vk_api.VkApi(token = vk_token).get_api()
+    return vk_api.VkApi(token=vk_token).get_api()

@@ -5,7 +5,7 @@ import json
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
 
 # Connect the path with your '.env' file name
-load_dotenv(os.path.join(BASEDIR, '.env'))
+load_dotenv(os.path.join(BASEDIR, 'resourses/.env'))
 
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 WEBHOOK_HOST = os.getenv("WEBHOOK_HOST")
@@ -25,28 +25,28 @@ VK_SERVICE_TOKEN: str = os.getenv("VK_SERVICE_TOKEN")
 # project_path = "/home/sherriice/PlatformaBot"
 
 
-project_path = "/home/sherri.ice/Documents/bot/PlatformaBot"
+project_path = "../resourses"
 
 
 def load_messages():
-    with open(f'{project_path}/resources/messages_answers.json') as json_file:
+    with open(f'{project_path}/messages_answers.json') as json_file:
         data = json.load(json_file)
         return data
 
 
 def load_buttons():
-    with open(f'{project_path}/resources/buttons.json') as json_file:
+    with open(f'{project_path}/buttons.json') as json_file:
         data = json.load(json_file)
         return data
 
 
 def load_photos():
-    with open(f'{project_path}/resources/photos.json') as json_file:
+    with open(f'{project_path}/photos.json') as json_file:
         data = json.load(json_file)
         return data
 
 
 def load_prices():
-    with open(f'{project_path}/resources/prices.json') as json_file:
+    with open(f'{project_path}/prices.json') as json_file:
         data = json.load(json_file)
         return data

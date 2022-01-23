@@ -2,7 +2,7 @@ from sql.database import db
 from flask import Flask
 from routes import bot_handler
 
-from resourses.loader import SQL_PASSWORD, SQL_HOST, SQL_USER, SQL_DATABASE
+from setup import SQL_PASSWORD, SQL_HOST, SQL_USER, SQL_DATABASE
 
 
 def create_app():

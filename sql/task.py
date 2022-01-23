@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from sql.database import db, apply_db_changes
-from sqlalchemy import desc, func
+from sqlalchemy import desc
 
 
 class EmployeesOnTask(db.Model):
@@ -30,6 +30,7 @@ class Task(db.Model):
     platform = db.Column(db.String(255))
     task_type = db.Column(db.String(255))
     price = db.Column(db.Integer)
+
     # Needed in case of importance overflow
     direct_moving = True
     top_importance = 0
@@ -43,14 +44,13 @@ class Task(db.Model):
     city_latitude = db.Column(db.Float)
     salary = db.Column(db.String(255))
     radius = db.Column(db.Float)
-    #
+
     customer = db.relationship("Customer", backref = db.backref("customer_id", uselist = False))
 
     def add_new_task(self, customer_id, platform, task_type, ref, guarantee, price, needed_users):
         db.session.add(Task(customer_id = customer_id, platform = platform, task_type = task_type, ref = ref,
                             guarantee = guarantee, on_guarantee = True if guarantee != "no" else False, price = price, \
                             needed_count_of_employees = needed_users))
-        apply_db_changes()
 
     def add_new_target_task(self):
         pass
@@ -99,7 +99,6 @@ class Task(db.Model):
             raise IndexError(f"Invalid task id: {task_id}")
         top_importance = self.query.order_by(desc(Task.importance)).first().importance
         task.importance = top_importance + 1
-        apply_db_changes()
 
     def pin_task(self, task_id):
         task = self.get_task_by_id(task_id)
@@ -108,13 +107,11 @@ class Task(db.Model):
         # TODO: write disclaimer
         task.pinned_date = datetime.utcnow().strftime("%m/%d/%y %H:%M")
         task.pinned = True
-        apply_db_changes()
 
     def delete_task(self, task_id):
         task = self.get_task_by_id(task_id)
         task.declined = True
         EmployeesOnTask.query.filter_by(task_id = task_id).delete()
-        apply_db_changes()
 
     def add_target_task(self, customer_id, platform, task_type, ref, price, age,
                         longitude, latitude, salary, radius):
@@ -122,7 +119,6 @@ class Task(db.Model):
                             price = price, age = age,
                             city_longitude = longitude,
                             city_latitude = latitude, salary = salary, radius = radius))
-        apply_db_changes()
 
 
 task_table = Task()

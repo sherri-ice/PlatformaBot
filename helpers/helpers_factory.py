@@ -2,9 +2,9 @@ from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
 
-from resourses.loader import SQL_PASSWORD, SQL_HOST, SQL_USER, SQL_DATABASE
+from setup import SQL_PASSWORD, SQL_HOST, SQL_USER, SQL_DATABASE
 
-from resourses.loader import TELEGRAM_TOKEN
+from setup import TELEGRAM_TOKEN
 from telebot import TeleBot
 
 bot = TeleBot(token = TELEGRAM_TOKEN)

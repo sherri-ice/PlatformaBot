@@ -1,7 +1,7 @@
 import requests
 import validators
 import re
-from resourses.loader import TELEGRAM_TOKEN
+from setup import TELEGRAM_TOKEN
 from vk.vk_auth import get_service_token_session
 
 
