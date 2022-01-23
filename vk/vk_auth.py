@@ -1,7 +1,7 @@
 import vk_api
 import requests
 
-from meta.loader import VK_API_APP_ID, REDIRECT_FROM_VK, VK_CLIENT_SECRET, VK_SERVICE_TOKEN
+from resourses.loader import VK_API_APP_ID, REDIRECT_FROM_VK, VK_CLIENT_SECRET, VK_SERVICE_TOKEN
 
 vk_session = vk_api.VkApi(app_id = VK_API_APP_ID, client_secret = VK_CLIENT_SECRET)
 

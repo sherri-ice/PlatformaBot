@@ -1,7 +1,7 @@
 import requests
 import validators
 import re
-from meta.loader import TELEGRAM_TOKEN
+from resourses.loader import TELEGRAM_TOKEN
 from vk.vk_auth import get_service_token_session
 
 
@@ -72,7 +72,3 @@ def vk_post_check(url):
     if len(result) == 0:
         return False, "post doesn't exist or can't be seen"
     return True, url
-
-
-if __name__ == '__main__':
-    print(vk_post_check("https://vk.com/id1?w=wall1_2442097"))

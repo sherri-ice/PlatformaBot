@@ -7,12 +7,12 @@ from sql.database import apply_db_changes
 from sql.user.user import user_table, employee_table, customer_table
 from sql.task.task import task_table, employees_on_task_table
 
-from meta.loader import TELEGRAM_TOKEN
-from meta.loader import load_messages, load_buttons, load_photos, load_prices
+from resourses.loader import TELEGRAM_TOKEN
+from resourses.loader import load_messages, load_buttons, load_photos, load_prices
 
 from telebot import custom_filters
 from geocode.geo_patcher import get_address_from_coordinates
-from url_checker.url_checker import telegram_channel_check, vk_page_check, vk_post_check
+from url_checker.__init__ import telegram_channel_check, vk_page_check, vk_post_check
 
 from helpers.guarantee_checker.guarantee_checker import check_vk_subscription_task, check_vk_like_task, \
     check_vk_repost_task, guarantee_checker_by_customer_id

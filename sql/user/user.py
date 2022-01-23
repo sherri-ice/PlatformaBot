@@ -4,7 +4,7 @@ from datetime import datetime
 import vk_api
 from sql.database import db, apply_db_changes
 from vk.vk_auth import authorize_vk_session
-from meta.loader import VK_API_APP_ID, VK_CLIENT_SECRET
+from resourses.loader import VK_API_APP_ID, VK_CLIENT_SECRET
 
 
 class UserTable(db.Model):

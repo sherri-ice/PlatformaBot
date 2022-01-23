@@ -25,28 +25,28 @@ VK_SERVICE_TOKEN: str = os.getenv("VK_SERVICE_TOKEN")
 # project_path = "/home/sherriice/PlatformaBot"
 
 
-project_path = "/home/sherri.ice/Documents/bot/project"
+project_path = "/home/sherri.ice/Documents/bot/PlatformaBot"
 
 
 def load_messages():
-    with open(f'{project_path}/meta/messages_answers.json') as json_file:
+    with open(f'{project_path}/resources/messages_answers.json') as json_file:
         data = json.load(json_file)
         return data
 
 
 def load_buttons():
-    with open(f'{project_path}/meta/buttons.json') as json_file:
+    with open(f'{project_path}/resources/buttons.json') as json_file:
         data = json.load(json_file)
         return data
 
 
 def load_photos():
-    with open(f'{project_path}/meta/photos.json') as json_file:
+    with open(f'{project_path}/resources/photos.json') as json_file:
         data = json.load(json_file)
         return data
 
 
 def load_prices():
-    with open(f'{project_path}/meta/prices.json') as json_file:
+    with open(f'{project_path}/resources/prices.json') as json_file:
         data = json.load(json_file)
         return data

@@ -5,7 +5,7 @@ from flask.blueprints import Blueprint
 from tg_bot.telegram_bot import get_telegram_bot, messages_templates, after_vk_auth_in_server, user_table
 from telebot import types
 
-from meta.loader import TELEGRAM_TOKEN, WEBHOOK_HOST
+from resourses.loader import TELEGRAM_TOKEN, WEBHOOK_HOST
 import time
 
 # from sql.user.user import register_vk_token
