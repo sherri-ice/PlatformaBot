@@ -13,6 +13,8 @@ import time
 WEBHOOK_URL_BASE = "https://%s" % WEBHOOK_HOST
 WEBHOOK_URL_PATH = "/%s/" % TELEGRAM_TOKEN
 
+print(WEBHOOK_URL_BASE)
+
 # Init new module for bot, later the one for the site will appear
 bot_handler = Blueprint('bot', __name__)
 
@@ -21,13 +23,13 @@ telegram_bot = get_telegram_bot()
 
 
 # Holds server indexes
-@bot_handler.route('/', methods = ['GET', 'HEAD'])
+@bot_handler.route('/', methods=['GET', 'HEAD'])
 def index():
     return "Hello"
 
 
 # Process vk auth calls
-@bot_handler.route('/vk_auth', methods = ['GET'])
+@bot_handler.route('/vk_auth', methods=['GET'])
 def redirect_from_vk():
     vk_code = request.args.get('code')
     tg_id = request.args.get('tg_id')
@@ -40,7 +42,7 @@ def redirect_from_vk():
 
 
 # Process webhook calls
-@bot_handler.route(WEBHOOK_URL_PATH, methods = ['POST'])
+@bot_handler.route(WEBHOOK_URL_PATH, methods=['POST'])
 def webhook():
     if flask.request.headers.get('content-type') == 'application/json':
         json_string = flask.request.get_data().decode('utf-8')
@@ -57,4 +59,4 @@ telegram_bot.remove_webhook()
 time.sleep(0.1)
 
 # Set webhook
-telegram_bot.set_webhook(drop_pending_updates = True, url = WEBHOOK_URL_BASE + WEBHOOK_URL_PATH)
+telegram_bot.set_webhook(drop_pending_updates=True, url=WEBHOOK_URL_BASE + WEBHOOK_URL_PATH)

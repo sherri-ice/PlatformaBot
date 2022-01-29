@@ -26,21 +26,21 @@ prices = load_prices()
 logger = telebot.logger
 telebot.logger.setLevel(logging.INFO)
 
-tg_bot = telebot.TeleBot(TELEGRAM_TOKEN, threaded = False)
+tg_bot = telebot.TeleBot(TELEGRAM_TOKEN, threaded=False)
 
 
 def create_inline_keyboard(data: dict):
     markup = types.InlineKeyboardMarkup()
     markup.row_width = 3
     for key in data:
-        markup.add(types.InlineKeyboardButton(text = key, callback_data = data[key]))
+        markup.add(types.InlineKeyboardButton(text=key, callback_data=data[key]))
     return markup
 
 
 def create_reply_keyboard(data: list):
-    markup = types.ReplyKeyboardMarkup(row_width = 2)
+    markup = types.ReplyKeyboardMarkup(row_width=2)
     for button in data:
-        markup.add(types.KeyboardButton(text = button))
+        markup.add(types.KeyboardButton(text=button))
     return markup
 
 
@@ -49,32 +49,32 @@ def create_main_buttons_reply_markup():
     button_2 = types.KeyboardButton(buttons["main_buttons"][1])
     button_3 = types.KeyboardButton(buttons["main_buttons"][2])
     button_4 = types.KeyboardButton(buttons["main_buttons"][3])
-    markup = types.ReplyKeyboardMarkup(resize_keyboard = True)
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     markup.add(button_1, button_2)
     markup.add(button_3, button_4)
     return markup
 
 
-@tg_bot.message_handler(commands = ['start'])
+@tg_bot.message_handler(commands=['start'])
 def command_send_welcome(message):
     if not is_unregistered_user(message.chat.id):
         message_to_user = messages_templates["registered_user"]["start_message"]
 
-        tg_bot.send_photo(message.chat.id, photo = images["buttons_helper"], caption = message_to_user,
-                          reply_markup = create_main_buttons_reply_markup())
+        tg_bot.send_photo(message.chat.id, photo=images["buttons_helper"], caption=message_to_user,
+                          reply_markup=create_main_buttons_reply_markup())
     else:
         message_to_user, keyboard = messages_templates["unregistered_user"]["start_message"], create_inline_keyboard(
             buttons["reg"])
-        tg_bot.send_photo(message.chat.id, photo = images["welcome"], caption = message_to_user,
-                          reply_markup = keyboard)
+        tg_bot.send_photo(message.chat.id, photo=images["welcome"], caption=message_to_user,
+                          reply_markup=keyboard)
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_reg")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_reg")
 def callback_reg(call):
     command_register(call.message)
 
 
-@tg_bot.message_handler(func = lambda message: message.text == "👥 Сменить роль")
+@tg_bot.message_handler(func=lambda message: message.text == "👥 Сменить роль")
 def reply_home(message):
     try:
         tg_bot.delete_state(message.chat.id)
@@ -83,31 +83,31 @@ def reply_home(message):
     choose_role(message)
 
 
-@tg_bot.message_handler(func = lambda message: message.text == "🏠 Домой")
+@tg_bot.message_handler(func=lambda message: message.text == "🏠 Домой")
 def reply_home(message):
     try:
         tg_bot.delete_state(message.chat.id)
     except KeyError as error:
         pass
-    tg_bot.send_photo(message.chat.id, photo = images["buttons_helper"], caption = messages_templates[
+    tg_bot.send_photo(message.chat.id, photo=images["buttons_helper"], caption=messages_templates[
         "registered_user"]["start_message"])
 
 
-@tg_bot.message_handler(func = lambda message: message.text == "👤 Мой профиль")
+@tg_bot.message_handler(func=lambda message: message.text == "👤 Мой профиль")
 def reply_home(message):
     try:
         tg_bot.delete_state(message.chat.id)
     except KeyError as error:
         pass
     user = user_table.get_user_by_tg_id(message.chat.id)
-    tg_bot.send_message(message.chat.id, get_profile_info(user.id), reply_markup = create_inline_keyboard(
+    tg_bot.send_message(message.chat.id, get_profile_info(user.id), reply_markup=create_inline_keyboard(
         buttons["profile_buttons"]))
 
 
 def send_data_warning(message):
-    tg_bot.delete_message(chat_id = message.chat.id, message_id = message.message_id)
-    tg_bot.send_photo(chat_id = message.chat.id, photo = images["reg_start"],
-                      caption = messages_templates["unregistered_user"][
+    tg_bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
+    tg_bot.send_photo(chat_id=message.chat.id, photo=images["reg_start"],
+                      caption=messages_templates["unregistered_user"][
                           "data_collection_warning"])
 
 
@@ -122,61 +122,61 @@ def command_register(message):
         apply_db_changes()
     send_data_warning(message)
     tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["age_reg_step"],
-                        reply_markup = create_inline_keyboard(buttons["age_reg_buttons"]))
+                        reply_markup=create_inline_keyboard(buttons["age_reg_buttons"]))
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_age_back")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_age_back")
 def callback_return_to_age_step(call):
-    tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id,
-                             text = messages_templates["unregistered_user"]["age_reg_step"])
-    tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id,
-                                     reply_markup = create_inline_keyboard(buttons["age_reg_buttons"]))
+    tg_bot.edit_message_text(chat_id=call.from_user.id, message_id=call.message.message_id,
+                             text=messages_templates["unregistered_user"]["age_reg_step"])
+    tg_bot.edit_message_reply_markup(chat_id=call.from_user.id, message_id=call.message.message_id,
+                                     reply_markup=create_inline_keyboard(buttons["age_reg_buttons"]))
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data in buttons["age_reg_buttons"].values())
+@tg_bot.callback_query_handler(func=lambda call: call.data in buttons["age_reg_buttons"].values())
 def callback_age_handler(call):
     tg_bot.set_state(call.from_user.id, "registering")
     user = user_table.get_user_by_tg_id(call.from_user.id)
     # Gets text from button
     user.age = list(buttons["age_reg_buttons"].keys())[list(buttons["age_reg_buttons"].values()).index(call.data)]
     apply_db_changes()
-    tg_bot.delete_message(chat_id = call.from_user.id, message_id = call.message.message_id)
+    tg_bot.delete_message(chat_id=call.from_user.id, message_id=call.message.message_id)
     tg_bot.send_message(call.from_user.id, messages_templates["unregistered_user"]["sex_reg_step"],
-                        reply_markup = create_inline_keyboard(buttons["sex_reg_buttons"]))
+                        reply_markup=create_inline_keyboard(buttons["sex_reg_buttons"]))
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data in buttons["sex_reg_buttons"].values())
+@tg_bot.callback_query_handler(func=lambda call: call.data in buttons["sex_reg_buttons"].values())
 def callback_sex_handler(call):
-    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    tg_bot.delete_message(call.from_user.id, message_id=call.message.message_id)
     user = user_table.get_user_by_tg_id(call.from_user.id)
     if call.data == "cd_male":
         user.sex = "M"
     else:
         user.sex = "F"
     apply_db_changes()
-    tg_bot.send_photo(call.from_user.id, photo = images["geo_send_help"], caption = messages_templates[
+    tg_bot.send_photo(call.from_user.id, photo=images["geo_send_help"], caption=messages_templates[
         "unregistered_user"]["city_reg_step"])
     tg_bot.set_state(call.from_user.id, "get_city")
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_city_back")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_city_back")
 def callback_return_to_city_step(call):
-    tg_bot.delete_message(chat_id = call.from_user.id, message_id = call.message.message_id)
-    tg_bot.send_photo(call.from_user.id, photo = images["geo_send_help"], caption = messages_templates[
+    tg_bot.delete_message(chat_id=call.from_user.id, message_id=call.message.message_id)
+    tg_bot.send_photo(call.from_user.id, photo=images["geo_send_help"], caption=messages_templates[
         "unregistered_user"]["city_reg_step"])
     tg_bot.set_state(call.from_user.id, "get_city")
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_accept_city")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_accept_city")
 def callback_accept_city_step(call):
-    tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id,
-                             text = messages_templates["unregistered_user"]["salary_reg_step"])
-    tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id,
-                                     reply_markup = create_inline_keyboard(buttons["salary_reg_buttons"]))
+    tg_bot.edit_message_text(chat_id=call.from_user.id, message_id=call.message.message_id,
+                             text=messages_templates["unregistered_user"]["salary_reg_step"])
+    tg_bot.edit_message_reply_markup(chat_id=call.from_user.id, message_id=call.message.message_id,
+                                     reply_markup=create_inline_keyboard(buttons["salary_reg_buttons"]))
     tg_bot.set_state(call.from_user.id, "get_salary")
 
 
-@tg_bot.message_handler(state = "get_city", content_types = ["location"])
+@tg_bot.message_handler(state="get_city", content_types=["location"])
 def process_city_step(message):
     user = user_table.get_user_by_tg_id(message.from_user.id)
     user.city_longitude, user.city_latitude = message.location.longitude, message.location.latitude
@@ -184,23 +184,23 @@ def process_city_step(message):
     address = get_address_from_coordinates(f"{user.city_longitude},{user.city_latitude}")
     if address == "error":
         tg_bot.send_message(message.chat.id, "Упс! Что-то не так с координатами, проверь их и попробуй ещё раз!",
-                            reply_markup = create_inline_keyboard(buttons["city_error_button"]))
+                            reply_markup=create_inline_keyboard(buttons["city_error_button"]))
         return
     user.city_name = address
     apply_db_changes()
     tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["city_get_data"].format(address),
-                        reply_markup = create_inline_keyboard(buttons["city_data_buttons"]))
+                        reply_markup=create_inline_keyboard(buttons["city_data_buttons"]))
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_salary_back")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_salary_back")
 def callback_return_to_age_step(call):
-    tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id,
-                             text = messages_templates["unregistered_user"]["salary_reg_step"])
-    tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id,
-                                     reply_markup = create_inline_keyboard(buttons["salary_reg_buttons"]))
+    tg_bot.edit_message_text(chat_id=call.from_user.id, message_id=call.message.message_id,
+                             text=messages_templates["unregistered_user"]["salary_reg_step"])
+    tg_bot.edit_message_reply_markup(chat_id=call.from_user.id, message_id=call.message.message_id,
+                                     reply_markup=create_inline_keyboard(buttons["salary_reg_buttons"]))
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data in buttons["salary_reg_buttons"].values())
+@tg_bot.callback_query_handler(func=lambda call: call.data in buttons["salary_reg_buttons"].values())
 def callback_salary_step(call):
     user = user_table.get_user_by_tg_id(call.from_user.id)
     if call.data == "cd_work_exists":
@@ -212,85 +212,85 @@ def callback_salary_step(call):
     finish_registration(call.message)
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data in buttons["read_faq_after_reg"].values())
+@tg_bot.callback_query_handler(func=lambda call: call.data in buttons["read_faq_after_reg"].values())
 def handle_callback_faq(call):
     if call.data == "cd_faq":
         tg_bot.answer_callback_query(call.id, "Прочитать FAQ")
-        tg_bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
-                                 text = messages_templates["reg_faq"])
-        tg_bot.edit_message_reply_markup(chat_id = call.message.chat.id, message_id = call.message.message_id,
-                                         reply_markup = create_inline_keyboard(buttons["have_read_faq"]))
+        tg_bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
+                                 text=messages_templates["reg_faq"])
+        tg_bot.edit_message_reply_markup(chat_id=call.message.chat.id, message_id=call.message.message_id,
+                                         reply_markup=create_inline_keyboard(buttons["have_read_faq"]))
     elif call.data == "cd_faq_cancel":
         tg_bot.answer_callback_query(call.id, "Не читать FAQ")
         keyboard = gen_markup_for_vk_auth(call.from_user.id)
         keyboard.add(types.InlineKeyboardButton("📕 Я передумал! Хочу прочитать FAQ",
-                                                callback_data = "cd_faq"))
+                                                callback_data="cd_faq"))
         keyboard.add(types.InlineKeyboardButton("🕔 Привязать позже",
-                                                callback_data = "cd_vk_auth_cancel"))
-        tg_bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
-                                 text = messages_templates["vk"]["vk_auth_message"])
-        tg_bot.edit_message_reply_markup(chat_id = call.message.chat.id, message_id = call.message.message_id,
-                                         reply_markup = keyboard)
+                                                callback_data="cd_vk_auth_cancel"))
+        tg_bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
+                                 text=messages_templates["vk"]["vk_auth_message"])
+        tg_bot.edit_message_reply_markup(chat_id=call.message.chat.id, message_id=call.message.message_id,
+                                         reply_markup=keyboard)
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_vk_back")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_vk_back")
 def callback_return_to_vk_step(call):
-    tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id,
-                             text = messages_templates["vk"]["vk_auth_message"])
+    tg_bot.edit_message_text(chat_id=call.from_user.id, message_id=call.message.message_id,
+                             text=messages_templates["vk"]["vk_auth_message"])
     keyboard = gen_markup_for_vk_auth(call.from_user.id)
-    keyboard.add(types.InlineKeyboardButton("Назад", callback_data = "cd_salary_back"))
-    keyboard.add(types.InlineKeyboardButton("Привязать позже", callback_data = "cd_vk_auth_cancel"))
-    tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id,
-                                     reply_markup = keyboard)
+    keyboard.add(types.InlineKeyboardButton("Назад", callback_data="cd_salary_back"))
+    keyboard.add(types.InlineKeyboardButton("Привязать позже", callback_data="cd_vk_auth_cancel"))
+    tg_bot.edit_message_reply_markup(chat_id=call.from_user.id, message_id=call.message.message_id,
+                                     reply_markup=keyboard)
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_vk_auth")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_vk_auth")
 def callback_vk_auth(call):
     keyboard = gen_markup_for_vk_auth(call.from_user.id)
-    keyboard.add(types.InlineKeyboardButton("Привяжу позже", callback_data = "cd_vk_auth_cancel"))
-    tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id,
-                             text = messages_templates["vk"]["vk_not_authorized"])
-    tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id,
-                                     reply_markup = keyboard)
+    keyboard.add(types.InlineKeyboardButton("Привяжу позже", callback_data="cd_vk_auth_cancel"))
+    tg_bot.edit_message_text(chat_id=call.from_user.id, message_id=call.message.message_id,
+                             text=messages_templates["vk"]["vk_not_authorized"])
+    tg_bot.edit_message_reply_markup(chat_id=call.from_user.id, message_id=call.message.message_id,
+                                     reply_markup=keyboard)
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_vk_reauth")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_vk_reauth")
 def callback_vk_auth(call):
     user = user_table.get_user_by_tg_id(call.from_user.id)
     if user.vk_access_token is not None:
-        tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id,
-                                 text = messages_templates["vk"]["vk_re_register"])
-        tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id,
-                                         reply_markup = create_inline_keyboard(buttons["vk_re_auth_buttons"]))
+        tg_bot.edit_message_text(chat_id=call.from_user.id, message_id=call.message.message_id,
+                                 text=messages_templates["vk"]["vk_re_register"])
+        tg_bot.edit_message_reply_markup(chat_id=call.from_user.id, message_id=call.message.message_id,
+                                         reply_markup=create_inline_keyboard(buttons["vk_re_auth_buttons"]))
         return
     keyboard = gen_markup_for_vk_auth(call.from_user.id)
-    keyboard.add(types.InlineKeyboardButton("Назад", callback_data = "cd_profile"))
-    tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id,
-                             text = messages_templates["vk"]["vk_not_authorized"])
-    tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id,
-                                     reply_markup = keyboard)
+    keyboard.add(types.InlineKeyboardButton("Назад", callback_data="cd_profile"))
+    tg_bot.edit_message_text(chat_id=call.from_user.id, message_id=call.message.message_id,
+                             text=messages_templates["vk"]["vk_not_authorized"])
+    tg_bot.edit_message_reply_markup(chat_id=call.from_user.id, message_id=call.message.message_id,
+                                     reply_markup=keyboard)
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_vk_auth_cancel")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_vk_auth_cancel")
 def cancel_vk_auth(call):
-    tg_bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
-                             text = messages_templates["vk"]["vk_cancel_auth"])
-    tg_bot.send_photo(call.from_user.id, photo = images["buttons_helper"], caption = messages_templates[
+    tg_bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
+                             text=messages_templates["vk"]["vk_cancel_auth"])
+    tg_bot.send_photo(call.from_user.id, photo=images["buttons_helper"], caption=messages_templates[
         "registered_user"]["start_message"])
     tg_bot.send_message(call.from_user.id, messages_templates["unregistered_user"]["after_faq_message"],
-                        reply_markup = create_main_buttons_reply_markup())
+                        reply_markup=create_main_buttons_reply_markup())
     choose_role(call.message)
 
 
 def after_vk_auth_in_server(tg_id):
-    tg_bot.send_message(tg_id, get_vk_profile_info(tg_id), reply_markup = create_inline_keyboard(
+    tg_bot.send_message(tg_id, get_vk_profile_info(tg_id), reply_markup=create_inline_keyboard(
         buttons["vk_auth_confirmation_buttons"]))
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_accept_vk")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_accept_vk")
 def callback_accept_vk_account(call):
-    tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id,
-                             text = messages_templates["unregistered_user"]["after_faq_message"])
+    tg_bot.edit_message_text(chat_id=call.from_user.id, message_id=call.message.message_id,
+                             text=messages_templates["unregistered_user"]["after_faq_message"])
     choose_role(call.message)
 
 
@@ -305,12 +305,12 @@ def finish_registration(message):
             sex,
             user.city_name,
             user.registered_date)
-        tg_bot.edit_message_text(chat_id = message.chat.id, message_id = message.message_id,
-                                 text = message_for_user)
+        tg_bot.edit_message_text(chat_id=message.chat.id, message_id=message.message_id,
+                                 text=message_for_user)
         return
     user.finished_reg = True
     apply_db_changes()
-    tg_bot.delete_message(chat_id = message.chat.id, message_id = message.message_id)
+    tg_bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
     sex = "Женщина" if user.sex == 'F' else "Мужчина"
     message = tg_bot.send_message(message.chat.id,
                                   messages_templates["registered_user"]["registration_common_data"].format(
@@ -327,26 +327,26 @@ def finish_registration(message):
 
 def show_faq_after_req(message):
     tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["finish_registration"],
-                        reply_markup = create_inline_keyboard(buttons["read_faq_after_reg"]))
+                        reply_markup=create_inline_keyboard(buttons["read_faq_after_reg"]))
 
 
-@tg_bot.message_handler(func = lambda message: is_unregistered_user(message.chat.id))
+@tg_bot.message_handler(func=lambda message: is_unregistered_user(message.chat.id))
 def unregistered_user_reply(message):
     tg_bot.send_message(message.chat.id, messages_templates["unregistered_user"]["request_for_registration"],
-                        reply_markup = create_inline_keyboard(buttons["reg"]))
+                        reply_markup=create_inline_keyboard(buttons["reg"]))
 
 
 def choose_role(message):
-    tg_bot.send_message(message.chat.id, messages_templates["choose_role"], reply_markup = create_inline_keyboard(
+    tg_bot.send_message(message.chat.id, messages_templates["choose_role"], reply_markup=create_inline_keyboard(
         buttons["choose_type_of_account"]))
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_choose_role")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_choose_role")
 def callback_choose_role(call):
-    tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id,
-                             text = messages_templates["choose_role"])
-    tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id,
-                                     reply_markup = create_inline_keyboard(
+    tg_bot.edit_message_text(chat_id=call.from_user.id, message_id=call.message.message_id,
+                             text=messages_templates["choose_role"])
+    tg_bot.edit_message_reply_markup(chat_id=call.from_user.id, message_id=call.message.message_id,
+                                     reply_markup=create_inline_keyboard(
                                          buttons["choose_type_of_account"]))
 
 
@@ -387,15 +387,15 @@ def get_employee_profile_info(user_id):
     return message, keyboard
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_employee_get_new_task")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_employee_get_new_task")
 def employee_get_new_task(call):
-    tg_bot.delete_message(chat_id = call.from_user.id, message_id = call.message.message_id)
+    tg_bot.delete_message(chat_id=call.from_user.id, message_id=call.message.message_id)
     tg_bot.send_message(call.from_user.id, messages_templates["employee"]["choose_platform"],
-                        reply_markup = create_inline_keyboard(buttons["employee_choose_platform_buttons"]))
+                        reply_markup=create_inline_keyboard(buttons["employee_choose_platform_buttons"]))
 
 
 @tg_bot.callback_query_handler(
-    func = lambda call: call.data == "employee_cd_choose_telegram_task" or call.data == "employee_cd_choose_vk_task")
+    func=lambda call: call.data == "employee_cd_choose_telegram_task" or call.data == "employee_cd_choose_vk_task")
 def callback_employee_choose_platform(call):
     tg_bot.set_state(call.from_user.id, "")
     with tg_bot.retrieve_data(call.from_user.id) as data:
@@ -405,15 +405,15 @@ def callback_employee_choose_platform(call):
         elif call.data == "employee_cd_choose_vk_task":
             user = user_table.get_user_by_tg_id(call.from_user.id)
             if user.vk_access_token is None:
-                tg_bot.delete_message(chat_id = call.from_user.id, message_id = call.message.message_id)
-                tg_bot.send_message(call.from_user.id, "Vk not authorized", reply_markup = gen_markup_for_vk_auth(
+                tg_bot.delete_message(chat_id=call.from_user.id, message_id=call.message.message_id)
+                tg_bot.send_message(call.from_user.id, "Vk not authorized", reply_markup=gen_markup_for_vk_auth(
                     call.from_user.id))
                 return
             data["platform"] = "vk"
             reply_markup = create_inline_keyboard(buttons["choose_type_of_task_vk"])
-    tg_bot.delete_message(chat_id = call.from_user.id, message_id = call.message.message_id)
+    tg_bot.delete_message(chat_id=call.from_user.id, message_id=call.message.message_id)
     tg_bot.send_message(call.from_user.id, messages_templates["employee"]["choose_type_of_task"],
-                        reply_markup = reply_markup)
+                        reply_markup=reply_markup)
 
 
 def task_types_callback_data_check(call):
@@ -421,7 +421,7 @@ def task_types_callback_data_check(call):
            call.data == "cd_telegram_subscribers"
 
 
-@tg_bot.callback_query_handler(func = task_types_callback_data_check)
+@tg_bot.callback_query_handler(func=task_types_callback_data_check)
 def callback_employee_choose_task_type(call):
     if call.data == "cd_vk_subscribers" or call.data == "cd_telegram_subscribers":
         with tg_bot.retrieve_data(call.from_user.id) as data:
@@ -439,12 +439,12 @@ def get_tasks_by_filter(message):
     chat_id = message.chat.id
     with tg_bot.retrieve_data(chat_id) as data:
         user = user_table.get_user_by_tg_id(chat_id)
-        tasks = task_table.get_new_tasks(platform = data["platform"], task_type = data["task_type"],
-                                         employee_id = user.employee.id)
-        tg_bot.delete_message(chat_id, message_id = message.message_id)
+        tasks = task_table.get_new_tasks(platform=data["platform"], task_type=data["task_type"],
+                                         employee_id=user.employee.id)
+        tg_bot.delete_message(chat_id, message_id=message.message_id)
         if len(tasks) == 0:
             tg_bot.send_message(chat_id, messages_templates["tasks"]["employee_no_tasks"],
-                                reply_markup = create_inline_keyboard(buttons["employee_return_to_tasks_buttons"]))
+                                reply_markup=create_inline_keyboard(buttons["employee_return_to_tasks_buttons"]))
         else:
             message_to_user = messages_templates["tasks"]["employee_get_tasks"].format(len(tasks))
             for task in tasks:
@@ -453,22 +453,22 @@ def get_tasks_by_filter(message):
                 else:
                     message_to_user += "Задание №{} | Награда: {} PTF\n".format(task.id, task.price)
             tg_bot.send_message(chat_id, message_to_user,
-                                reply_markup = create_inline_keyboard(buttons["employee_back_to_profile"]))
+                                reply_markup=create_inline_keyboard(buttons["employee_back_to_profile"]))
             tg_bot.set_state(message.chat.id, "get_task_id")
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_reenter_task_number")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_reenter_task_number")
 def employee_reenter_task_number(call):
     get_tasks_by_filter(call.message)
 
 
-@tg_bot.message_handler(state = "get_task_id", is_digit = False)
+@tg_bot.message_handler(state="get_task_id", is_digit=False)
 def employee_get_wrong_task_id(message):
     tg_bot.send_message(message.chat.id, messages_templates["tasks"]["employee_wrong_task_number"],
-                        reply_markup = create_inline_keyboard(buttons["employee_reenter_task_number_button"]))
+                        reply_markup=create_inline_keyboard(buttons["employee_reenter_task_number_button"]))
 
 
-@tg_bot.message_handler(state = "get_task_id", is_digit = True)
+@tg_bot.message_handler(state="get_task_id", is_digit=True)
 def employee_get_task_id(message):
     task_id = message.text
     with tg_bot.retrieve_data(message.chat.id) as data:
@@ -487,24 +487,24 @@ def employee_get_task_id(message):
         task_text = "Сделать репост"
     tg_bot.set_state(message.chat.id, "")
     tg_bot.send_message(message.chat.id, message_to_user.format(task.id, task_text, task.ref, task.guarantee),
-                        reply_markup = create_inline_keyboard(buttons["employee_got_new_task_buttons"]))
+                        reply_markup=create_inline_keyboard(buttons["employee_got_new_task_buttons"]))
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_done_task")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_done_task")
 def employee_done_task(call):
     with tg_bot.retrieve_data(call.from_user.id) as data:
         task_id = data['task_id']
-        task = task_table.get_task_by_id(task_id = task_id)
+        task = task_table.get_task_by_id(task_id=task_id)
         user = user_table.get_user_by_tg_id(call.from_user.id)
         employee = user.employee
         result = True
         if task.platform == "vk":
             if task.task_type == "sub":
-                result = check_vk_subscription_task(employee_id = employee.id, page_link = task.ref)
+                result = check_vk_subscription_task(employee_id=employee.id, page_link=task.ref)
             elif task.task_type == "likes":
-                result = check_vk_like_task(employee_id = employee.id, post_link = task.ref)
+                result = check_vk_like_task(employee_id=employee.id, post_link=task.ref)
             elif task.task_type == "reposts":
-                result = check_vk_repost_task(employee_id = employee.id, post_link = task.ref)
+                result = check_vk_repost_task(employee_id=employee.id, post_link=task.ref)
         if not result:
             done_task_doubt(call.message)
         else:
@@ -515,11 +515,11 @@ def employee_done_task(call):
 def done_task(message):
     with tg_bot.retrieve_data(message.chat.id) as data:
         task_id = data['task_id']
-        task = task_table.get_task_by_id(task_id = task_id)
+        task = task_table.get_task_by_id(task_id=task_id)
         message_to_user = messages_templates["tasks"]["employee_done_task"].format(task.price)
-        tg_bot.delete_message(message.chat.id, message_id = message.message_id)
+        tg_bot.delete_message(message.chat.id, message_id=message.message_id)
         tg_bot.send_message(message.chat.id, message_to_user,
-                            reply_markup = create_inline_keyboard(buttons["employee_done_task_buttons"]))
+                            reply_markup=create_inline_keyboard(buttons["employee_done_task_buttons"]))
 
         task.current_count_of_employees += 1
         if task.current_count_of_employees >= task.needed_count_of_employees:
@@ -534,9 +534,9 @@ def done_task(message):
 
 
 def done_task_doubt(message):
-    tg_bot.delete_message(message.chat.id, message_id = message.message_id)
+    tg_bot.delete_message(message.chat.id, message_id=message.message_id)
     tg_bot.send_message(message.chat.id, messages_templates["tasks"]["employee_done_task_doubt"],
-                        reply_markup = create_inline_keyboard(buttons["employee_done_task_doubt_buttons"]))
+                        reply_markup=create_inline_keyboard(buttons["employee_done_task_doubt_buttons"]))
 
 
 def get_customer_profile_info(user_id):
@@ -549,44 +549,44 @@ def get_customer_profile_info(user_id):
     return message
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_employee")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_employee")
 def switch_to_employee(call):
     try:
         tg_bot.delete_state(call.from_user.id)
     except KeyError as error:
         pass
-    user = user_table.get_user_by_tg_id(user_id = call.from_user.id)
+    user = user_table.get_user_by_tg_id(user_id=call.from_user.id)
     employee = employee_table.get_employee_by_id(user.id)
     if employee is None:
         employee_table.add_employee(user.id)
     employee_data, keyboard = get_employee_profile_info(user.id)
     tg_bot.delete_message(call.message.chat.id, call.message.message_id)
-    tg_bot.send_photo(call.message.chat.id, photo = images["employee"], caption = employee_data,
-                      reply_markup = keyboard)
+    tg_bot.send_photo(call.message.chat.id, photo=images["employee"], caption=employee_data,
+                      reply_markup=keyboard)
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_employee_get_balance")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_employee_get_balance")
 def callback_get_employee_balance(call):
     user = user_table.get_user_by_tg_id(call.from_user.id)
     employee = employee_table.get_employee_by_id(user.id)
     message_to_user = messages_templates["employee"]["balance"].format(employee.balance)
     keyboard = create_inline_keyboard(buttons["employee_balance_buttons"])
     tg_bot.delete_message(call.message.chat.id, call.message.message_id)
-    tg_bot.send_message(call.message.chat.id, message_to_user, reply_markup = keyboard)
+    tg_bot.send_message(call.message.chat.id, message_to_user, reply_markup=keyboard)
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_employee_faq")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_employee_faq")
 def callback_get_employee_faq(call):
     message_to_user = messages_templates["employee"]["faq"]
     keyboard = create_inline_keyboard(buttons["employee_faq_buttons"])
     tg_bot.delete_message(call.message.chat.id, call.message.message_id)
-    tg_bot.send_message(call.message.chat.id, message_to_user, reply_markup = keyboard)
+    tg_bot.send_message(call.message.chat.id, message_to_user, reply_markup=keyboard)
 
 
 def gen_markup_for_vk_auth(tg_id):
     markup = types.InlineKeyboardMarkup()
     markup.row_width = 1
-    markup.add(types.InlineKeyboardButton(text = "🔹 VK авторизация", url = request_vk_auth_code(tg_id)))
+    markup.add(types.InlineKeyboardButton(text="🔹 VK авторизация", url=request_vk_auth_code(tg_id)))
     return markup
 
 
@@ -598,24 +598,24 @@ def get_vk_profile_info(tg_id) -> str:
     return "\nПрофиль: {} {}, \nСсылка: vk.com/id{}".format(data["first_name"], data["last_name"], data["id"])
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_profile")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_profile")
 def callback_profile(call):
     user = user_table.get_user_by_tg_id(call.from_user.id)
-    message = get_profile_info(user_id = user.id) + "\nВыберете действие:"
-    tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id, text = message)
-    tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id,
-                                     reply_markup = create_inline_keyboard(buttons["profile_buttons"]))
+    message = get_profile_info(user_id=user.id) + "\nВыберете действие:"
+    tg_bot.edit_message_text(chat_id=call.from_user.id, message_id=call.message.message_id, text=message)
+    tg_bot.edit_message_reply_markup(chat_id=call.from_user.id, message_id=call.message.message_id,
+                                     reply_markup=create_inline_keyboard(buttons["profile_buttons"]))
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_re_register")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_re_register")
 def callback_re_register(call):
     message = messages_templates["registered_user"]["re_register"]
-    tg_bot.edit_message_text(chat_id = call.from_user.id, message_id = call.message.message_id, text = message)
-    tg_bot.edit_message_reply_markup(chat_id = call.from_user.id, message_id = call.message.message_id,
-                                     reply_markup = create_inline_keyboard(buttons["re_reg_buttons"]))
+    tg_bot.edit_message_text(chat_id=call.from_user.id, message_id=call.message.message_id, text=message)
+    tg_bot.edit_message_reply_markup(chat_id=call.from_user.id, message_id=call.message.message_id,
+                                     reply_markup=create_inline_keyboard(buttons["re_reg_buttons"]))
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_customer")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_customer")
 def callback_switch_to_customer(call):
     user = user_table.get_user_by_tg_id(call.from_user.id)
     customer = customer_table.get_customer_by_id(user.id)
@@ -623,20 +623,20 @@ def callback_switch_to_customer(call):
         customer_table.add_customer(user.id)
     message = get_customer_profile_info(user.id)
     keyboard = create_inline_keyboard(buttons["customer_profile_buttons"])
-    tg_bot.delete_message(chat_id = call.message.chat.id, message_id = call.message.message_id)
-    tg_bot.send_photo(call.message.chat.id, photo = images["customer"], caption = message, reply_markup = keyboard)
+    tg_bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
+    tg_bot.send_photo(call.message.chat.id, photo=images["customer"], caption=message, reply_markup=keyboard)
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_create_task")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_create_task")
 def customer_create_new_task(call):
     customer = customer_table.get_customer_by_id(user_table.get_user_by_tg_id(call.from_user.id).id)
-    tg_bot.delete_message(chat_id = call.from_user.id, message_id = call.message.message_id)
+    tg_bot.delete_message(chat_id=call.from_user.id, message_id=call.message.message_id)
     tg_bot.send_message(call.message.chat.id, messages_templates["tasks"]["create_new_task"].format(customer.balance),
-                        reply_markup = create_inline_keyboard(buttons["customer_choose_platform_buttons"]))
+                        reply_markup=create_inline_keyboard(buttons["customer_choose_platform_buttons"]))
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "customer_cd_choose_vk_task" or
-                                                   call.data == "customer_cd_choose_telegram_task")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "customer_cd_choose_vk_task" or
+                                                 call.data == "customer_cd_choose_telegram_task")
 def choose_platform(call):
     keyboard = ""
     if call.data == "customer_cd_choose_vk_task":
@@ -644,14 +644,14 @@ def choose_platform(call):
     elif call.data == "customer_cd_choose_telegram_task":
         keyboard = create_inline_keyboard(buttons["customer_choose_type_of_task_telegram"])
 
-    tg_bot.delete_message(chat_id = call.from_user.id, message_id = call.message.message_id)
-    tg_bot.send_message(chat_id = call.from_user.id, text = messages_templates["tasks"]["choose_task_type"],
-                        reply_markup = keyboard)
+    tg_bot.delete_message(chat_id=call.from_user.id, message_id=call.message.message_id)
+    tg_bot.send_message(chat_id=call.from_user.id, text=messages_templates["tasks"]["choose_task_type"],
+                        reply_markup=keyboard)
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_ct_telegram_subscribers")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_ct_telegram_subscribers")
 def task_telegram_subscribers(call):
-    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    tg_bot.delete_message(call.from_user.id, message_id=call.message.message_id)
     tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["request_for_telegram_channel_link"])
     tg_bot.set_state(call.from_user.id, "get_tg_task_url")
     with tg_bot.retrieve_data(call.from_user.id) as data:
@@ -659,9 +659,9 @@ def task_telegram_subscribers(call):
         data["platform"] = "tg"
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_ct_vk_subscribers")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_ct_vk_subscribers")
 def task_vk_subscribers(call):
-    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    tg_bot.delete_message(call.from_user.id, message_id=call.message.message_id)
     tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["request_for_vk_page_subs_link"])
     tg_bot.set_state(call.from_user.id, "get_vk_subs_task_url")
     with tg_bot.retrieve_data(call.from_user.id) as data:
@@ -669,9 +669,9 @@ def task_vk_subscribers(call):
         data["platform"] = "vk"
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_ct_vk_likes")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_ct_vk_likes")
 def task_vk_subscribers(call):
-    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    tg_bot.delete_message(call.from_user.id, message_id=call.message.message_id)
     tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["request_for_vk_page_likes_link"])
     tg_bot.set_state(call.from_user.id, "get_vk_likes_and_repost_task_url")
     with tg_bot.retrieve_data(call.from_user.id) as data:
@@ -679,9 +679,9 @@ def task_vk_subscribers(call):
         data["platform"] = "vk"
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_ct_vk_reposts")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_ct_vk_reposts")
 def task_vk_subscribers(call):
-    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    tg_bot.delete_message(call.from_user.id, message_id=call.message.message_id)
     tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["request_for_vk_page_reposts_link"])
     tg_bot.set_state(call.from_user.id, "get_vk_likes_and_repost_task_url")
     with tg_bot.retrieve_data(call.from_user.id) as data:
@@ -689,13 +689,13 @@ def task_vk_subscribers(call):
         data["platform"] = "vk"
 
 
-@tg_bot.message_handler(state = "get_tg_task_url")
+@tg_bot.message_handler(state="get_tg_task_url")
 def customer_get_tg_task_url(message):
     res, name = telegram_channel_check(message.text)
     chat_id = message.chat.id
     if not res:
         tg_bot.send_message(chat_id, messages_templates["tasks"]["telegram_channel_not_found"],
-                            reply_markup = create_inline_keyboard(buttons["customer_resend_telegram_channel_link"]))
+                            reply_markup=create_inline_keyboard(buttons["customer_resend_telegram_channel_link"]))
     else:
         tg_bot.send_message(chat_id, messages_templates["tasks"]["telegram_channel_found"].format(name))
         with tg_bot.retrieve_data(chat_id) as data:
@@ -703,7 +703,7 @@ def customer_get_tg_task_url(message):
         customer_send_tg_prices(message)
 
 
-@tg_bot.message_handler(state = "get_vk_subs_task_url")
+@tg_bot.message_handler(state="get_vk_subs_task_url")
 def customer_get_vk_task_url(message):
     res, name = vk_page_check(message.text)
     message_to_user = ""
@@ -715,7 +715,7 @@ def customer_get_vk_task_url(message):
         message_to_user = messages_templates["tasks"]["vk_group_closed"]
     if not res:
         tg_bot.send_message(message.chat.id, message_to_user,
-                            reply_markup = create_inline_keyboard(buttons["customer_resend_vk_page_link"]))
+                            reply_markup=create_inline_keyboard(buttons["customer_resend_vk_page_link"]))
     else:
         tg_bot.send_message(message.chat.id, messages_templates["tasks"]["vk_page_found"].format(name))
         with tg_bot.retrieve_data(message.chat.id) as data:
@@ -723,7 +723,7 @@ def customer_get_vk_task_url(message):
         customer_send_vk_subscribers_prices(message)
 
 
-@tg_bot.message_handler(state = "get_vk_likes_and_repost_task_url")
+@tg_bot.message_handler(state="get_vk_likes_and_repost_task_url")
 def customer_get_vk_task_url(message):
     res, url = vk_post_check(message.text)
     message_to_user = ""
@@ -733,7 +733,7 @@ def customer_get_vk_task_url(message):
         message_to_user = messages_templates["tasks"]["vk_post_not_found"]
     if not res:
         tg_bot.send_message(message.chat.id, message_to_user,
-                            reply_markup = create_inline_keyboard(buttons["customer_resend_vk_page_link"]))
+                            reply_markup=create_inline_keyboard(buttons["customer_resend_vk_page_link"]))
     else:
         tg_bot.send_message(message.chat.id, messages_templates["tasks"]["vk_post_found"].format(url))
         with tg_bot.retrieve_data(message.chat.id) as data:
@@ -746,25 +746,25 @@ def customer_get_vk_task_url(message):
 
 def customer_send_tg_prices(message):
     tg_bot.send_message(message.chat.id, messages_templates["tasks"]["tg_current_prices"],
-                        reply_markup = create_inline_keyboard(buttons["customer_back_from_choosing_price"]))
+                        reply_markup=create_inline_keyboard(buttons["customer_back_from_choosing_price"]))
     tg_bot.set_state(message.chat.id, "get_money_for_tasks")
 
 
 def customer_send_vk_subscribers_prices(message):
     tg_bot.send_message(message.chat.id, messages_templates["tasks"]["vk_subs_current_prices"],
-                        reply_markup = create_inline_keyboard(buttons["customer_back_from_choosing_price"]))
+                        reply_markup=create_inline_keyboard(buttons["customer_back_from_choosing_price"]))
     tg_bot.set_state(message.chat.id, "get_money_for_tasks")
 
 
 def customer_send_vk_likes_prices(message):
     tg_bot.send_message(message.chat.id, messages_templates["tasks"]["vk_likes_current_prices"],
-                        reply_markup = create_inline_keyboard(buttons["customer_back_from_choosing_price"]))
+                        reply_markup=create_inline_keyboard(buttons["customer_back_from_choosing_price"]))
     tg_bot.set_state(message.chat.id, "get_money_for_tasks")
 
 
 def customer_send_vk_reposts_prices(message):
     tg_bot.send_message(message.chat.id, messages_templates["tasks"]["vk_reposts_current_prices"],
-                        reply_markup = create_inline_keyboard(buttons["customer_back_from_choosing_price"]))
+                        reply_markup=create_inline_keyboard(buttons["customer_back_from_choosing_price"]))
     tg_bot.set_state(message.chat.id, "get_money_for_tasks")
 
 
@@ -828,13 +828,13 @@ def form_vk_reposts_tasks_variants(money: int):
     return message
 
 
-@tg_bot.message_handler(state = "get_money_for_tasks", is_digit = True)
+@tg_bot.message_handler(state="get_money_for_tasks", is_digit=True)
 def customer_get_money_for_task(message):
     money = int(message.text)
     customer = customer_table.get_customer_by_id(user_table.get_user_by_tg_id(message.chat.id).id)
     if money > customer.balance:
         tg_bot.send_message(message.chat.id, messages_templates["tasks"]["not_enough_money_on_balance"],
-                            reply_markup = create_inline_keyboard(buttons["customer_not_enough_money_buttons"]))
+                            reply_markup=create_inline_keyboard(buttons["customer_not_enough_money_buttons"]))
         return
     with tg_bot.retrieve_data(message.chat.id) as data:
         data["money"] = money
@@ -844,31 +844,31 @@ def customer_get_money_for_task(message):
             else:
                 message_to_user = form_telegram_subs_tasks_variants(money)
             tg_bot.send_message(message.chat.id, message_to_user,
-                                reply_markup = create_inline_keyboard(
+                                reply_markup=create_inline_keyboard(
                                     buttons["customer_choose_subs_task_cost_variants"]))
         elif data["task_type"] == "likes":
             tg_bot.send_message(message.chat.id, form_vk_likes_tasks_variants(money),
-                                reply_markup = create_inline_keyboard(
+                                reply_markup=create_inline_keyboard(
                                     buttons["customer_choose_other_task_cost_variants"]))
         elif data["task_type"] == "reposts":
             tg_bot.send_message(message.chat.id, form_vk_reposts_tasks_variants(money),
-                                reply_markup = create_inline_keyboard(
+                                reply_markup=create_inline_keyboard(
                                     buttons["customer_choose_other_task_cost_variants"]))
 
 
-@tg_bot.message_handler(state = "get_money_for_tasks", is_digit = False)
+@tg_bot.message_handler(state="get_money_for_tasks", is_digit=False)
 def customer_get_money_for_task(message):
     tg_bot.send_message(message.chat.id, messages_templates["tasks"]["wrong_price_input"],
-                        reply_markup = create_inline_keyboard(buttons["customer_reject_reenter_price"]))
+                        reply_markup=create_inline_keyboard(buttons["customer_reject_reenter_price"]))
 
 
 def count_available_employees(available_money: int, prices_place: str, task_type: str):
     return [int(available_money / price) for price in prices[prices_place][task_type].values()]
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_back_to_choose_task_cost")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_back_to_choose_task_cost")
 def customer_back_to_choose_task_cost(call):
-    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    tg_bot.delete_message(call.from_user.id, message_id=call.message.message_id)
     with tg_bot.retrieve_data(call.from_user.id) as data:
         if data["task_type"] == "sub":
             if data["platform"] == "vk":
@@ -876,22 +876,22 @@ def customer_back_to_choose_task_cost(call):
             else:
                 message_to_user = form_telegram_subs_tasks_variants(data["money"])
             tg_bot.send_message(call.from_user.id, message_to_user,
-                                reply_markup = create_inline_keyboard(
+                                reply_markup=create_inline_keyboard(
                                     buttons["customer_choose_subs_task_cost_variants"]))
         elif data["task_type"] == "likes":
             tg_bot.send_message(call.from_user.id, form_vk_likes_tasks_variants(data["money"]),
-                                reply_markup = create_inline_keyboard(
+                                reply_markup=create_inline_keyboard(
                                     buttons["customer_choose_other_task_cost_variants"]))
         elif data["task_type"] == "reposts":
             tg_bot.send_message(call.from_user.id, form_vk_reposts_tasks_variants(data["money"]),
-                                reply_markup = create_inline_keyboard(
+                                reply_markup=create_inline_keyboard(
                                     buttons["customer_choose_other_task_cost_variants"]))
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data in buttons[
+@tg_bot.callback_query_handler(func=lambda call: call.data in buttons[
     "customer_choose_subs_task_cost_variants"].values())
 def customer_choose_task_cost(call):
-    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    tg_bot.delete_message(call.from_user.id, message_id=call.message.message_id)
     with tg_bot.retrieve_data(call.from_user.id) as data:
         money = data["money"]
         if call.data == "cd_own_variant":
@@ -900,7 +900,7 @@ def customer_choose_task_cost(call):
             else:
                 buttons_to_send = buttons["customer_custom_other_task_select_guarantee"]
             tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["custom_task"],
-                                reply_markup = create_inline_keyboard(buttons_to_send))
+                                reply_markup=create_inline_keyboard(buttons_to_send))
         else:
             if data["platform"] == "vk":
                 available_employees = count_available_employees(money, "vk_prices", "subscribers")
@@ -930,10 +930,10 @@ def customer_choose_task_cost(call):
                 message = message.format(available_employees[3], "нет", summa)
                 data["guarantee"] = "no"
             tg_bot.send_message(call.from_user.id, message,
-                                reply_markup = create_inline_keyboard(buttons["customer_save_task_button"]))
+                                reply_markup=create_inline_keyboard(buttons["customer_save_task_button"]))
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data in buttons[
+@tg_bot.callback_query_handler(func=lambda call: call.data in buttons[
     "customer_custom_subs_task_select_guarantee"].values())
 def customer_custom_task_guarantee(call):
     tg_bot.delete_message(call.from_user.id, call.message.message_id)
@@ -977,7 +977,7 @@ def customer_custom_task_guarantee(call):
         tg_bot.set_state(call.from_user.id, "get_price_for_custom_task")
 
 
-@tg_bot.message_handler(state = "get_price_for_custom_task", is_digit = True)
+@tg_bot.message_handler(state="get_price_for_custom_task", is_digit=True)
 def customer_get_price_for_custom_task(message):
     if int(message.text) == 0:
         tg_bot.send_message(message.chat.id, messages_templates["tasks"]["zero_price_input"])
@@ -988,32 +988,32 @@ def customer_get_price_for_custom_task(message):
         tg_bot.send_message(message.chat.id,
                             messages_templates["tasks"]["custom_task_accept_message"].format(data["price"],
                                                                                              available_subscribers),
-                            reply_markup = create_inline_keyboard(buttons["customer_save_task_button"]))
+                            reply_markup=create_inline_keyboard(buttons["customer_save_task_button"]))
         tg_bot.set_state(message.chat.id, "")
 
 
-@tg_bot.message_handler(state = "get_price_for_custom_task", is_digit = False)
+@tg_bot.message_handler(state="get_price_for_custom_task", is_digit=False)
 def customer_get_price_for_custom_task(message):
     tg_bot.send_message(message.chat.id, messages_templates["tasks"]["wrong_price_input"],
-                        reply_markup = create_inline_keyboard(buttons["customer_reject_reenter_price"]))
+                        reply_markup=create_inline_keyboard(buttons["customer_reject_reenter_price"]))
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_customer_reject_reenter_price")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_customer_reject_reenter_price")
 def customer_reject_reentering_price(call):
     tg_bot.delete_state(call.from_user.id)
     callback_profile(call)
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_save_task")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_save_task")
 def customer_save_task(call):
-    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    tg_bot.delete_message(call.from_user.id, message_id=call.message.message_id)
     with tg_bot.retrieve_data(call.from_user.id) as data:
         user = user_table.get_user_by_tg_id(call.from_user.id)
         customer = customer_table.get_customer_by_id(user.id)
         available_subscribers = int(int(data["money"]) / int(data["price"]))
         if available_subscribers == 0:
             tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["custom_task_zero_subs"],
-                                reply_markup = create_inline_keyboard(buttons["customer_get_back_to_choose_task_cost"]))
+                                reply_markup=create_inline_keyboard(buttons["customer_get_back_to_choose_task_cost"]))
             return
         else:
             task_table.add_new_task(customer.id, data["platform"], data["task_type"], data["ref"], data["guarantee"],
@@ -1021,23 +1021,23 @@ def customer_save_task(call):
             customer.balance -= int(data["price"]) * available_subscribers
             apply_db_changes()
             tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["task_accept_message"],
-                                reply_markup = create_inline_keyboard(buttons["saved_task_buttons"]))
+                                reply_markup=create_inline_keyboard(buttons["saved_task_buttons"]))
     tg_bot.delete_state(call.from_user.id)
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_customer_get_balance")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_customer_get_balance")
 def callback_get_customer_balance(call):
-    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    tg_bot.delete_message(call.from_user.id, message_id=call.message.message_id)
     user = user_table.get_user_by_tg_id(call.from_user.id)
     customer = customer_table.get_customer_by_id(user.id)
     message_to_user = messages_templates["customer"]["balance"].format(customer.balance)
     keyboard = create_inline_keyboard(buttons["customer_balance_buttons"])
-    tg_bot.send_message(call.from_user.id, message_to_user, reply_markup = keyboard)
+    tg_bot.send_message(call.from_user.id, message_to_user, reply_markup=keyboard)
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_customer_my_tasks")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_customer_my_tasks")
 def customer_get_tasks(call):
-    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    tg_bot.delete_message(call.from_user.id, message_id=call.message.message_id)
     user = user_table.get_user_by_tg_id(call.from_user.id)
     customer = customer_table.get_customer_by_id(user.id)
     tasks = task_table.get_active_tasks_by_customer_id(customer.id)
@@ -1062,7 +1062,7 @@ def customer_get_tasks(call):
                 task_type = "Репосты"
             if task.pinned:
                 pin_time_left = (datetime.datetime.strptime(task.pinned_date, "%m/%d/%y %H:%M") + \
-                                 datetime.timedelta(days = 1) - datetime.datetime.utcnow())
+                                 datetime.timedelta(days=1) - datetime.datetime.utcnow())
                 message += f"\n\n 📌 Задание - {task.id}\nПлатформа: {platform}\nТип: " \
                            f"{task_type}\nПрогресс: {task.current_count_of_employees}/{task.needed_count_of_employees}" \
                            f"\nОсталось времени до окончания статуса \"Закреплено\":" \
@@ -1071,10 +1071,10 @@ def customer_get_tasks(call):
             else:
                 message += f"\n\n ° Задание - {task.id}\nПлатформа: {platform}\nТип: " \
                            f"{task_type}\nПрогресс: {task.current_count_of_employees}/{task.needed_count_of_employees}"
-    tg_bot.send_message(call.from_user.id, message, reply_markup = keyboard)
+    tg_bot.send_message(call.from_user.id, message, reply_markup=keyboard)
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_select_top_task")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_select_top_task")
 def customer_get_task_top(call):
     user = user_table.get_user_by_tg_id(call.from_user.id)
     tasks = task_table.get_active_tasks_by_customer_id(user.customer.id)
@@ -1082,16 +1082,16 @@ def customer_get_task_top(call):
     if len(tasks) == 0:
         message_to_user += messages_templates["tasks"]["customer_no_active_tasks"]
         keyboard = create_inline_keyboard(buttons["customer_no_tasks"])
-        tg_bot.send_message(call.from_user.id, message_to_user, reply_markup = keyboard)
+        tg_bot.send_message(call.from_user.id, message_to_user, reply_markup=keyboard)
     else:
         for task in tasks:
             message_to_user += f"\n° Задание - {task.id}"
         tg_bot.send_message(call.from_user.id, message_to_user,
-                            reply_markup = create_inline_keyboard(buttons["customer_back_to_customer_tasks"]))
+                            reply_markup=create_inline_keyboard(buttons["customer_back_to_customer_tasks"]))
         tg_bot.set_state(call.from_user.id, "get_task_id_for_top")
 
 
-@tg_bot.message_handler(state = "get_task_id_for_top", is_digit = True)
+@tg_bot.message_handler(state="get_task_id_for_top", is_digit=True)
 def get_task_if_for_top(message):
     task_id = message.text
     task = task_table.get_task_by_id(task_id)
@@ -1102,18 +1102,18 @@ def get_task_if_for_top(message):
         data['task_id'] = task_id
     tg_bot.send_message(message.chat.id,
                         messages_templates["tasks"]["set_to_top"].format(task_id, prices["set_to_top_price"]),
-                        reply_markup = create_inline_keyboard(buttons["set_to_top_buttons"]))
+                        reply_markup=create_inline_keyboard(buttons["set_to_top_buttons"]))
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_set_task_to_top")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_set_task_to_top")
 def set_task_to_top(call):
-    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    tg_bot.delete_message(call.from_user.id, message_id=call.message.message_id)
     user = user_table.get_user_by_tg_id(call.from_user.id)
     if user.customer.balance < prices["set_to_top_price"]:
         lacked_sum = prices["set_to_top_price"] - user.customer.balance
         tg_bot.send_message(call.from_user.id,
                             messages_templates["tasks"]["not_enough_money_for_top"].format(lacked_sum),
-                            reply_markup = create_inline_keyboard(buttons["not_ok_set_top_task_buttons"]))
+                            reply_markup=create_inline_keyboard(buttons["not_ok_set_top_task_buttons"]))
     else:
         user.customer.balance -= prices["set_to_top_price"]
         apply_db_changes()
@@ -1121,27 +1121,27 @@ def set_task_to_top(call):
             task_id = data['task_id']
             task_table.raise_task_in_top(task_id)
             tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["ok_set_to_top"],
-                                reply_markup = create_inline_keyboard(buttons["ok_set_top_task_buttons"]))
+                                reply_markup=create_inline_keyboard(buttons["ok_set_top_task_buttons"]))
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_select_pin_task")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_select_pin_task")
 def customer_select_task_to_pin(call):
     user = user_table.get_user_by_tg_id(call.from_user.id)
-    tasks = task_table.get_active_tasks_by_customer_id(user.customer.id, pinned = False)
+    tasks = task_table.get_active_tasks_by_customer_id(user.customer.id, pinned=False)
     message_to_user = messages_templates["tasks"]["pin"]["select_pin_task"].format(len(tasks))
     if len(tasks) == 0:
         message_to_user += messages_templates["tasks"]["customer_no_active_tasks"]
         keyboard = create_inline_keyboard(buttons["customer_no_tasks"])
-        tg_bot.send_message(call.from_user.id, message_to_user, reply_markup = keyboard)
+        tg_bot.send_message(call.from_user.id, message_to_user, reply_markup=keyboard)
     else:
         for task in tasks:
             message_to_user += f"\n° Задание - {task.id}"
         tg_bot.send_message(call.from_user.id, message_to_user,
-                            reply_markup = create_inline_keyboard(buttons["customer_back_to_customer_tasks"]))
+                            reply_markup=create_inline_keyboard(buttons["customer_back_to_customer_tasks"]))
         tg_bot.set_state(call.from_user.id, "get_task_id_for_pin")
 
 
-@tg_bot.message_handler(state = "get_task_id_for_pin", is_digit = True)
+@tg_bot.message_handler(state="get_task_id_for_pin", is_digit=True)
 def get_task_for_pin(message):
     task_id = message.text
     task = task_table.get_task_by_id(task_id)
@@ -1152,18 +1152,18 @@ def get_task_for_pin(message):
         data['task_id'] = task_id
     tg_bot.send_message(message.chat.id,
                         messages_templates["tasks"]["pin"]["pin_task_approve"].format(task_id, prices["pin_price"]),
-                        reply_markup = create_inline_keyboard(buttons["pin_buttons"]["pin_approve_buttons"]))
+                        reply_markup=create_inline_keyboard(buttons["pin_buttons"]["pin_approve_buttons"]))
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_pin_task")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_pin_task")
 def pin_task(call):
-    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    tg_bot.delete_message(call.from_user.id, message_id=call.message.message_id)
     user = user_table.get_user_by_tg_id(call.from_user.id)
     if user.customer.balance < prices["pin_price"]:
         lacked_sum = prices["pin_price"] - user.customer.balance
         tg_bot.send_message(call.from_user.id,
                             messages_templates["tasks"]["pin"]["pin_not_enough_money"].format(lacked_sum),
-                            reply_markup = create_inline_keyboard(buttons["pin_buttons"]["not_ok_pin_task_buttons"]))
+                            reply_markup=create_inline_keyboard(buttons["pin_buttons"]["not_ok_pin_task_buttons"]))
     else:
         user.customer.balance -= prices["pin_price"]
         apply_db_changes()
@@ -1171,10 +1171,10 @@ def pin_task(call):
             task_id = data['task_id']
             task_table.pin_task(task_id)
             tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["pin"]["pin_ok"],
-                                reply_markup = create_inline_keyboard(buttons["pin_buttons"]["ok_pin_task_buttons"]))
+                                reply_markup=create_inline_keyboard(buttons["pin_buttons"]["ok_pin_task_buttons"]))
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_select_decline_task")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_select_decline_task")
 def customer_decline_task(call):
     user = user_table.get_user_by_tg_id(call.from_user.id)
     tasks = task_table.get_active_tasks_by_customer_id(user.customer.id)
@@ -1183,7 +1183,7 @@ def customer_decline_task(call):
     if len(tasks) == 0:
         message_to_user += messages_templates["tasks"]["customer_no_active_tasks"]
         keyboard = create_inline_keyboard(buttons["customer_no_tasks"])
-        tg_bot.send_message(call.from_user.id, message_to_user, reply_markup = keyboard)
+        tg_bot.send_message(call.from_user.id, message_to_user, reply_markup=keyboard)
     else:
         for task in tasks:
             if task.pinned:
@@ -1191,11 +1191,11 @@ def customer_decline_task(call):
             else:
                 message_to_user += f"\n Задание №{task.id}"
         tg_bot.send_message(call.from_user.id, message_to_user,
-                            reply_markup = create_inline_keyboard(buttons["customer_back_to_customer_tasks"]))
+                            reply_markup=create_inline_keyboard(buttons["customer_back_to_customer_tasks"]))
         tg_bot.set_state(call.from_user.id, "get_task_id_to_decline")
 
 
-@tg_bot.message_handler(state = "get_task_id_to_decline", is_digit = True)
+@tg_bot.message_handler(state="get_task_id_to_decline", is_digit=True)
 def get_task_for_pin(message):
     task_id = message.text
     task = task_table.get_task_by_id(task_id)
@@ -1206,12 +1206,12 @@ def get_task_for_pin(message):
         data['task_id'] = task_id
     tg_bot.send_message(message.chat.id,
                         messages_templates["tasks"]["decline"]["decline_task_approve"].format(task_id),
-                        reply_markup = create_inline_keyboard(buttons["decline_buttons"]["ok_decline_buttons"]))
+                        reply_markup=create_inline_keyboard(buttons["decline_buttons"]["ok_decline_buttons"]))
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_decline_task")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_decline_task")
 def customer_decline_task(call):
-    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    tg_bot.delete_message(call.from_user.id, message_id=call.message.message_id)
     with tg_bot.retrieve_data(call.from_user.id) as data:
         task_id = data['task_id']
         user = user_table.get_user_by_tg_id(call.from_user.id)
@@ -1221,12 +1221,12 @@ def customer_decline_task(call):
         apply_db_changes()
         task_table.delete_task(task_id)
         tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["decline"]["ok_decline_task"].format(reward),
-                            reply_markup = create_inline_keyboard(buttons["decline_buttons"]["ok_declined_buttons"]))
+                            reply_markup=create_inline_keyboard(buttons["decline_buttons"]["ok_declined_buttons"]))
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_task_history")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_task_history")
 def customer_task_history(call):
-    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    tg_bot.delete_message(call.from_user.id, message_id=call.message.message_id)
     user = user_table.get_user_by_tg_id(call.from_user.id)
     all_tasks = task_table.get_tasks_by_customer_id(user.customer.id)
     active_tasks = task_table.get_active_tasks_by_customer_id(user.customer.id)
@@ -1234,7 +1234,7 @@ def customer_task_history(call):
     if len(all_tasks) == 0:
         message_to_user += messages_templates["tasks"]["customer_no_active_tasks"]
         keyboard = create_inline_keyboard(buttons["customer_no_tasks"])
-        tg_bot.send_message(call.from_user.id, message_to_user, reply_markup = keyboard)
+        tg_bot.send_message(call.from_user.id, message_to_user, reply_markup=keyboard)
     else:
         for task in all_tasks:
             if task.declined:
@@ -1244,12 +1244,12 @@ def customer_task_history(call):
             else:
                 message_to_user += f"\nЗадание №{task.id} (выполнено)"
         tg_bot.send_message(call.from_user.id, message_to_user,
-                            reply_markup = create_inline_keyboard(buttons["customer_return_button"]))
+                            reply_markup=create_inline_keyboard(buttons["customer_return_button"]))
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_check_guarantee")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_check_guarantee")
 def check_guarantee(call):
-    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    tg_bot.delete_message(call.from_user.id, message_id=call.message.message_id)
     user = user_table.get_user_by_tg_id(call.from_user.id)
     result, tasks_id = guarantee_checker_by_customer_id(user.customer.id)
     if not result:
@@ -1258,19 +1258,19 @@ def check_guarantee(call):
             task = task_table.get_task_by_id(task_id)
             message_to_user += f"\n№{task_id}\n💲 Вам было компенсировано: {task.price} PTF"
         tg_bot.send_message(call.from_user.id, message_to_user,
-                            reply_markup = create_inline_keyboard(buttons["customer_return_button"]))
+                            reply_markup=create_inline_keyboard(buttons["customer_return_button"]))
     else:
         message_to_user = messages_templates["tasks"]["guarantee"]["guarantee_ok"]
         tg_bot.send_message(call.from_user.id, message_to_user,
-                            reply_markup = create_inline_keyboard(buttons["customer_guarantee_okay"]))
+                            reply_markup=create_inline_keyboard(buttons["customer_guarantee_okay"]))
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_customer_faq")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_customer_faq")
 def callback_get_customer_faq(call):
     message_to_user = messages_templates["customer"]["faq"]
     keyboard = create_inline_keyboard(buttons["customer_faq_buttons"])
-    tg_bot.delete_message(chat_id = call.from_user.id, message_id = call.message.message_id)
-    tg_bot.send_message(call.from_user.id, message_to_user, reply_markup = keyboard)
+    tg_bot.delete_message(chat_id=call.from_user.id, message_id=call.message.message_id)
+    tg_bot.send_message(call.from_user.id, message_to_user, reply_markup=keyboard)
 
 
 def get_user_balance(user_id):
@@ -1288,20 +1288,20 @@ def get_user_balance(user_id):
     return messages_templates["registered_user"]["common_balance"].format(customer_balance, employee_balance)
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_transfer_money_to_customer")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_transfer_money_to_customer")
 def transfer_money_to_customer(call):
-    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    tg_bot.delete_message(call.from_user.id, message_id=call.message.message_id)
     tg_bot.send_message(call.from_user.id, messages_templates["registered_user"]["transfer_money_to_customer"])
     tg_bot.set_state(call.from_user.id, "get_money_to_transfer")
 
 
-@tg_bot.message_handler(state = "get_money_to_transfer", is_digit = False)
+@tg_bot.message_handler(state="get_money_to_transfer", is_digit=False)
 def get_wrong_sum_for_transfer_to_customer(message):
     tg_bot.send_message(message.chat.id,
                         messages_templates["registered_user"]["transfer_money_to_customer_not_integer"])
 
 
-@tg_bot.message_handler(state = "get_money_to_transfer", is_digit = True)
+@tg_bot.message_handler(state="get_money_to_transfer", is_digit=True)
 def get_money_amount_for_transfer_to_customer(message):
     money_amount = message.text
     user = user_table.get_user_by_tg_id(message.chat.id)
@@ -1315,20 +1315,20 @@ def get_money_amount_for_transfer_to_customer(message):
     tg_bot.send_message(message.chat.id,
                         messages_templates["registered_user"][
                             "transfer_money_to_customer_correct_amount_of_money"].format(message.text),
-                        reply_markup = create_inline_keyboard(buttons["transfer_money_finished_buttons"]))
+                        reply_markup=create_inline_keyboard(buttons["transfer_money_finished_buttons"]))
     tg_bot.delete_state(message.chat.id)
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_target_task_menu")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_target_task_menu")
 def target_task_menu(call):
-    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    tg_bot.delete_message(call.from_user.id, message_id=call.message.message_id)
     user = user_table.get_user_by_tg_id(call.from_user.id)
     tg_bot.send_message(call.from_user.id,
                         messages_templates["tasks"]["target"]["start_message"].format(user.customer.balance),
-                        reply_markup = create_inline_keyboard(buttons["target_buttons"]["start_buttons"]))
+                        reply_markup=create_inline_keyboard(buttons["target_buttons"]["start_buttons"]))
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data in ["cd_target_tg", "cd_target_vk"])
+@tg_bot.callback_query_handler(func=lambda call: call.data in ["cd_target_tg", "cd_target_vk"])
 def choose_platform_target_task(call):
     message_to_user = messages_templates["tasks"]["target"]["task_type"]
     keyboard = []
@@ -1337,13 +1337,13 @@ def choose_platform_target_task(call):
     elif call.data == "cd_target_vk":
         keyboard = create_inline_keyboard(buttons["target_buttons"]["vk_tasks_buttons"])
 
-    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
-    tg_bot.send_message(call.from_user.id, message_to_user, reply_markup = keyboard)
+    tg_bot.delete_message(call.from_user.id, message_id=call.message.message_id)
+    tg_bot.send_message(call.from_user.id, message_to_user, reply_markup=keyboard)
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_tg_subs_target")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_tg_subs_target")
 def tg_target_task(call):
-    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    tg_bot.delete_message(call.from_user.id, message_id=call.message.message_id)
     tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["request_for_telegram_channel_link"])
     tg_bot.set_state(call.from_user.id, "get_tg_target_task_url")
     with tg_bot.retrieve_data(call.from_user.id) as data:
@@ -1351,9 +1351,9 @@ def tg_target_task(call):
         data["platform"] = "tg"
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data in buttons["target_buttons"]["age_buttons"].values())
+@tg_bot.callback_query_handler(func=lambda call: call.data in buttons["target_buttons"]["age_buttons"].values())
 def get_age_target_task(call):
-    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    tg_bot.delete_message(call.from_user.id, message_id=call.message.message_id)
     with tg_bot.retrieve_data(call.from_user.id) as data:
         if call.data == "cd_young_target":
             data["age"] = "12-17"
@@ -1365,40 +1365,40 @@ def get_age_target_task(call):
             data["age"] = "30+"
         else:
             data["age"] = "all"
-    tg_bot.send_photo(call.from_user.id, photo = images["geo_send_help"],
-                      caption = messages_templates["tasks"]["target"]["age_chosen"],
-                      reply_markup = create_inline_keyboard(buttons["target_buttons"]["geo_buttons"]))
+    tg_bot.send_photo(call.from_user.id, photo=images["geo_send_help"],
+                      caption=messages_templates["tasks"]["target"]["age_chosen"],
+                      reply_markup=create_inline_keyboard(buttons["target_buttons"]["geo_buttons"]))
     tg_bot.set_state(call.from_user.id, "get_employee_position")
 
 
-@tg_bot.message_handler(state = "get_employee_position", content_types = ["location"])
+@tg_bot.message_handler(state="get_employee_position", content_types=["location"])
 def get_employee_position(message):
     longitude, latitude = message.location.longitude, message.location.latitude
     address = get_address_from_coordinates(f"{longitude},{latitude}")
     if address == "error":
         tg_bot.send_message(message.chat.id, "Упс! Что-то не так с координатами, проверь их и попробуй ещё раз!",
-                            reply_markup = create_inline_keyboard(buttons["target_buttons"]["geo_back_buttons"]))
+                            reply_markup=create_inline_keyboard(buttons["target_buttons"]["geo_back_buttons"]))
         return
     with tg_bot.retrieve_data(message.chat.id) as data:
         data['longitude'] = longitude
         data['latitude'] = latitude
         data['address'] = address
     tg_bot.send_message(message.chat.id, messages_templates["tasks"]["target"]["get_geo_position"].format(address),
-                        reply_markup = create_inline_keyboard(buttons["target_buttons"]["geo_data_buttons"]))
+                        reply_markup=create_inline_keyboard(buttons["target_buttons"]["geo_data_buttons"]))
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_target_coordinates_back")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_target_coordinates_back")
 def target_coordinates_back(call):
-    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
-    tg_bot.send_photo(call.from_user.id, photo = images["geo_send_help"],
-                      caption = messages_templates["tasks"]["target"]["age_chosen"],
-                      reply_markup = create_inline_keyboard(buttons["target_buttons"]["geo_buttons"]))
+    tg_bot.delete_message(call.from_user.id, message_id=call.message.message_id)
+    tg_bot.send_photo(call.from_user.id, photo=images["geo_send_help"],
+                      caption=messages_templates["tasks"]["target"]["age_chosen"],
+                      reply_markup=create_inline_keyboard(buttons["target_buttons"]["geo_buttons"]))
     tg_bot.set_state(call.from_user.id, "get_employee_position")
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_accept_target_coordinates")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_accept_target_coordinates")
 def save_target_task_coordinates(call):
-    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    tg_bot.delete_message(call.from_user.id, message_id=call.message.message_id)
     with tg_bot.retrieve_data(call.from_user.id) as data:
         message_to_user = messages_templates["tasks"]["target"]["geo_show_coordinates"].format(data["address"]) + \
                           "\n\n" + messages_templates["tasks"]["target"]["get_coordinate_radius"]
@@ -1406,9 +1406,9 @@ def save_target_task_coordinates(call):
     tg_bot.set_state(call.from_user.id, "get_radius_for_target_task")
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_target_radius_back")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_target_radius_back")
 def target_radius_back(call):
-    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    tg_bot.delete_message(call.from_user.id, message_id=call.message.message_id)
     with tg_bot.retrieve_data(call.from_user.id) as data:
         message_to_user = messages_templates["tasks"]["target"]["geo_show_coordinates"].format(data["address"]) + \
                           "\n\n" + messages_templates["tasks"]["target"]["get_coordinate_radius"]
@@ -1416,7 +1416,7 @@ def target_radius_back(call):
     tg_bot.set_state(call.from_user.id, "get_radius_for_target_task")
 
 
-@tg_bot.message_handler(state = "get_radius_for_target_task", is_digit = True)
+@tg_bot.message_handler(state="get_radius_for_target_task", is_digit=True)
 def get_radius_for_target_task(message):
     radius = int(message.text)
     if radius <= 0:
@@ -1425,25 +1425,25 @@ def get_radius_for_target_task(message):
     with tg_bot.retrieve_data(message.chat.id) as data:
         data['radius'] = radius
     tg_bot.send_message(message.chat.id, messages_templates["tasks"]["target"]["got_radius"].format(radius),
-                        reply_markup = create_inline_keyboard(buttons["target_buttons"]["geo_data_got_radius_buttons"]))
+                        reply_markup=create_inline_keyboard(buttons["target_buttons"]["geo_data_got_radius_buttons"]))
 
 
-@tg_bot.message_handler(state = "get_radius_for_target_task", is_digit = False)
+@tg_bot.message_handler(state="get_radius_for_target_task", is_digit=False)
 def wrong_radius_input(message):
     tg_bot.send_message(message.chat.id, messages_templates["tasks"]["target"]["wrong_radius"])
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_accept_radius")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_accept_radius")
 def accept_radius(call):
-    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    tg_bot.delete_message(call.from_user.id, message_id=call.message.message_id)
     tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["target"]["financial_state"],
-                        reply_markup = create_inline_keyboard(buttons["target_buttons"]["financial_options_buttons"]))
+                        reply_markup=create_inline_keyboard(buttons["target_buttons"]["financial_options_buttons"]))
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data in
-                                                   buttons["target_buttons"]["financial_options_buttons"].values())
+@tg_bot.callback_query_handler(func=lambda call: call.data in
+                                                 buttons["target_buttons"]["financial_options_buttons"].values())
 def target_financial_state(call):
-    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    tg_bot.delete_message(call.from_user.id, message_id=call.message.message_id)
     with tg_bot.retrieve_data(call.from_user.id) as data:
         if call.data == "cd_financial_status_yes":
             data["financial_status"] = "yes"
@@ -1461,12 +1461,12 @@ def target_financial_state(call):
         tg_bot.set_state(call.from_user.id, "get_target_task_budget")
 
 
-@tg_bot.message_handler(state = "get_target_task_budget", is_digit = False)
+@tg_bot.message_handler(state="get_target_task_budget", is_digit=False)
 def wrong_budget_target_task(message):
     tg_bot.send_message(message.chat.id, messages_templates["tasks"]["target"]["wrong_budget"])
 
 
-@tg_bot.message_handler(state = "get_target_task_budget", is_digit = True)
+@tg_bot.message_handler(state="get_target_task_budget", is_digit=True)
 def get_task_task_budget(message):
     budget = int(message.text)
     if budget <= 0:
@@ -1475,16 +1475,16 @@ def get_task_task_budget(message):
     user = user_table.get_user_by_tg_id(message.chat.id)
     if budget > user.customer.balance:
         tg_bot.send_message(message.chat.id, messages_templates["tasks"]["target"]["not_enough_money"],
-                            reply_markup = create_inline_keyboard(buttons["target_buttons"]["target_donate_buttons"]))
+                            reply_markup=create_inline_keyboard(buttons["target_buttons"]["target_donate_buttons"]))
         return
     # TODO: define price
     tg_bot.send_message(message.chat.id, messages_templates["tasks"]["target"]["got_budget"].format(budget, 0),
-                        reply_markup = create_inline_keyboard(buttons["target_buttons"]["create_task_buttons"]))
+                        reply_markup=create_inline_keyboard(buttons["target_buttons"]["create_task_buttons"]))
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_correct_budget")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_correct_budget")
 def correct_budget(call):
-    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    tg_bot.delete_message(call.from_user.id, message_id=call.message.message_id)
     with tg_bot.retrieve_data(call.from_user.id) as data:
         customers = user_table.find_employees_for_target_task_by_criteria(data)
         user = user_table.get_user_by_tg_id(call.from_user.id)
@@ -1496,16 +1496,16 @@ def correct_budget(call):
     tg_bot.set_state(call.from_user.id, "get_target_task_budget")
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_correct_criteria")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_correct_criteria")
 def correct_criteria(call):
-    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    tg_bot.delete_message(call.from_user.id, message_id=call.message.message_id)
     tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["target"]["target_task_settings"],
-                        reply_markup = create_inline_keyboard(buttons["target_buttons"]["age_buttons"]))
+                        reply_markup=create_inline_keyboard(buttons["target_buttons"]["age_buttons"]))
 
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_create_target_task")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_create_target_task")
 def save_target_task(call):
-    tg_bot.delete_message(call.from_user.id, message_id = call.message.message_id)
+    tg_bot.delete_message(call.from_user.id, message_id=call.message.message_id)
     with tg_bot.retrieve_data(call.from_user.id) as data:
         user = user_table.get_user_by_tg_id(call.from_user.id)
         # TODO: needed employees and price
@@ -1513,49 +1513,49 @@ def save_target_task(call):
                                    data['age'],
                                    data['longitude'], data['latitude'], data['financial_status'], data['radius'])
     tg_bot.send_message(call.from_user.id, messages_templates["tasks"]["target"]["created_task"],
-                        reply_markup = create_inline_keyboard(buttons["target_buttons"]["created_task_buttons"]))
+                        reply_markup=create_inline_keyboard(buttons["target_buttons"]["created_task_buttons"]))
 
 
-@tg_bot.message_handler(state = "get_tg_target_task_url")
+@tg_bot.message_handler(state="get_tg_target_task_url")
 def customer_get_tg_target_task_url(message):
     res, name = telegram_channel_check(message.text)
     chat_id = message.chat.id
     if not res:
         tg_bot.send_message(chat_id, messages_templates["tasks"]["telegram_channel_not_found"],
-                            reply_markup = create_inline_keyboard(buttons["customer_resend_telegram_channel_link"]))
+                            reply_markup=create_inline_keyboard(buttons["customer_resend_telegram_channel_link"]))
     else:
         tg_bot.send_message(chat_id, messages_templates["tasks"]["telegram_channel_found"].format(name))
         with tg_bot.retrieve_data(chat_id) as data:
             data["ref"] = message.text
         tg_bot.send_message(message.chat.id, messages_templates["tasks"]["target"]["target_task_settings"],
-                            reply_markup = create_inline_keyboard(buttons["target_buttons"]["age_buttons"]))
+                            reply_markup=create_inline_keyboard(buttons["target_buttons"]["age_buttons"]))
 
 
 # TODO: отображение, что задача таргет, показывать юзерам, которые подходят, определить цену, будет ли гарантия на
 #  эти задачи, будут ли вк лайки и комменты, создать для вк
 
-@tg_bot.callback_query_handler(func = lambda call: call.data == "cd_technical_help")
+@tg_bot.callback_query_handler(func=lambda call: call.data == "cd_technical_help")
 def technical_help(call):
     tg_bot.send_message(call.from_user.id, messages_templates["technical_help"])
 
 
-@tg_bot.message_handler(func = lambda message: message.text == "💴 Мой баланс")
+@tg_bot.message_handler(func=lambda message: message.text == "💴 Мой баланс")
 def reply_home(message):
     user = user_table.get_user_by_tg_id(message.chat.id)
     message_for_user = get_user_balance(user.id)
     tg_bot.send_message(message.chat.id, message_for_user,
-                        reply_markup = create_inline_keyboard(buttons["common_balance_buttons"]))
+                        reply_markup=create_inline_keyboard(buttons["common_balance_buttons"]))
 
 
-@tg_bot.callback_query_handler(func = lambda call: True)
+@tg_bot.callback_query_handler(func=lambda call: True)
 def handle_unregistered_callback(call):
     tg_bot.send_message(call.from_user.id, "В разработке! :)")
 
 
-@tg_bot.message_handler(func = lambda message: not is_unregistered_user(message.chat.id), content_types = ['text'])
+@tg_bot.message_handler(func=lambda message: not is_unregistered_user(message.chat.id), content_types=['text'])
 def echo_message(message):
-    tg_bot.send_photo(message.chat.id, photo = images["buttons_helper"], caption = "Если пропали кнопки, то нажми на "
-                                                                                   "иконку, как на картинке:")
+    tg_bot.send_photo(message.chat.id, photo=images["buttons_helper"], caption="Если пропали кнопки, то нажми на "
+                                                                               "иконку, как на картинке:")
 
 
 def get_telegram_bot():

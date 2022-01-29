@@ -1,6 +1,6 @@
 from sql.database import db
 from flask import Flask
-from routes import bot_handler
+from server.routes import bot_handler
 
 from setup import SQL_PASSWORD, SQL_HOST, SQL_USER, SQL_DATABASE
 

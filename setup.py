@@ -25,7 +25,7 @@ VK_SERVICE_TOKEN: str = os.getenv("VK_SERVICE_TOKEN")
 # project_path = "/home/sherriice/PlatformaBot"
 
 
-project_path = "../resourses"
+project_path = os.getcwd() + '/resourses'
 
 
 def load_messages():

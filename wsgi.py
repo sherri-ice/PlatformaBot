@@ -1,3 +1,6 @@
 from server.app import create_app
 
-app = application = create_app()
+if __name__ == '__main__':
+    app = application = create_app()
+    app.run()
+
